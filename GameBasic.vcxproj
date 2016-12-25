@@ -82,8 +82,11 @@
     <ClCompile Include="source\scene\SceneInitialize.cpp" />
     <ClCompile Include="source\scene\SceneTitle.cpp" />
     <ClCompile Include="source\utility\bezier.cpp" />
+    <ClCompile Include="source\utility\ConsoleManager.cpp" />
     <ClCompile Include="source\utility\counter.cpp" />
     <ClCompile Include="source\utility\DeviceManager.cpp" />
+    <ClCompile Include="source\utility\FadeManager.cpp" />
+    <ClCompile Include="source\utility\KeyManager.cpp" />
     <ClCompile Include="source\utility\Renderer.cpp" />
     <ClCompile Include="source\utility\SceneManager.cpp" />
   </ItemGroup>
@@ -96,9 +99,12 @@
     <ClInclude Include="source\scene\SceneList.h" />
     <ClInclude Include="source\scene\SceneTitle.h" />
     <ClInclude Include="source\utility\bezier.h" />
+    <ClInclude Include="source\utility\ConsoleManager.h" />
     <ClInclude Include="source\utility\counter.h" />
     <ClInclude Include="source\utility\DeviceManager.h" />
+    <ClInclude Include="source\utility\FadeManager.h" />
     <ClInclude Include="source\utility\FileUtility.hpp" />
+    <ClInclude Include="source\utility\KeyManager.h" />
     <ClInclude Include="source\utility\Renderer.h" />
     <ClInclude Include="source\utility\SceneManager.h" />
     <ClInclude Include="source\utility\StateManager.h" />

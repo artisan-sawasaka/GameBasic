@@ -2,6 +2,7 @@
 #include "utility/Renderer.h"
 #include "utility/Utility.hpp"
 #include "utility/DeviceManager.h"
+#include "utility/FadeManager.h"
 
 /*!
  * @brief 更新
@@ -17,6 +18,8 @@ void SceneTitle::Initialize(const SceneBaseParam* param)
 	fade_counter_.set(0, 0, 1);
 	cursor_counter_.set(0, 10, -3);
 	SetBezier_(Bezier::Linear);
+
+	state_.Change(ST_INIT);
 }
 
 /*!
@@ -24,6 +27,23 @@ void SceneTitle::Initialize(const SceneBaseParam* param)
  */
 void SceneTitle::Update(float df)
 {
+	state_.Check(df);
+	// 初期化
+	if (state_ == ST_INIT) {
+		state_.Change(ST_FADE_IN_INIT, true);
+	}
+
+	// フェード
+	if (state_ == ST_FADE_IN_INIT) {
+		FadeManager::GetInstance()->FadeIn();
+		state_.Change(ST_FADE_IN, true);
+	}
+	if (state_ == ST_FADE_IN) {
+		if (FadeManager::GetInstance()->IsEnd()) {
+			state_.Change(ST_UPDATE, true);
+		}
+	}
+
 	if (GetKeyState('R') < 0) {
 		// マスターデータ再読み込み
 		Reload_();
@@ -77,15 +97,18 @@ void SceneTitle::Update(float df)
 
 	// カーソルを操作
 	objects_["BezierTimer"]->x = bezier_timer_;
+}
 
+/*!
+ * @brief 描画
+ */
+void SceneTitle::Render()
+{
 	// 画面クリア
 	Renderer::GetInstance()->ClearScreen(Gdiplus::Color(0, 80, 255));
 
 	// マスターデータに基づく描画処理
 	Utility::BaseRender(MasterData::TitleImageList, MasterData::TitleUI, bitmaps_);
-
-	// フェード
-	Renderer::GetInstance()->FillRect(0, 0, DeviceManager::GetInstance()->GetWidth(), DeviceManager::GetInstance()->GetHeight(), Gdiplus::Color(fade_counter_, 0, 0, 0));
 
 	// 操作説明
 	static const char* ds[] = {
@@ -106,13 +129,6 @@ void SceneTitle::Update(float df)
 	for (int i = 0; i < sizeof(ds) / sizeof(*ds); ++i) {
 		Renderer::GetInstance()->DrawString(ds[i], Renderer::LEFT_TOP, 0, i * 16, 12);
 	}
-}
-
-/*!
- * @brief 描画
- */
-void SceneTitle::Render()
-{
 }
 
 /*!

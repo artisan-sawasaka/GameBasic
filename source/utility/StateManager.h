@@ -50,6 +50,16 @@ public :
 		wait_time_ = time;
 	}
 
+	/*!
+	 * @brief ó‘Ô‚ğØ‚è‘Ö‚¦‚é
+	 *
+	 * @param state Ÿ‚Ìó‘Ô‚ğw’è‚·‚é
+	 * @param time Ÿ‚ÉØ‚è‘Ö‚í‚é‚Ü‚Å‚Ì‘Ò‚¿ŠÔ‚ğw’è‚·‚é
+	 */
+	bool IsRange(State start, State end) {
+		return start <= state_ && state_ <= end;
+	}
+
 	operator State() const { return state_; }
 	State operator=(State state){ state_ = state; return state; }
 	State Get() const{ return state_; }

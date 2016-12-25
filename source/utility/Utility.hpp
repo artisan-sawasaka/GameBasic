@@ -13,12 +13,16 @@ public:
 	 */
 	static void ReloadMasterData()
 	{
+#if 1
+		MasterData::Reload("data/master");
+#else
 		char current[MAX_PATH];
 		GetCurrentDirectoryA(sizeof(current), current);
 		SetCurrentDirectoryA("resource");
 		system("call create_binary.bat");
 		SetCurrentDirectoryA(current);
 		MasterData::Reload("data/master");
+#endif
 	}
 
 	/*!

@@ -2,6 +2,9 @@
 #include "utility/SceneManager.h"
 #include "utility/Renderer.h"
 #include "utility/DeviceManager.h"
+#include "utility/FadeManager.h"
+#include "utility/ConsoleManager.h"
+#include "utility/KeyManager.h"
 #include <set>
 #include <algorithm>
 
@@ -33,6 +36,12 @@ MainApp::~MainApp()
  */
 LRESULT MainApp::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 {
+	if (msg == WM_KEYDOWN) {
+		KeyManager::GetInstance()->Down(wParam);
+	} else if (msg == WM_KEYUP) {
+		KeyManager::GetInstance()->Up(wParam);
+	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -49,6 +58,8 @@ void MainApp::Initialize()
 
 	// シーン切り替え
 	SceneManager::GetInstance()->Change(SceneList::Initialize, nullptr);
+
+	ConsoleManager::GetInstance()->Open();
 }
 
 /*!
@@ -63,13 +74,22 @@ void MainApp::Finalize()
  */
 void MainApp::Update(float df)
 {
+	// キーの更新
+	KeyManager::GetInstance()->Update();
+
 	// シーンの再読み込み
-	if (GetKeyState('P') < 0) {
+	if (KeyManager::GetInstance()->IsTrg('P')) {
 		SceneManager::GetInstance()->Restart();
 	}
 
+	// フェードの更新
+	FadeManager::GetInstance()->Update(df);
+
 	// シーンの更新
 	SceneManager::GetInstance()->Update(df);
+
+	// フェード処理
+	FadeManager::GetInstance()->Render();
 
 	// FPS表示
 	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 16, Gdiplus::Color::White, _T("FPS:%.1f"), GetAverageFPS());

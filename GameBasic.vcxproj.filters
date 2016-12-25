@@ -49,6 +49,15 @@
     <ClCompile Include="source\utility\DeviceManager.cpp">
       <Filter>source\utility</Filter>
     </ClCompile>
+    <ClCompile Include="source\utility\FadeManager.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\ConsoleManager.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\KeyManager.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\utility\bezier.h">
@@ -97,6 +106,15 @@
       <Filter>source\scene</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\DeviceManager.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\FadeManager.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\ConsoleManager.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\KeyManager.h">
       <Filter>source\utility</Filter>
     </ClInclude>
   </ItemGroup>
