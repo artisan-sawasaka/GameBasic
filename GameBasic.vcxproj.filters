@@ -14,6 +14,9 @@
     <Filter Include="source\master">
       <UniqueIdentifier>{2fdb1698-53eb-4ca0-900e-20687fee5649}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\scene">
+      <UniqueIdentifier>{e4ed048e-73eb-439e-bafa-3ac8937668af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\utility\bezier.cpp">
@@ -33,6 +36,18 @@
     </ClCompile>
     <ClCompile Include="source\master\MasterData.cpp">
       <Filter>source\master</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\SceneManager.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\SceneInitialize.cpp">
+      <Filter>source\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\SceneTitle.cpp">
+      <Filter>source\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\DeviceManager.cpp">
+      <Filter>source\utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +76,27 @@
       <Filter>source\utility</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\Utility.hpp">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\StateManager.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\SceneBase.h">
+      <Filter>source\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\SceneManager.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\SceneList.h">
+      <Filter>source\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\SceneInitialize.h">
+      <Filter>source\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\SceneTitle.h">
+      <Filter>source\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\DeviceManager.h">
       <Filter>source\utility</Filter>
     </ClInclude>
   </ItemGroup>

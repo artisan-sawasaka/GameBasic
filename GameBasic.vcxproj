@@ -79,18 +79,29 @@
     <ClCompile Include="source\main\main.cpp" />
     <ClCompile Include="source\main\WinMain.cpp" />
     <ClCompile Include="source\master\MasterData.cpp" />
+    <ClCompile Include="source\scene\SceneInitialize.cpp" />
+    <ClCompile Include="source\scene\SceneTitle.cpp" />
     <ClCompile Include="source\utility\bezier.cpp" />
     <ClCompile Include="source\utility\counter.cpp" />
+    <ClCompile Include="source\utility\DeviceManager.cpp" />
     <ClCompile Include="source\utility\Renderer.cpp" />
+    <ClCompile Include="source\utility\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main\main.h" />
     <ClInclude Include="source\main\WinMain.h" />
     <ClInclude Include="source\master\MasterData.hpp" />
+    <ClInclude Include="source\scene\SceneBase.h" />
+    <ClInclude Include="source\scene\SceneInitialize.h" />
+    <ClInclude Include="source\scene\SceneList.h" />
+    <ClInclude Include="source\scene\SceneTitle.h" />
     <ClInclude Include="source\utility\bezier.h" />
     <ClInclude Include="source\utility\counter.h" />
+    <ClInclude Include="source\utility\DeviceManager.h" />
     <ClInclude Include="source\utility\FileUtility.hpp" />
     <ClInclude Include="source\utility\Renderer.h" />
+    <ClInclude Include="source\utility\SceneManager.h" />
+    <ClInclude Include="source\utility\StateManager.h" />
     <ClInclude Include="source\utility\StreamReader.hpp" />
     <ClInclude Include="source\utility\Utility.hpp" />
   </ItemGroup>
