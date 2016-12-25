@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="source\main">
+      <UniqueIdentifier>{93183e4d-baa3-42a0-8b7b-040b1ce7146f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\utility">
+      <UniqueIdentifier>{dc229ec0-d1a0-4202-8e65-430e7a65f2ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\master">
+      <UniqueIdentifier>{2fdb1698-53eb-4ca0-900e-20687fee5649}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\utility\bezier.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\counter.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main\main.cpp">
+      <Filter>source\main</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main\WinMain.cpp">
+      <Filter>source\main</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\Renderer.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\master\MasterData.cpp">
+      <Filter>source\master</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\utility\bezier.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\counter.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\main\main.h">
+      <Filter>source\main</Filter>
+    </ClInclude>
+    <ClInclude Include="source\main\WinMain.h">
+      <Filter>source\main</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\Renderer.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\master\MasterData.hpp">
+      <Filter>source\master</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\FileUtility.hpp">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\StreamReader.hpp">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\Utility.hpp">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
