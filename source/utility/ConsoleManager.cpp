@@ -3,12 +3,20 @@
 #include <Fcntl.h>
 #include <stdio.h>
 
+/*!
+ * @brief コンソールウインドウを開く
+ */
 void ConsoleManager::Open()
 {
+	if (handle_ != 0) return ;
+
     AllocConsole();
     handle_ = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
+/*!
+ * @brief コンソールウインドウを閉じる
+ */
 void ConsoleManager::Close()
 {
 	if (handle_ != 0) {
@@ -17,6 +25,9 @@ void ConsoleManager::Close()
 	handle_ = 0;
 }
 
+/*!
+ * @brief コンソールウインドウに文字を出力
+ */
 void ConsoleManager::Print(const char* s, ...)
 {
 	if (handle_ == 0) return;

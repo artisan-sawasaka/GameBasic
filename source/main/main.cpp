@@ -58,8 +58,6 @@ void MainApp::Initialize()
 
 	// シーン切り替え
 	SceneManager::GetInstance()->Change(SceneList::Initialize, nullptr);
-
-	ConsoleManager::GetInstance()->Open();
 }
 
 /*!
@@ -77,9 +75,16 @@ void MainApp::Update(float df)
 	// キーの更新
 	KeyManager::GetInstance()->Update();
 
-	// シーンの再読み込み
+	// デバッグ機能
 	if (KeyManager::GetInstance()->IsTrg('P')) {
+		// 現在のシーンの再読み込み
 		SceneManager::GetInstance()->Restart();
+	} else if (KeyManager::GetInstance()->IsTrg('O')) {
+		// デバッグ出力ウインドウを開く
+		ConsoleManager::GetInstance()->Open();
+	} else if (KeyManager::GetInstance()->IsTrg('C')) {
+		// デバッグ出力ウインドウを閉じる
+		ConsoleManager::GetInstance()->Close();
 	}
 
 	// フェードの更新
