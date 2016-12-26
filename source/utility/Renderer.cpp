@@ -24,6 +24,8 @@ Renderer::~Renderer()
 void Renderer::Initialize(HDC hdc)
 {
 	graphics_.reset(new Gdiplus::Graphics(hdc));
+	graphics_->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+
 	brush_.reset(new Gdiplus::SolidBrush(Gdiplus::Color::White));
 	memset(cm_.m, 0, sizeof(cm_.m));
 	cm_.m[4][4] = 1.0f;
@@ -86,7 +88,7 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 
 	// •`‰æ
 	Gdiplus::Rect dst(dx, dy, dw, dh);
-	graphics_->DrawImage(image, dst, sx, sy, sw, sh, Gdiplus::UnitPixel, & ia_);
+	graphics_->DrawImage(image, dst, sx, sy, sw, sh, Gdiplus::UnitPixel, &ia_);
 }
 
 /*!

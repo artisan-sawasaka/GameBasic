@@ -87,13 +87,31 @@ void MainApp::Update(float df)
 		ConsoleManager::GetInstance()->Close();
 	}
 
+	// 更新
+	Update_(df);
+
+	// 描画
+	Render_();
+}
+
+void MainApp::Update_(float df)
+{
 	// フェードの更新
 	FadeManager::GetInstance()->Update(df);
 
 	// シーンの更新
 	SceneManager::GetInstance()->Update(df);
+}
 
-	// フェード処理
+void MainApp::Render_()
+{
+	// 画面クリア
+	Renderer::GetInstance()->ClearScreen(Gdiplus::Color(0, 80, 255));
+
+	// シーン
+	SceneManager::GetInstance()->Render();
+
+	// フェード
 	FadeManager::GetInstance()->Render();
 
 	// FPS表示

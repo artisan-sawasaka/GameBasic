@@ -42,6 +42,15 @@ void SceneManager::Update(float df)
 
 	if (scene_) {
 		scene_->Update(df);
+	}
+}
+
+/*!
+ * @brief •`‰æ
+ */
+void SceneManager::Render()
+{
+	if (scene_) {
 		scene_->Render();
 	}
 }

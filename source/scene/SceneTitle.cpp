@@ -104,9 +104,6 @@ void SceneTitle::Update(float df)
  */
 void SceneTitle::Render()
 {
-	// 画面クリア
-	Renderer::GetInstance()->ClearScreen(Gdiplus::Color(0, 80, 255));
-
 	// マスターデータに基づく描画処理
 	Utility::BaseRender(MasterData::TitleImageList, MasterData::TitleUI, bitmaps_);
 

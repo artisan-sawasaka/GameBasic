@@ -29,8 +29,6 @@ public :
 	virtual void Update(float dt);
 
 private :
-	/*!
-	 * @brief マスター再読み込み
-	 */
-	void Reload_();
+	void Update_(float df);
+	void Render_();
 };

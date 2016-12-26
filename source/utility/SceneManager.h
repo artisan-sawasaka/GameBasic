@@ -28,6 +28,11 @@ public :
 	 */
 	void Update(float df);
 
+	/*!
+	* @brief •`‰æ
+	*/
+	void Render();
+
 	static SceneManager* GetInstance()
 	{
 		static SceneManager v;

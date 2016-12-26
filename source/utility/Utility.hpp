@@ -101,7 +101,6 @@ public:
 				const auto& info2 = it2->second;
 				auto it3 = bitmaps.find(info2.path);
 				if (it3 == bitmaps.end()) continue ;
-
 				Renderer::GetInstance()->DrawImage(it3->second.get(),
 					static_cast<Renderer::Anchor>(info.anchor),
 					info.x,  info.y,  info.w,  info.h,
