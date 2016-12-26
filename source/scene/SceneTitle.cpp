@@ -3,6 +3,7 @@
 #include "utility/Utility.hpp"
 #include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
+#include "utility/KeyManager.h"
 
 /*!
  * @brief 更新
@@ -56,7 +57,7 @@ void SceneTitle::Update(float df)
 	} else if (GetKeyState('S') < 0) {
 		// 止まったカウンターを再度再生
 		stop_counter_.set(0, stop_counter_.getEnd(), 6);
-	} else if (GetKeyState('1') < 0) {
+	} else if (KeyManager::GetInstance()->IsPress('1')) {
 		SetBezier_(Bezier::Linear);
 	} else if (GetKeyState('2') < 0) {
 		SetBezier_(Bezier::EaseIn);

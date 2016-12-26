@@ -14,7 +14,7 @@
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// クラス名とタイトルを設定
-	MainApp app(_T("bezier"), _T("bezierのテスト"));
+	MainApp app(_T("GameBasic"), _T("ゲーム開発のベース"));
 
 	// アプリをスタート
 	app.Start();
@@ -40,6 +40,8 @@ LRESULT MainApp::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 		KeyManager::GetInstance()->Down(wParam);
 	} else if (msg == WM_KEYUP) {
 		KeyManager::GetInstance()->Up(wParam);
+	} else if (msg == WM_ACTIVATE && wParam == 0) {
+		KeyManager::GetInstance()->Clear();
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);

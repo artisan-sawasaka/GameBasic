@@ -175,6 +175,12 @@ LRESULT CALLBACK AppBase::WndProc_(HWND hWnd, UINT msg, UINT wParam, LONG lParam
 			}
 			break;
 		}
+	case WM_ACTIVATE :
+		app->active_ = (wParam != 0);
+		if (!app->active_) {
+			app->fps_count_ = 0;
+		}
+		break;
 	}
 
 	if (app != nullptr) {
@@ -208,9 +214,11 @@ SIZE AppBase::GetClientSize_(int w, int h)
  */
 float AppBase::VSync_()
 {
+	int fps = active_ ? fps_ : 10;
+
 	// ‘Ò‚¿ŽžŠÔ”»’è
 	DWORD time = timeGetTime();
-	int wait = ++fps_count_ * 1000 / fps_ - (time - start_time_);
+	int wait = ++fps_count_ * 1000 / fps - (time - start_time_);
 	if (wait > 0) {
 		Sleep(wait);
 	} else {
@@ -223,8 +231,8 @@ float AppBase::VSync_()
 	old_time_ = time;
 
 	// •½‹ÏFPSŒv‘ª
-	if (fps_count_ % fps_ == 0) {
-		average_fps_ = 1000.f / ((time - start_time_) / static_cast<float>(fps_));
+	if (fps_count_ % fps == 0) {
+		average_fps_ = 1000.f / ((time - start_time_) / static_cast<float>(fps));
 		fps_count_ = 0;
 		start_time_ = time;
 	}

@@ -126,6 +126,7 @@ private :
 	DWORD start_time_;
 	HWND hwnd_;
 	DWORD style_;
+	bool active_;
 
 	// バックバッファ
 	HBITMAP bitmap_;

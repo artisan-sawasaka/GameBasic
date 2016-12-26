@@ -1,5 +1,6 @@
 #include "KeyManager.h"
 #include <string.h>
+#include <algorithm>
 
 KeyManager::KeyManager()
 {
@@ -11,9 +12,9 @@ KeyManager::KeyManager()
  */
 void KeyManager::Clear()
 {
-	memset(keys_, 0 , sizeof(keys_));
-	memset(keys_back_, 0 , sizeof(keys_back_));
-	memset(keys_temp_, 0 , sizeof(keys_temp_));
+	memset(keys_, false , sizeof(keys_));
+	memset(keys_back_, false, sizeof(keys_back_));
+	memset(keys_temp_, false, sizeof(keys_temp_));
 }
 
 /*!
