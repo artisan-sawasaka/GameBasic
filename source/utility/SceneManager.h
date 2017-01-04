@@ -1,3 +1,10 @@
+/*!
+ * @file
+ *
+ * @brief シーン管理クラスを提供します。
+ *
+ * @copyright
+ */
 #pragma once
 
 #include "StateManager.h"
@@ -5,6 +12,9 @@
 #include "scene/SceneList.h"
 #include <memory>
 
+/*!
+ * @brief シーン管理クラス
+ */
 class SceneManager
 {
 public :
@@ -33,8 +43,7 @@ public :
 	*/
 	void Render();
 
-	static SceneManager* GetInstance()
-	{
+	static SceneManager* GetInstance() {
 		static SceneManager v;
 		return &v;
 	}

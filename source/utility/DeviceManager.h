@@ -1,7 +1,17 @@
+/*!
+ * @file
+ *
+ * @brief デバイス管理クラスを提供します。
+ *
+ * @copyright
+ */
 #pragma once
 
 class AppBase;
 
+/*!
+ * @brief デバイス管理クラスを提供します。
+ */
 class DeviceManager
 {
 public :

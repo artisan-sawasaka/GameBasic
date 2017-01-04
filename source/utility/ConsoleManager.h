@@ -1,7 +1,17 @@
+/*!
+ * @file
+ *
+ * @brief コンソール管理クラスを提供します。
+ *
+ * @copyright
+ */
 #pragma once
 
 #include <Windows.h>
 
+/*!
+ * @brief コンソール管理クラス
+ */
 class ConsoleManager
 {
 public :

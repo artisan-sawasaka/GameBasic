@@ -79,7 +79,6 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 	cm_.m[3][3] = color.GetA() / 255.0f;
 	ia_.SetColorMatrix(&cm_);
 
-
 	// アンカーを基準にして表示座標を変える
 	if (anchor != LEFT_TOP) {
 		dx -= (dw >> 1) * (anchor % 3);
@@ -87,8 +86,7 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 	}
 
 	// 描画
-	Gdiplus::Rect dst(dx, dy, dw, dh);
-	graphics_->DrawImage(image, dst, sx, sy, sw, sh, Gdiplus::UnitPixel, &ia_);
+	graphics_->DrawImage(image, Gdiplus::Rect(dx, dy, dw, dh), sx, sy, sw, sh, Gdiplus::UnitPixel, &ia_);
 }
 
 /*!
@@ -130,7 +128,7 @@ void Renderer::DrawStringFormat(Anchor anchor, int x, int y, int size, const Gdi
 	if (color.GetA() == 0) return ;
 
 	// テキストフォーマットを変換
-	char text[1024];
+	char text[10240];
 	va_list arg;
 	va_start(arg, s);
 	vsprintf(text, s, arg);
@@ -147,7 +145,7 @@ void Renderer::DrawStringFormat(Anchor anchor, int x, int y, int size, const Gdi
 	if (color.GetA() == 0) return ;
 
 	// テキストフォーマットを変換
-	wchar_t text[1024];
+	wchar_t text[10240];
 	va_list arg;
 	va_start(arg, s);
 	vswprintf(text, s, arg);

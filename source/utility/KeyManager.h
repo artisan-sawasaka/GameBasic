@@ -1,5 +1,15 @@
+/*!
+ * @file
+ *
+ * @brief キー管理クラスを提供します。
+ *
+ * @copyright
+ */
 #pragma once
 
+/*!
+ * @brief キー管理クラス
+ */
 class KeyManager
 {
 public :

@@ -1,7 +1,7 @@
 #pragma once
 
 /*!
- * @brief オプション
+ * @brief シーンリスト
  */
 class SceneList
 {

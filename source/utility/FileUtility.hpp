@@ -1,9 +1,19 @@
+/*!
+ * @file
+ *
+ * @brief ファイルユーティリティクラスを提供します。
+ *
+ * @copyright
+ */
 #pragma once
 
 #include <vector>
 #include <string>
 #include <algorithm>
 
+/*!
+ * @brief ファイルユーティリティクラスを提供します。
+ */
 class File
 {
 public:

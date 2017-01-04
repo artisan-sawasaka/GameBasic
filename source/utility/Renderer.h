@@ -1,3 +1,10 @@
+/*!
+ * @file
+ *
+ * @brief レンダリングクラスを提供します。
+ *
+ * @copyright
+ */
 #pragma once
 
 #include <Windows.h>
@@ -6,6 +13,9 @@
 #include "master/MasterData.hpp"
 
 
+/*!
+ * @brief レンダリングクラス
+ */
 class Renderer
 {
 public :

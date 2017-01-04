@@ -34,7 +34,7 @@ void FadeManager::Update(float df)
 void FadeManager::Render()
 {
 	if (alpha_ == 0) return ;
-	ConsoleManager::GetInstance()->Print("alpfa:%d\n", alpha_.Get());
+	//ConsoleManager::GetInstance()->Print("alpfa:%d\n", alpha_.Get());
 
 	color_.SetValue((color_.GetValue() & ~Gdiplus::Color::AlphaMask) | ((alpha_ & 0xff) << Gdiplus::Color::AlphaShift));
 	Renderer::GetInstance()->FillRect(0, 0, DeviceManager::GetInstance()->GetWidth(), DeviceManager::GetInstance()->GetHeight(), color_);

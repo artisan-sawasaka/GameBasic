@@ -1,9 +1,19 @@
+/*!
+ * @file
+ *
+ * @brief フェード管理クラスを提供します。
+ *
+ * @copyright
+ */
 #pragma once
 
 #include "bezier.h"
 #include <Windows.h>
 #include <gdiplus.h>
 
+/*!
+ * @brief フェード管理クラスを提供します。
+ */
 class FadeManager
 {
 public :
