@@ -31,4 +31,7 @@ public :
 private :
 	void Update_(float df);
 	void Render_();
+	void RenderDebug_();
+
+	bool is_debug_render_;
 };

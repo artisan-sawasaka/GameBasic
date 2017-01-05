@@ -45,13 +45,12 @@ private :
 	void Reload_();
 	void SetBezier_(const Bezier::ControlPoint& cp);
 
-	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;
-	std::map<std::string, MasterData::TitleUIData*> objects_;
-	StateManager<State> state_;
+	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;	// 画像データ
+	std::map<std::string, MasterData::TitleUIData*> objects_;			// 表示物
+	StateManager<State> state_;											// 状態管理
 
 	SaturationCounter stop_counter_;
 	RootCounter root_counter_;
-	InteriorCounter fade_counter_;
 	LoopCounter cursor_counter_;
 	Bezier::Counter<int> bezier_counter_;
 	Bezier::Timer<int> bezier_timer_;

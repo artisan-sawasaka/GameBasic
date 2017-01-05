@@ -3,6 +3,8 @@
 
 
 
+!cri_ware_pcx86_le.dll
+!cri_ware_pcx86_le_import.lib
 !Tool/AutoMaster/Net20/*.dll
 Tool/AutoMaster/[Oo]bj/
 Tool/AutoMaster/[Bb]in/

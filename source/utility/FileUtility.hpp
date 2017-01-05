@@ -98,4 +98,19 @@ public:
 
 		return ret;
 	}
+
+	/*!
+	* @brief 指定したファイルの存在の有無を取得する
+	*
+	* @param path ファイルのパス
+	*
+	* @return ファイルが存在した場合は true を返します。
+	*/
+	static bool Exist(const std::string& path)
+	{
+		FILE* fp = std::fopen(path.c_str(), "rb");
+		if (fp == nullptr) return false;
+		fclose(fp);
+		return true;
+	}
 };

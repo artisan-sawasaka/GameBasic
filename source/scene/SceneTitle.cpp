@@ -4,6 +4,9 @@
 #include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
+#include "utility/SoundManager.h"
+#include "sound/Bgm.h"
+#include "sound/Se.h"
 
 /*!
  * @brief 更新
@@ -16,7 +19,6 @@ void SceneTitle::Initialize(const SceneBaseParam* param)
 	// 各種カウンター初期化
 	stop_counter_.set(0, DeviceManager::GetInstance()->GetWidth() - 150, 6);
 	root_counter_.set(0, DeviceManager::GetInstance()->GetWidth(), 4);
-	fade_counter_.set(0, 0, 1);
 	cursor_counter_.set(0, 10, -3);
 	SetBezier_(Bezier::Linear);
 
@@ -34,52 +36,36 @@ void SceneTitle::Update(float df)
 		state_.Change(ST_FADE_IN_INIT, true);
 	}
 
-	// フェード
+	// フェードイン
 	if (state_ == ST_FADE_IN_INIT) {
 		FadeManager::GetInstance()->FadeIn();
 		state_.Change(ST_FADE_IN, true);
 	}
 	if (state_ == ST_FADE_IN) {
 		if (FadeManager::GetInstance()->IsEnd()) {
-			state_.Change(ST_UPDATE, true);
+			state_.Change(ST_UPDATE);
 		}
 	}
 
-	if (GetKeyState('R') < 0) {
-		// マスターデータ再読み込み
-		Reload_();
-	} else if (GetKeyState('I') < 0) {
-		// フェードイン
-		fade_counter_.set(fade_counter_, 0, 30);
-	} else if (GetKeyState('O') < 0) {
-		// フェードアウト
-		fade_counter_.set(fade_counter_, 255, 30);
-	} else if (GetKeyState('S') < 0) {
+	if (GetKeyState('S') < 0) {
 		// 止まったカウンターを再度再生
 		stop_counter_.set(0, stop_counter_.getEnd(), 6);
-	} else if (KeyManager::GetInstance()->IsPress('1')) {
-		SetBezier_(Bezier::Linear);
-	} else if (GetKeyState('2') < 0) {
-		SetBezier_(Bezier::EaseIn);
-	} else if (GetKeyState('3') < 0) {
-		SetBezier_(Bezier::EaseOut);
-	} else if (GetKeyState('4') < 0) {
-		SetBezier_(Bezier::EaseInOut);
-	} else if (GetKeyState('5') < 0) {
-		SetBezier_(Bezier::EaseInBack);
-	} else if (GetKeyState('6') < 0) {
-		SetBezier_(Bezier::EaseOutBack);
-	} else if (GetKeyState('7') < 0) {
-		SetBezier_(Bezier::EaseInOutBack);
-	} else if (GetKeyState('8') < 0) {
-		SetBezier_(Bezier::EaseInCirc);
-	} else if (GetKeyState('9') < 0) {
-		SetBezier_(Bezier::ControlPoint(MasterData::Const.x1, MasterData::Const.y1, MasterData::Const.x2, MasterData::Const.y2));
+	} else if (KeyManager::GetInstance()->IsTrg('1')) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
+	} else if (KeyManager::GetInstance()->IsTrg('2')) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_FIELD);
+	} else if (KeyManager::GetInstance()->IsTrg('3')) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
+	} else if (KeyManager::GetInstance()->IsTrg('4')) {
+		SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
+	} else if (KeyManager::GetInstance()->IsTrg('5')) {
+		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
+	} else if (KeyManager::GetInstance()->IsTrg('6')) {
+		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 	}
 
 	++stop_counter_;
 	++root_counter_;
-	++fade_counter_;
 	++cursor_counter_;
 	++bezier_counter_;
 	bezier_timer_.Update(df);
@@ -106,27 +92,7 @@ void SceneTitle::Update(float df)
 void SceneTitle::Render()
 {
 	// マスターデータに基づく描画処理
-	Utility::BaseRender(MasterData::TitleImageList, MasterData::TitleUI, bitmaps_);
-
-	// 操作説明
-	static const char* ds[] = {
-		"R:マスター読み込み",
-		"I:フェードイン",
-		"O:フェードアウト",
-		"S:とまる～を再度移動",
-		"1:Bezier::Linear:",
-		"2:Bezier::EaseIn:",
-		"3:Bezier::EaseOut",
-		"4:Bezier::EaseInOut",
-		"5:Bezier::EaseInBack",
-		"6:Bezier::EaseOutBack",
-		"7:Bezier::EaseInOutBack",
-		"8:Bezier::EaseInCirc",
-		"9:Bezier オリジナル",
-	};
-	for (int i = 0; i < sizeof(ds) / sizeof(*ds); ++i) {
-		Renderer::GetInstance()->DrawString(ds[i], Renderer::LEFT_TOP, 0, i * 16, 12);
-	}
+	Utility::BasicRender(MasterData::TitleImageList, MasterData::TitleUI, bitmaps_);
 }
 
 /*!
@@ -143,7 +109,7 @@ void SceneTitle::Reload_()
 	// 画像を読み込み
 	bitmaps_ = Utility::CreateBitmaps(MasterData::TitleImageList);
 
-	// 操作しやすいようにデータ化する
+	// 操作しやすいようにオブジェクト化する
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(MasterData::TitleUI);
 
 	cursour_y_ = objects_["TextCursor"]->y;

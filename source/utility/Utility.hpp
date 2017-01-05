@@ -90,7 +90,7 @@ public:
 	 * @return オブジェクトデータ
 	 */
 	template <class ImageList, class UI>
-	static void BaseRender(const ImageList& list, const UI& ui, std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>>& bitmaps)
+	static void BasicRender(const ImageList& list, const UI& ui, std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>>& bitmaps)
 	{
 		for (auto it = ui.begin(); it != ui.end(); ++it) {
 			const auto& info = *it;
