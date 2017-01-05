@@ -96,7 +96,6 @@ private :
 	std::shared_ptr<Gdiplus::Graphics> graphics_;
 	std::map<int, std::shared_ptr<Gdiplus::Font>> fonts_;
 	std::shared_ptr<Gdiplus::SolidBrush> brush_;
-	Gdiplus::ImageAttributes ia_;
 	Gdiplus::ColorMatrix cm_;
 	Gdiplus::StringFormat string_format_;
 };

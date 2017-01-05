@@ -73,11 +73,12 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 	if (color.GetA() == 0) return ;
 
 	// 色設定
+	Gdiplus::ImageAttributes ia;
 	cm_.m[0][0] = color.GetR() / 255.0f;
 	cm_.m[1][1] = color.GetG() / 255.0f;
 	cm_.m[2][2] = color.GetB() / 255.0f;
 	cm_.m[3][3] = color.GetA() / 255.0f;
-	ia_.SetColorMatrix(&cm_);
+	ia.SetColorMatrix(&cm_);
 
 	// アンカーを基準にして表示座標を変える
 	if (anchor != LEFT_TOP) {
@@ -86,7 +87,7 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 	}
 
 	// 描画
-	graphics_->DrawImage(image, Gdiplus::Rect(dx, dy, dw, dh), sx, sy, sw, sh, Gdiplus::UnitPixel, &ia_);
+	graphics_->DrawImage(image, Gdiplus::Rect(dx, dy, dw, dh), sx, sy, sw, sh, Gdiplus::UnitPixel, &ia);
 }
 
 /*!

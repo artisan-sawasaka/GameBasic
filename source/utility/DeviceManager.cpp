@@ -35,3 +35,13 @@ void DeviceManager::SetFPS(int fps)
 	if (app_ == nullptr) return;
 	app_->SetFPS(fps);
 }
+
+/*!
+ * @brief I—¹
+ */
+void DeviceManager::Exit()
+{
+	if (app_ == nullptr) return;
+	PostMessage(app_->GetWindowHandle(), WM_CLOSE, 0, 0);
+}
+

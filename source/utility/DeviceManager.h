@@ -35,6 +35,11 @@ public :
 	 */
 	void SetFPS(int fps);
 
+	/*!
+	 * @brief èIóπ
+	 */
+	void Exit();
+
 	static DeviceManager* GetInstance()
 	{
 		static DeviceManager v;

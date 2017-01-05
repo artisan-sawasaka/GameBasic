@@ -15,12 +15,8 @@ void SceneTitle::Initialize(const SceneBaseParam* param)
 {
 	// マスターデータ読み込み
 	Reload_();
-	
-	// 各種カウンター初期化
-	stop_counter_.set(0, DeviceManager::GetInstance()->GetWidth() - 150, 6);
-	root_counter_.set(0, DeviceManager::GetInstance()->GetWidth(), 4);
-	cursor_counter_.set(0, 10, -3);
-	SetBezier_(Bezier::Linear);
+
+	cursor_ = 0;
 
 	state_.Change(ST_INIT);
 }
@@ -33,24 +29,35 @@ void SceneTitle::Update(float df)
 	state_.Check(df);
 	// 初期化
 	if (state_ == ST_INIT) {
+		animtion_.SetIn(MasterData::TitleUI, MasterData::TitleInOut);
 		state_.Change(ST_FADE_IN_INIT, true);
 	}
 
 	// フェードイン
-	if (state_ == ST_FADE_IN_INIT) {
-		FadeManager::GetInstance()->FadeIn();
-		state_.Change(ST_FADE_IN, true);
-	}
-	if (state_ == ST_FADE_IN) {
-		if (FadeManager::GetInstance()->IsEnd()) {
-			state_.Change(ST_UPDATE);
+	if (state_.IsRange(ST_FADE_IN_INIT, ST_FADE_IN)) {
+		if (ActionFadeIn_(df)) {
+			state_.Change(ST_SELECT_INIT);
 		}
 	}
 
-	if (GetKeyState('S') < 0) {
-		// 止まったカウンターを再度再生
-		stop_counter_.set(0, stop_counter_.getEnd(), 6);
-	} else if (KeyManager::GetInstance()->IsTrg('1')) {
+	// 更新
+	if (state_.IsRange(ST_SELECT_INIT, ST_SELECT)) {
+		if (ActionSelect_(df)) {
+			state_.Change(ST_FADE_OUT_INIT);
+		}
+	}
+
+	// フェードアウト
+	if (state_.IsRange(ST_FADE_OUT_INIT, ST_FADE_OUT)) {
+		if (ActionFadeOut_(df)) {
+			state_.Change(ST_SELECT_INIT);
+		}
+	}
+
+	// カーソルチェック
+	CheckCursor_();
+
+	if (KeyManager::GetInstance()->IsTrg('1')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
 	} else if (KeyManager::GetInstance()->IsTrg('2')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_FIELD);
@@ -63,27 +70,6 @@ void SceneTitle::Update(float df)
 	} else if (KeyManager::GetInstance()->IsTrg('6')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 	}
-
-	++stop_counter_;
-	++root_counter_;
-	++cursor_counter_;
-	++bezier_counter_;
-	bezier_timer_.Update(df);
-
-	// とまる～を操作
-	objects_["TextStop"]->x = stop_counter_;
-
-	// まわる～を操作
-	objects_["TextLoop"]->x = root_counter_;
-
-	// カーソルを操作
-	objects_["TextCursor"]->y = cursour_y_ + cursor_counter_;
-
-	// ベジェカウンターを操作
-	objects_["BezierCounter"]->x = bezier_counter_;
-
-	// カーソルを操作
-	objects_["BezierTimer"]->x = bezier_timer_;
 }
 
 /*!
@@ -111,12 +97,77 @@ void SceneTitle::Reload_()
 
 	// 操作しやすいようにオブジェクト化する
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(MasterData::TitleUI);
-
-	cursour_y_ = objects_["TextCursor"]->y;
 }
 
-void SceneTitle::SetBezier_(const Bezier::ControlPoint& cp)
+void SceneTitle::CheckCursor_()
 {
-	bezier_counter_.Set(100, 400, 60, cp);
-	bezier_timer_.Set(100, 400, 1.0f, cp);
+	static const char* button[] = { "ButtonGray", "ButtonRed" };
+
+	objects_["StartButton"]->str = button[cursor_ == 0 ? 1 : 0];
+	objects_["OptionButton"]->str = button[cursor_ == 1 ? 1 : 0];
+	objects_["ExitButton"]->str = button[cursor_ == 2 ? 1 : 0];
+}
+
+bool SceneTitle::ActionFadeIn_(float df)
+{
+	if (state_ == ST_FADE_IN_INIT) {
+		FadeManager::GetInstance()->FadeIn();
+		state_.Change(ST_FADE_IN, true);
+	}
+	if (state_ == ST_FADE_IN) {
+		animtion_.Update(df);
+		if (FadeManager::GetInstance()->IsEnd() && animtion_.IsEnd()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SceneTitle::ActionSelect_(float df)
+{
+	if (state_ == ST_SELECT_INIT) {
+		state_.Change(ST_SELECT, true);
+	}
+	if (state_ == ST_SELECT) {
+		if (KeyManager::GetInstance()->IsTrg(VK_UP)) {
+			// 上
+			cursor_ = (cursor_ + 2) % 3;
+			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
+		} else if (KeyManager::GetInstance()->IsTrg(VK_DOWN)) {
+			// 下
+			cursor_ = ++cursor_ % 3;
+			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
+		} else if (KeyManager::GetInstance()->IsTrg(VK_RETURN)) {
+			// 決定
+			if (cursor_ == 0) {
+				// 開始
+			} else if (cursor_ == 0) {
+				// オプション
+			} else {
+				// 終了
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool SceneTitle::ActionFadeOut_(float df)
+{
+	if (state_ == ST_FADE_OUT_INIT) {
+		animtion_.SetOut(MasterData::TitleUI, MasterData::TitleInOut);
+		FadeManager::GetInstance()->FadeOut(0.3f, Gdiplus::Color::Black, 0.2f);
+		state_.Change(ST_FADE_OUT, true);
+	}
+	if (state_ == ST_FADE_OUT) {
+		animtion_.Update(df);
+		if (FadeManager::GetInstance()->IsEnd() && animtion_.IsEnd()) {
+			DeviceManager::GetInstance()->Exit();
+			return true;
+		}
+	}
+
+	return false;
 }

@@ -5,6 +5,7 @@
 #include "utility/counter.h"
 #include "utility/bezier.h"
 #include "utility/StateManager.h"
+#include "utility/InOutAnimation.h"
 #include "master/MasterData.hpp"
 #include <memory>
 #include <map>
@@ -37,23 +38,37 @@ public :
 private :
 	enum State {
 		ST_INIT,
+
+		// フェードイン
 		ST_FADE_IN_INIT,
 		ST_FADE_IN,
-		ST_UPDATE,
+
+		// 更新
+		ST_SELECT_INIT,
+		ST_SELECT,
+
+		// フェードアウト
+		ST_FADE_OUT_INIT,
+		ST_FADE_OUT,
+
+		ST_EXIT,
 	};
 	
 	void Reload_();
-	void SetBezier_(const Bezier::ControlPoint& cp);
+	void CheckCursor_();
 
-	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;	// 画像データ
-	std::map<std::string, MasterData::TitleUIData*> objects_;			// 表示物
-	StateManager<State> state_;											// 状態管理
+	// 処理
+	bool ActionFadeIn_(float df);			// フェードイン
+	bool ActionSelect_(float df);			// 選択
+	bool ActionFadeOut_(float df);			// フェードアウト
 
-	SaturationCounter stop_counter_;
-	RootCounter root_counter_;
-	LoopCounter cursor_counter_;
-	Bezier::Counter<int> bezier_counter_;
+
+	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;				// 画像データ
+	std::map<std::string, MasterData::TitleUIData*> objects_;						// 表示物
+	InOutAnimation<MasterData::TitleUIData, MasterData::TitleInOutData> animtion_;	// InOutアニメーション
+	StateManager<State> state_;														// 状態管理
+
 	Bezier::Timer<int> bezier_timer_;
 
-	int cursour_y_;
+	int cursor_;
 };

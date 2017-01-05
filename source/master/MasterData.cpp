@@ -4,9 +4,10 @@
 
 namespace MasterData
 {
+    ConstData Const;
     std::map<std::string, TitleImageListData> TitleImageList;
     std::vector<TitleUIData> TitleUI;
-    ConstData Const;
+    std::map<std::string, TitleInOutData> TitleInOut;
 
 
     void Reload(const std::string& path)
@@ -14,6 +15,10 @@ namespace MasterData
         std::vector<char> buffer;
 	    StreamReader reader;
         int length;
+
+        buffer = File::ReadAllBytes(path + "/Const.dat");
+        reader = StreamReader(buffer);
+        Const.Load(reader);
 
         buffer = File::ReadAllBytes(path + "/TitleImageList.dat");
         reader = StreamReader(buffer);
@@ -30,9 +35,13 @@ namespace MasterData
             TitleUI[i].Load(reader);
         }
 
-        buffer = File::ReadAllBytes(path + "/Const.dat");
+        buffer = File::ReadAllBytes(path + "/TitleInOut.dat");
         reader = StreamReader(buffer);
-        Const.Load(reader);
+        length = reader.ReadInt();
+        for (int i = 0; i < length; ++i) {
+            auto key = reader.ReadStringNoSeek();
+            TitleInOut[key].Load(reader);
+        }
 
     }
 }

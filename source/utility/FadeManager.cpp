@@ -6,18 +6,19 @@
 /*!
  * @brief フェードイン
  */
-void FadeManager::FadeIn(float time, const Gdiplus::Color& color)
+void FadeManager::FadeIn(float time, const Gdiplus::Color& color, float delay)
 {
 	alpha_.Set(255, 0, time, Bezier::Linear);
-	ConsoleManager::GetInstance()->Print("alpfa:Set\n");
+	delay_time_ = delay;
 }
 
 /*!
  * @brief フェードアウト
  */
-void FadeManager::FadeOut(float time, const Gdiplus::Color& color)
+void FadeManager::FadeOut(float time, const Gdiplus::Color& color, float delay)
 {
 	alpha_.Set(0, 255, time, Bezier::Linear);
+	delay_time_ = delay;
 }
 
 /*!
@@ -25,6 +26,10 @@ void FadeManager::FadeOut(float time, const Gdiplus::Color& color)
  */
 void FadeManager::Update(float df)
 {
+	if (delay_time_ > 0) {
+		delay_time_ -= df;
+		if (delay_time_ > 0) return;
+	}
 	alpha_.Update(df);
 }
 

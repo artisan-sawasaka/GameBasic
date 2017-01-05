@@ -20,12 +20,12 @@ public :
 	/*!
 	 * @brief フェードイン
 	 */
-	void FadeIn(float time = 0.3f, const Gdiplus::Color& color = Gdiplus::Color::Black);
+	void FadeIn(float time = 0.3f, const Gdiplus::Color& color = Gdiplus::Color::Black, float delay = 0.0f);
 
 	/*!
 	 * @brief フェードアウト
 	 */
-	void FadeOut(float time = 0.3f, const Gdiplus::Color& color = Gdiplus::Color::Black);
+	void FadeOut(float time = 0.3f, const Gdiplus::Color& color = Gdiplus::Color::Black, float delay = 0.0f);
 
 	/*!
 	 * @brief 終了判定
@@ -48,8 +48,9 @@ public :
 	}
 
 private :
-	FadeManager(){}
+	FadeManager() : delay_time_(0.0f) { alpha_.Set(0, 0, 0.0f, Bezier::Linear); }
 
 	Bezier::Timer<int> alpha_;
 	Gdiplus::Color color_;
+	float delay_time_;
 };
