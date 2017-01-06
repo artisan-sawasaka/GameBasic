@@ -73,14 +73,17 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 	int sx, int sy, int sw, int sh, const Gdiplus::Color& color, float rotate)
 {
 	if (color.GetA() == 0) return ;
+	bool is_color = color.GetValue() != 0xffffffff;
 
 	// Fİ’è
 	Gdiplus::ImageAttributes ia;
-	cm_.m[0][0] = color.GetR() / 255.0f;
-	cm_.m[1][1] = color.GetG() / 255.0f;
-	cm_.m[2][2] = color.GetB() / 255.0f;
-	cm_.m[3][3] = color.GetA() / 255.0f;
-	ia.SetColorMatrix(&cm_);
+	if (is_color) {
+		cm_.m[0][0] = color.GetR() / 255.0f;
+		cm_.m[1][1] = color.GetG() / 255.0f;
+		cm_.m[2][2] = color.GetB() / 255.0f;
+		cm_.m[3][3] = color.GetA() / 255.0f;
+		ia.SetColorMatrix(&cm_);
+	}
 
 	// ‰ñ“]
 	if (rotate != 0) {
@@ -95,9 +98,13 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 		dx -= (dw >> 1) * (anchor % 3);
 		dy -= (dh >> 1) * (anchor / 3);
 	}
-
+	
 	// •`‰æ
-	graphics_->DrawImage(image, Gdiplus::Rect(dx, dy, dw, dh), sx, sy, sw, sh, Gdiplus::UnitPixel, &ia);
+	if (is_color) {
+		graphics_->DrawImage(image, Gdiplus::Rect(dx, dy, dw, dh), sx, sy, sw, sh, Gdiplus::UnitPixel, &ia);
+	} else {
+		graphics_->DrawImage(image, Gdiplus::Rect(dx, dy, dw, dh), sx, sy, sw, sh, Gdiplus::UnitPixel);
+	}
 
 	// ‰ñ“]‰ğœ
 	if (rotate != 0) {
