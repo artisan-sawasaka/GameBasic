@@ -82,6 +82,7 @@ void MainApp::Update(float df)
 	// デバッグ機能
 	if (KeyManager::GetInstance()->IsTrg('R')) {
 		// 現在のシーンの再読み込み
+		SoundManager::GetInstance()->StopAll();
 		SceneManager::GetInstance()->Restart();
 	} else if (KeyManager::GetInstance()->IsTrg('O')) {
 		// デバッグ出力ウインドウを開く

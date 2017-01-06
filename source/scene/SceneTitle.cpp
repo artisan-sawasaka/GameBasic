@@ -29,6 +29,7 @@ void SceneTitle::Update(float df)
 	state_.Check(df);
 	// ‰Šú‰»
 	if (state_ == ST_INIT) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
 		animtion_.SetIn(MasterData::TitleUI, MasterData::TitleInOut);
 		state_.Change(ST_FADE_IN_INIT, true);
 	}
@@ -140,6 +141,7 @@ bool SceneTitle::ActionSelect_(float df)
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 		} else if (KeyManager::GetInstance()->IsTrg(VK_RETURN)) {
 			// Œˆ’è
+			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			if (cursor_ == 0) {
 				// ŠJŽn
 			} else if (cursor_ == 0) {
