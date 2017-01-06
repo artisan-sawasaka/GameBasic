@@ -57,7 +57,7 @@ public :
 	/*!
 	 * @brief ‰æ‘œ•`‰æ
 	 */
-	void DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Gdiplus::Color& color);
+	void DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Gdiplus::Color& color = Gdiplus::Color::White, float rotate = 0.0f);
 
 	/*!
 	 * @brief •¶Žš—ñ•`‰æ

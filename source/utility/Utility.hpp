@@ -105,7 +105,8 @@ public:
 					static_cast<Renderer::Anchor>(info.anchor),
 					info.x,  info.y,  info.w,  info.h,
 					info2.x, info2.y, info2.w, info2.h,
-					Gdiplus::Color(info.a, info.r, info.g, info.b));
+					Gdiplus::Color(info.a, info.r, info.g, info.b),
+					info.rotate);
 			} else if (info.type == 1) {
 				// •¶Žš—ñ•`‰æ
 				Renderer::GetInstance()->DrawString(info.str.c_str(),

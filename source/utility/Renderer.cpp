@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+static const float RotateBase = 360.0f;
+
 Renderer::Renderer()
 {
 	// GDI+‰Šú‰»
@@ -68,7 +70,7 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int x, int y)
  * @brief ‰æ‘œ•`‰æ
  */
 void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, int dw, int dh,
-	int sx, int sy, int sw, int sh, const Gdiplus::Color& color)
+	int sx, int sy, int sw, int sh, const Gdiplus::Color& color, float rotate)
 {
 	if (color.GetA() == 0) return ;
 
@@ -80,6 +82,14 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 	cm_.m[3][3] = color.GetA() / 255.0f;
 	ia.SetColorMatrix(&cm_);
 
+	// ‰ñ“]
+	if (rotate != 0) {
+		Gdiplus::Matrix rotateMatrix;
+		float angle = rotate * RotateBase;
+		rotateMatrix.RotateAt(angle, Gdiplus::PointF(static_cast<Gdiplus::REAL>(dx),static_cast<Gdiplus::REAL>(dy)));
+		graphics_->SetTransform(&rotateMatrix);
+	}
+
 	// ƒAƒ“ƒJ[‚ğŠî€‚É‚µ‚Ä•\¦À•W‚ğ•Ï‚¦‚é
 	if (anchor != LEFT_TOP) {
 		dx -= (dw >> 1) * (anchor % 3);
@@ -88,6 +98,11 @@ void Renderer::DrawImage(Gdiplus::Bitmap* image, Anchor anchor, int dx, int dy, 
 
 	// •`‰æ
 	graphics_->DrawImage(image, Gdiplus::Rect(dx, dy, dw, dh), sx, sy, sw, sh, Gdiplus::UnitPixel, &ia);
+
+	// ‰ñ“]‰ğœ
+	if (rotate != 0) {
+		graphics_->ResetTransform();
+	}
 }
 
 /*!

@@ -21,6 +21,7 @@ public :
     int g;
     int b;
     int a;
+    float rotate;
 
     void Load(StreamReader& reader)
     {
@@ -37,6 +38,7 @@ public :
         g = reader.ReadInt();
         b = reader.ReadInt();
         a = reader.ReadInt();
+        rotate = reader.ReadFloat();
     }
 };
 }
