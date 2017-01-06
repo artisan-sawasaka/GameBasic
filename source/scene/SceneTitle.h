@@ -38,18 +38,19 @@ public :
 private :
 	enum State {
 		ST_INIT,
+		ST_LOADING,
 
-		// フェードイン
-		ST_FADE_IN_INIT,
-		ST_FADE_IN,
+		// インアニメーション
+		ST_IN_ANIMATION_INIT,
+		ST_IN_ANIMATION,
 
 		// 更新
 		ST_SELECT_INIT,
 		ST_SELECT,
 
-		// フェードアウト
-		ST_FADE_OUT_INIT,
-		ST_FADE_OUT,
+		// アウトアニメーション
+		ST_OUT_ANIMATION_INIT,
+		ST_OUT_ANIMATION,
 
 		ST_EXIT,
 	};
@@ -58,9 +59,9 @@ private :
 	void CheckCursor_();
 
 	// 処理
-	bool ActionFadeIn_(float df);			// フェードイン
+	bool ActionInAnimation_(float df);		// インアニメーション
 	bool ActionSelect_(float df);			// 選択
-	bool ActionFadeOut_(float df);			// フェードアウト
+	bool ActionOutAnimation_(float df);		// アウトアニメーション
 
 
 	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;				// 画像データ

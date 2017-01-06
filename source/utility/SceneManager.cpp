@@ -8,9 +8,38 @@
  */
 void SceneManager::Change(SceneList::List scene, std::shared_ptr<SceneBaseParam> param)
 {
-	scene_state_.Change(scene);
-	param_ = param;
+	if (last_scene_ != SceneList::None) {
+		stack_.push({ last_scene_, last_param_ });
+	}
+
+	last_scene_ = scene;
+	last_param_ = param;
+	scene_state_.Change(last_scene_);
 }
+
+/*!
+ * @brief シーン切り替え
+ */
+bool SceneManager::Back()
+{
+	if (stack_.empty()) return false;
+
+	last_scene_ = stack_.top().last_scene_;
+	last_param_ = stack_.top().last_param_;
+	stack_.pop();
+	scene_state_.Change(last_scene_);
+
+	return true;
+}
+
+/*!
+ * @brief シーンのスタックをクリアする
+ */
+void SceneManager::Clear()
+{
+	std::stack<StackInfo>().swap(stack_);
+}
+
 
 /*!
  * @brief シーンを最初から処理する
@@ -35,8 +64,9 @@ void SceneManager::Update(float df)
 		case SceneList::Title :			scene_.reset(new SceneTitle());			break;
 		default : break;
 		}
+
 		if (scene_) {
-			scene_->Initialize(param_.get());
+			scene_->Initialize(last_param_.get());
 		}
 	}
 

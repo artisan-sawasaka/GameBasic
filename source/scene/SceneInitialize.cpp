@@ -22,7 +22,11 @@ void SceneInitialize::Update(float df)
 	SoundManager::GetInstance()->LoadSeFile("data/sound/Se.acb");							// SE“Ç‚Ýž‚Ý
 
 	// ƒ^ƒCƒgƒ‹‚Ö‘JˆÚ
-	SceneManager::GetInstance()->Change(SceneList::Title, nullptr);
+	static float time;
+	time += df;
+	if (time >= 1.0f) {
+		SceneManager::GetInstance()->Change(SceneList::Title, nullptr);
+	}
 }
 
 /*!

@@ -48,9 +48,9 @@ public :
 	}
 
 private :
-	FadeManager() : delay_time_(0.0f) { alpha_.Set(0, 0, 0.0f, Bezier::Linear); }
+	FadeManager() : delay_time_(0.0f), color_(Gdiplus::Color::Black) { alpha_.Set(255, 255, 0.0f, Bezier::Linear); }
 
-	Bezier::Timer<int> alpha_;
-	Gdiplus::Color color_;
 	float delay_time_;
+	Gdiplus::Color color_;
+	Bezier::Timer<int> alpha_;
 };

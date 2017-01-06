@@ -9,9 +9,11 @@
 
 #include "bezier.h"
 #include "DeviceManager.h"
+#include "FadeManager.h"
 #include <vector>
 #include <string>
 #include <map>
+#include <algorithm>
 
 /*!
  * @brief InOutアニメーション管理クラス
@@ -20,11 +22,19 @@ template <class Data, class Animation>
 class InOutAnimation
 {
 public :
+	enum Type {
+		Move,
+		Alpha,
+		FadeIn,
+		FadeOut,
+	};
+
 	/*!
 	 * @brief 開始アニメーションをセットします。
 	 */
 	template <class UI>
 	void SetIn(UI& ui, const std::map<std::string, Animation>& inout) {
+		// オブジェクト
 		for (auto it = ui.begin(); it != ui.end(); ++it) {
 			auto it2 = inout.find(it->name);
 			if (it2 == inout.end()) continue;
@@ -32,9 +42,9 @@ public :
 			auto& anim = it2->second;
 			Info info;
 			info.data = &(*it);
-			info.type = anim.type;
+			info.anim = &anim;
 			info.wait_time = anim.delay;
-			if (info.type == 0) {
+			if (anim.type == Move) {
 				// 移動
 				int xvalue = (anim.param1 % 3 - 1) * DeviceManager::GetInstance()->GetWidth();
 				int yvalue = (anim.param1 / 3 - 1) * DeviceManager::GetInstance()->GetHeight();
@@ -44,7 +54,7 @@ public :
 				info.bezier_[1].Set(info.data->y + yvalue, info.data->y, anim.time, Bezier::EaseOut);
 				info.data->x = info.bezier_[0];
 				info.data->y = info.bezier_[1];
-			} else if (info.type == 1) {
+			} else if (anim.type == Alpha) {
 				// アルファ
 				info.bezier_.resize(1);
 				info.bezier_[0].Set(0, info.data->a, anim.time, Bezier::EaseOut);
@@ -52,14 +62,25 @@ public :
 			}
 			infos_.push_back(info);
 		}
+		// フェードイン
+		auto it = std::find_if(inout.begin(), inout.end(),
+			[](const std::pair<std::string, Animation>& v) { return v.second.type == FadeIn; });
+		if (it != inout.end()) {
+			Info info;
+			info.data = nullptr;
+			info.anim = &it->second;
+			info.is_start = false;
+			infos_.push_back(info);
+		}
 	}
 
 	/*!
-	* @brief 終了アニメーションをセットします。
-	*/
+	 * @brief 終了アニメーションをセットします。
+	 */
 	template <class UI>
 	void SetOut(UI& ui, const std::map<std::string, Animation>& inout)
 	{
+		// オブジェクト
 		for (auto it = ui.begin(); it != ui.end(); ++it) {
 			auto it2 = inout.find(it->name);
 			if (it2 == inout.end()) continue;
@@ -67,9 +88,9 @@ public :
 			auto& anim = it2->second;
 			Info info;
 			info.data = &(*it);
-			info.type = anim.type;
+			info.anim = &anim;
 			info.wait_time = anim.delay;
-			if (info.type == 0) {
+			if (anim.type == Move) {
 				// 移動
 				int xvalue = (anim.param1 % 3 - 1) * DeviceManager::GetInstance()->GetWidth();
 				int yvalue = (anim.param1 / 3 - 1) * DeviceManager::GetInstance()->GetHeight();
@@ -78,11 +99,21 @@ public :
 				info.bezier_[0].Set(info.data->x, info.data->x - xvalue, anim.time, Bezier::EaseOut);
 				info.bezier_[1].Set(info.data->y, info.data->y - yvalue, anim.time, Bezier::EaseOut);
 			}
-			else if (info.type == 1) {
+			else if (anim.type == Alpha) {
 				// アルファ
 				info.bezier_.resize(1);
 				info.bezier_[0].Set(info.data->a, 0, anim.time, Bezier::EaseOut);
 			}
+			infos_.push_back(info);
+		}
+		// フェードアウト
+		auto it = std::find_if(inout.begin(), inout.end(),
+			[](const std::pair<std::string, Animation>& v) { return v.second.type == FadeOut; });
+		if (it != inout.end()) {
+			Info info;
+			info.data = nullptr;
+			info.anim = &it->second;
+			info.is_start = false;
 			infos_.push_back(info);
 		}
 	}
@@ -98,16 +129,30 @@ public :
 			info.wait_time -= df;
 			if (info.wait_time > 0) continue;
 
-			if (info.type == 0) {
+			for (size_t j = 0; j < info.bezier_.size(); ++j) {
+				info.bezier_[j].Update(df);
+			}
+
+			int type = info.anim->type;
+			if (type == Move) {
 				// 移動
 				info.data->x = info.bezier_[0];
 				info.data->y = info.bezier_[1];
-			} else if (info.type == 1) {
+			} else if (type == Alpha) {
 				// アルファ
 				info.data->a = info.bezier_[0];
-			}
-			for (size_t j = 0; j < info.bezier_.size(); ++j) {
-				info.bezier_[j].Update(df);
+			} else if (type == FadeIn) {
+				// フェードイン
+				if (!info.is_start) {
+					FadeManager::GetInstance()->FadeIn(info.anim->time, Gdiplus::Color::Black, info.wait_time);
+					info.is_start = true;
+				}
+			} else if (type == FadeOut) {
+				// フェードアウト
+				if (!info.is_start) {
+					FadeManager::GetInstance()->FadeOut(info.anim->time, Gdiplus::Color::Black, info.wait_time);
+					info.is_start = true;
+				}
 			}
 		}
 	}
@@ -126,6 +171,10 @@ public :
 			for (size_t j = 0; j < info.bezier_.size(); ++j) {
 				if (!info.bezier_[j].IsEnd())
 					return false;
+
+				if ((info.anim->type == FadeIn || info.anim->type == FadeOut) &&
+					!FadeManager::GetInstance()->IsEnd())
+					return false;
 			}
 		}
 		return true;
@@ -134,9 +183,10 @@ public :
 private :
 	struct Info {
 		Data* data;
-		int type;
+		const Animation* anim;
 		float wait_time;
 		std::vector<Bezier::Timer<int>> bezier_;
+		bool is_start;
 	};
 
 	std::vector<Info> infos_;

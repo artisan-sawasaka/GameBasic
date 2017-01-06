@@ -5,6 +5,7 @@
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
 #include "utility/SoundManager.h"
+#include "utility/SceneManager.h"
 #include "sound/Bgm.h"
 #include "sound/Se.h"
 
@@ -14,8 +15,6 @@
 void SceneTitle::Initialize(const SceneBaseParam* param)
 {
 	// マスターデータ読み込み
-	Reload_();
-
 	cursor_ = 0;
 
 	state_.Change(ST_INIT);
@@ -30,13 +29,16 @@ void SceneTitle::Update(float df)
 	// 初期化
 	if (state_ == ST_INIT) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
-		animtion_.SetIn(MasterData::TitleUI, MasterData::TitleInOut);
-		state_.Change(ST_FADE_IN_INIT, true);
+		state_.Change(ST_LOADING, true);
+	}
+	if (state_ == ST_LOADING) {
+		Reload_();
+		state_.Change(ST_IN_ANIMATION_INIT);
 	}
 
-	// フェードイン
-	if (state_.IsRange(ST_FADE_IN_INIT, ST_FADE_IN)) {
-		if (ActionFadeIn_(df)) {
+	// インアニメーション
+	if (state_.IsRange(ST_IN_ANIMATION_INIT, ST_IN_ANIMATION)) {
+		if (ActionInAnimation_(df)) {
 			state_.Change(ST_SELECT_INIT);
 		}
 	}
@@ -44,13 +46,13 @@ void SceneTitle::Update(float df)
 	// 更新
 	if (state_.IsRange(ST_SELECT_INIT, ST_SELECT)) {
 		if (ActionSelect_(df)) {
-			state_.Change(ST_FADE_OUT_INIT);
+			state_.Change(ST_OUT_ANIMATION_INIT);
 		}
 	}
 
-	// フェードアウト
-	if (state_.IsRange(ST_FADE_OUT_INIT, ST_FADE_OUT)) {
-		if (ActionFadeOut_(df)) {
+	// アウトアニメーション
+	if (state_.IsRange(ST_OUT_ANIMATION_INIT, ST_OUT_ANIMATION)) {
+		if (ActionOutAnimation_(df)) {
 			state_.Change(ST_SELECT_INIT);
 		}
 	}
@@ -70,6 +72,8 @@ void SceneTitle::Update(float df)
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
 	} else if (KeyManager::GetInstance()->IsTrg('6')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
+	} else if (KeyManager::GetInstance()->IsTrg('9')) {
+		SoundManager::GetInstance()->StopAll();
 	}
 }
 
@@ -109,15 +113,15 @@ void SceneTitle::CheckCursor_()
 	objects_["ExitButton"]->str = button[cursor_ == 2 ? 1 : 0];
 }
 
-bool SceneTitle::ActionFadeIn_(float df)
+bool SceneTitle::ActionInAnimation_(float df)
 {
-	if (state_ == ST_FADE_IN_INIT) {
-		FadeManager::GetInstance()->FadeIn();
-		state_.Change(ST_FADE_IN, true);
+	if (state_ == ST_IN_ANIMATION_INIT) {
+		animtion_.SetIn(MasterData::TitleUI, MasterData::TitleInOut);
+		state_.Change(ST_IN_ANIMATION, true);
 	}
-	if (state_ == ST_FADE_IN) {
+	if (state_ == ST_IN_ANIMATION) {
 		animtion_.Update(df);
-		if (FadeManager::GetInstance()->IsEnd() && animtion_.IsEnd()) {
+		if (animtion_.IsEnd()) {
 			return true;
 		}
 	}
@@ -144,29 +148,28 @@ bool SceneTitle::ActionSelect_(float df)
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			if (cursor_ == 0) {
 				// 開始
-			} else if (cursor_ == 0) {
+			} else if (cursor_ == 1) {
 				// オプション
 			} else {
 				// 終了
-				return true;
 			}
+			return true;
 		}
 	}
 
 	return false;
 }
 
-bool SceneTitle::ActionFadeOut_(float df)
+bool SceneTitle::ActionOutAnimation_(float df)
 {
-	if (state_ == ST_FADE_OUT_INIT) {
+	if (state_ == ST_OUT_ANIMATION_INIT) {
 		animtion_.SetOut(MasterData::TitleUI, MasterData::TitleInOut);
-		FadeManager::GetInstance()->FadeOut(0.3f, Gdiplus::Color::Black, 0.2f);
-		state_.Change(ST_FADE_OUT, true);
+		state_.Change(ST_OUT_ANIMATION, true);
 	}
-	if (state_ == ST_FADE_OUT) {
+	if (state_ == ST_OUT_ANIMATION) {
 		animtion_.Update(df);
-		if (FadeManager::GetInstance()->IsEnd() && animtion_.IsEnd()) {
-			DeviceManager::GetInstance()->Exit();
+		if (animtion_.IsEnd()) {
+			SceneManager::GetInstance()->Restart();
 			return true;
 		}
 	}

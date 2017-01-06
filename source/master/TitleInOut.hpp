@@ -13,7 +13,7 @@ public :
     float time;
     float delay;
     int param1;
-    int param2;
+    float param2;
 
     void Load(StreamReader& reader)
     {
@@ -22,7 +22,7 @@ public :
         time = reader.ReadFloat();
         delay = reader.ReadFloat();
         param1 = reader.ReadInt();
-        param2 = reader.ReadInt();
+        param2 = reader.ReadFloat();
     }
 };
 }
