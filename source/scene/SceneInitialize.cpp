@@ -9,7 +9,7 @@
 void SceneInitialize::Update(float df)
 {
 	// ƒTƒEƒ“ƒh‰Šú‰»
-	SoundManager::InitializeParam param {
+	SoundManager::InitializeParam param = {
 		1,				//  BGM‚ÌÅ‘å“¯Ä¶”
 		8,				//  SE‚ÌÅ‘å“¯Ä¶”
 		4,				//  VOICE‚ÌÅ‘å“¯Ä¶”

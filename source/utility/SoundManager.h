@@ -71,8 +71,10 @@ public:
      * @param fadein_time フェードインの時間を秒で指定します。
      * @param fadeout_time フェードアウトの時間を秒で指定します。
 	 * @param track 再生トラックを指定します。
+     *
+     * @return 再生したトラックを返します。再生できなかった場合は-1を返します。
 	 */
-	void PlayBgm(int id, float delay = 0.0f, float fadein_time = 0.5f, float fadeout_time = 0.5f, int track = 0);
+	int PlayBgm(int id, float delay = 0.0f, float fadein_time = 0.5f, float fadeout_time = 0.5f, int track = 0);
 
     /**
      * @brief BGMを再生します。
@@ -82,8 +84,10 @@ public:
      * @param fadein_time フェードインの時間を秒で指定します。
      * @param fadeout_time フェードアウトの時間を秒で指定します。
 	 * @param track 再生トラックを指定します。
+     *
+     * @return 再生したトラックを返します。再生できなかった場合は-1を返します。
 	 */
-    void PlayBgm(const std::string& cue, float delay = 0.0f, float fadein_time = 0.5f, float fadeout_time = 0.5f, int track = 0);
+    int PlayBgm(const std::string& cue, float delay = 0.0f, float fadein_time = 0.5f, float fadeout_time = 0.5f, int track = 0);
 
     /**
      * @brief BGMを停止します。
@@ -247,11 +251,14 @@ public:
         return &v;
     }
 private :
-    enum SoundType {
-        BGM,
-        SE,
-        VOICE
-    };
+	class SoundType {
+	public :
+		enum Type {
+			BGM,
+			SE,
+			VOICE
+		};
+	};
     struct AcbInfo {
         std::string file;
         CriAtomExAcbHn data;
@@ -260,24 +267,24 @@ private :
 	struct PlayerInfo {
 		CriAtomExPlayerHn player;
 		float wait_time;
-		std::function<void()> func;
+		std::function<int()> func;
 	};
 
     SoundManager();
 	~SoundManager();
     
-    int GetTrackIndex_(SoundType type, int index) const;
+    int GetTrackIndex_(SoundType::Type type, int index) const;
     void ReleaseAcb_(CriAtomExAcbHn& handle);
     void ReleaseAcbList_(std::list<AcbInfo>& handles);
     void ReleaseVoicePool_(CriAtomExVoicePoolHn& handle);
 	CriAtomExAcbHn GetAcbData_(std::list<AcbInfo>& acb_infos, const std::string& file, int max_value, bool is_awb);
     
-    void PlayBgm_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, float delay, float fadein_time, float fadeout_time, int track);
+    int PlayBgm_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, float delay, float fadein_time, float fadeout_time, int track);
     int PlaySe_(std::function<void(CriAtomExPlayerHn)> acb_func, int track, float delay);
     int PlayVoice_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, const std::string& file, int track, float delay);
 
     InitializeParam param_;
-    bool initialized_ = false;
+    bool initialized_;
     
     CriAtomExAcbHn base_bgm_data_;
     CriAtomExAcbHn base_se_data_;
