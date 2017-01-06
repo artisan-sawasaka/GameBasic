@@ -99,8 +99,7 @@ public :
 				info.bezier_.resize(2);
 				info.bezier_[0].Set(info.data->x, info.data->x + xvalue, anim.time, Bezier::EaseOut);
 				info.bezier_[1].Set(info.data->y, info.data->y + yvalue, anim.time, Bezier::EaseOut);
-			}
-			else if (anim.type == Alpha) {
+			} else if (anim.type == Alpha) {
 				// ƒAƒ‹ƒtƒ@
 				info.bezier_.resize(1);
 				info.bezier_[0].Set(info.data->a, 0, anim.time, Bezier::EaseOut);
