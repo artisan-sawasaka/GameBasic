@@ -55,6 +55,14 @@ private :
 		ST_EXIT,
 	};
 	
+	enum Menu {
+		Start,
+		Option,
+		Exit,
+
+		MenuMax,
+	};
+
 	void Reload_();
 	void CheckCursor_();
 
@@ -71,5 +79,5 @@ private :
 
 	Bezier::Timer<int> bezier_timer_;
 
-	int cursor_;
+	Menu cursor_;
 };

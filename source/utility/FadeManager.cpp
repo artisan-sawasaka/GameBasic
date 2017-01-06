@@ -28,9 +28,11 @@ void FadeManager::Update(float df)
 {
 	if (delay_time_ > 0) {
 		delay_time_ -= df;
+		ConsoleManager::GetInstance()->Print("time:%9.3f\n", delay_time_);
 		if (delay_time_ > 0) return;
 	}
 	alpha_.Update(df);
+	ConsoleManager::GetInstance()->Print("alpha:%d\n", alpha_.Get());
 }
 
 /*!

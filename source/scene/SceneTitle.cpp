@@ -15,7 +15,7 @@
 void SceneTitle::Initialize(const SceneBaseParam* param)
 {
 	// マスターデータ読み込み
-	cursor_ = 0;
+	cursor_ = Start;
 
 	state_.Change(ST_INIT);
 }
@@ -108,9 +108,9 @@ void SceneTitle::CheckCursor_()
 {
 	static const char* button[] = { "ButtonGray", "ButtonRed" };
 
-	objects_["StartButton"]->str = button[cursor_ == 0 ? 1 : 0];
-	objects_["OptionButton"]->str = button[cursor_ == 1 ? 1 : 0];
-	objects_["ExitButton"]->str = button[cursor_ == 2 ? 1 : 0];
+	objects_["StartButton"]->str = button[cursor_ == Start ? 1 : 0];
+	objects_["OptionButton"]->str = button[cursor_ == Option ? 1 : 0];
+	objects_["ExitButton"]->str = button[cursor_ == Exit ? 1 : 0];
 }
 
 bool SceneTitle::ActionInAnimation_(float df)
@@ -137,18 +137,18 @@ bool SceneTitle::ActionSelect_(float df)
 	if (state_ == ST_SELECT) {
 		if (KeyManager::GetInstance()->IsTrg(VK_UP)) {
 			// 上
-			cursor_ = (cursor_ + 2) % 3;
+			cursor_ = static_cast<Menu>((cursor_ + (MenuMax - 1)) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 		} else if (KeyManager::GetInstance()->IsTrg(VK_DOWN)) {
 			// 下
-			cursor_ = ++cursor_ % 3;
+			cursor_ = static_cast<Menu>((cursor_ + 1) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 		} else if (KeyManager::GetInstance()->IsTrg(VK_RETURN)) {
 			// 決定
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
-			if (cursor_ == 0) {
+			if (cursor_ == Start) {
 				// 開始
-			} else if (cursor_ == 1) {
+			} else if (cursor_ == Option) {
 				// オプション
 			} else {
 				// 終了
@@ -169,6 +169,9 @@ bool SceneTitle::ActionOutAnimation_(float df)
 	if (state_ == ST_OUT_ANIMATION) {
 		animtion_.Update(df);
 		if (animtion_.IsEnd()) {
+			if (cursor_ == Exit) {
+				DeviceManager::GetInstance()->Exit();
+			}
 			SceneManager::GetInstance()->Restart();
 			return true;
 		}

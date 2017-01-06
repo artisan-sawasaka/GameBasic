@@ -11,18 +11,18 @@ public :
     std::string name;
     int type;
     float time;
-    float delay;
+    float in_delay;
+    float out_delay;
     int param1;
-    float param2;
 
     void Load(StreamReader& reader)
     {
         name = reader.ReadString();
         type = reader.ReadInt();
         time = reader.ReadFloat();
-        delay = reader.ReadFloat();
+        in_delay = reader.ReadFloat();
+        out_delay = reader.ReadFloat();
         param1 = reader.ReadInt();
-        param2 = reader.ReadFloat();
     }
 };
 }

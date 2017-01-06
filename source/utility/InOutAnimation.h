@@ -23,10 +23,10 @@ class InOutAnimation
 {
 public :
 	enum Type {
-		Move,
-		Alpha,
 		FadeIn,
 		FadeOut,
+		Move,
+		Alpha,
 	};
 
 	/*!
@@ -43,7 +43,7 @@ public :
 			Info info;
 			info.data = &(*it);
 			info.anim = &anim;
-			info.wait_time = anim.delay;
+			info.wait_time = anim.in_delay;
 			if (anim.type == Move) {
 				// 移動
 				int xvalue = (anim.param1 % 3 - 1) * DeviceManager::GetInstance()->GetWidth();
@@ -69,6 +69,7 @@ public :
 			Info info;
 			info.data = nullptr;
 			info.anim = &it->second;
+			info.wait_time = 0.0f;
 			info.is_start = false;
 			infos_.push_back(info);
 		}
@@ -89,15 +90,15 @@ public :
 			Info info;
 			info.data = &(*it);
 			info.anim = &anim;
-			info.wait_time = anim.delay;
+			info.wait_time = anim.out_delay;
 			if (anim.type == Move) {
 				// 移動
 				int xvalue = (anim.param1 % 3 - 1) * DeviceManager::GetInstance()->GetWidth();
 				int yvalue = (anim.param1 / 3 - 1) * DeviceManager::GetInstance()->GetHeight();
 
 				info.bezier_.resize(2);
-				info.bezier_[0].Set(info.data->x, info.data->x - xvalue, anim.time, Bezier::EaseOut);
-				info.bezier_[1].Set(info.data->y, info.data->y - yvalue, anim.time, Bezier::EaseOut);
+				info.bezier_[0].Set(info.data->x, info.data->x + xvalue, anim.time, Bezier::EaseOut);
+				info.bezier_[1].Set(info.data->y, info.data->y + yvalue, anim.time, Bezier::EaseOut);
 			}
 			else if (anim.type == Alpha) {
 				// アルファ
@@ -113,6 +114,7 @@ public :
 			Info info;
 			info.data = nullptr;
 			info.anim = &it->second;
+			info.wait_time = 0.0f;
 			info.is_start = false;
 			infos_.push_back(info);
 		}
@@ -134,25 +136,25 @@ public :
 			}
 
 			int type = info.anim->type;
-			if (type == Move) {
+			if (type == FadeIn) {
+				// フェードイン
+				if (!info.is_start) {
+					FadeManager::GetInstance()->FadeIn(info.anim->time, Gdiplus::Color::Black, info.anim->in_delay);
+					info.is_start = true;
+				}
+			} else if (type == FadeOut) {
+				// フェードアウト
+				if (!info.is_start) {
+					FadeManager::GetInstance()->FadeOut(info.anim->time, Gdiplus::Color::Black, info.anim->in_delay);
+					info.is_start = true;
+				}
+			} else if (type == Move) {
 				// 移動
 				info.data->x = info.bezier_[0];
 				info.data->y = info.bezier_[1];
 			} else if (type == Alpha) {
 				// アルファ
 				info.data->a = info.bezier_[0];
-			} else if (type == FadeIn) {
-				// フェードイン
-				if (!info.is_start) {
-					FadeManager::GetInstance()->FadeIn(info.anim->time, Gdiplus::Color::Black, info.wait_time);
-					info.is_start = true;
-				}
-			} else if (type == FadeOut) {
-				// フェードアウト
-				if (!info.is_start) {
-					FadeManager::GetInstance()->FadeOut(info.anim->time, Gdiplus::Color::Black, info.wait_time);
-					info.is_start = true;
-				}
 			}
 		}
 	}
@@ -168,12 +170,12 @@ public :
 			const auto& info = infos_[i];
 			if (info.wait_time > 0) return false;
 
+			if ((info.anim->type == FadeIn || info.anim->type == FadeOut) &&
+				!FadeManager::GetInstance()->IsEnd())
+				return false;
+
 			for (size_t j = 0; j < info.bezier_.size(); ++j) {
 				if (!info.bezier_[j].IsEnd())
-					return false;
-
-				if ((info.anim->type == FadeIn || info.anim->type == FadeOut) &&
-					!FadeManager::GetInstance()->IsEnd())
 					return false;
 			}
 		}

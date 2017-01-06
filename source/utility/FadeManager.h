@@ -30,7 +30,7 @@ public :
 	/*!
 	 * @brief I—¹”»’è
 	 */
-	bool IsEnd() const { return alpha_.IsEnd(); }
+	bool IsEnd() const { return delay_time_ <= 0 && alpha_.IsEnd(); }
 
 	/*!
 	 * @brief XV
