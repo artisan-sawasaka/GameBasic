@@ -64,7 +64,7 @@ public :
 		}
 		// フェードイン
 		auto it = std::find_if(inout.begin(), inout.end(),
-			[](const std::pair<std::string, Animation>& v) { return v.second.type == FadeIn; });
+			[this](const std::pair<std::string, Animation>& v) { return v.second.type == FadeIn; });
 		if (it != inout.end()) {
 			Info info;
 			info.data = nullptr;
@@ -108,7 +108,7 @@ public :
 		}
 		// フェードアウト
 		auto it = std::find_if(inout.begin(), inout.end(),
-			[](const std::pair<std::string, Animation>& v) { return v.second.type == FadeOut; });
+			[this](const std::pair<std::string, Animation>& v) { return v.second.type == FadeOut; });
 		if (it != inout.end()) {
 			Info info;
 			info.data = nullptr;

@@ -9,7 +9,11 @@
 void SceneManager::Change(SceneList::List scene, std::shared_ptr<SceneBaseParam> param)
 {
 	if (last_scene_ != SceneList::None) {
-		stack_.push({ last_scene_, last_param_ });
+		StackInfo info = {
+			last_scene_,
+			last_param_,
+		};
+		stack_.push(info);
 	}
 
 	last_scene_ = scene;
