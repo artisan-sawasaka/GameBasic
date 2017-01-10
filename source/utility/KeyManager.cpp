@@ -1,6 +1,7 @@
 #include "KeyManager.h"
 #include <string.h>
 #include <algorithm>
+#include "master/MasterData.hpp"
 
 KeyManager::KeyManager()
 {
@@ -13,8 +14,6 @@ KeyManager::KeyManager()
 void KeyManager::Clear()
 {
 	memset(keys_, false , sizeof(keys_));
-	memset(keys_back_, false, sizeof(keys_back_));
-	memset(keys_temp_, false, sizeof(keys_temp_));
 }
 
 /*!
@@ -22,7 +21,7 @@ void KeyManager::Clear()
  */
 void KeyManager::Down(unsigned char key)
 {
-	keys_temp_[key] = true;
+	keys_[key].key_temp = true;
 }
 
 /*!
@@ -30,7 +29,7 @@ void KeyManager::Down(unsigned char key)
  */
 void KeyManager::Up(unsigned char key)
 {
-	keys_temp_[key] = false;
+	keys_[key].key_temp = false;
 }
 
 /*!
@@ -38,8 +37,12 @@ void KeyManager::Up(unsigned char key)
  */
 void KeyManager::Update()
 {
-	memcpy(keys_back_, keys_, sizeof(keys_));
-	memcpy(keys_, keys_temp_, sizeof(keys_));
+	for (int i = 0; i < sizeof(keys_) / sizeof(*keys_); ++i) {
+		auto& info = keys_[i];
+		info.key_back = info.key;
+		info.key = info.key_temp;
+		info.key_count = info.key ? info.key_count + 1 : 0;
+	}
 }
 
 /*!
@@ -47,7 +50,7 @@ void KeyManager::Update()
  */
 bool KeyManager::IsPress(unsigned char key) const
 {
-	return keys_[key];
+	return keys_[key].key;
 }
 
 /*!
@@ -55,7 +58,7 @@ bool KeyManager::IsPress(unsigned char key) const
  */
 bool KeyManager::IsTrg(unsigned char key) const
 {
-	return keys_[key] && !keys_back_[key];
+	return keys_[key].key && !keys_[key].key_back;
 }
 
 /*!
@@ -63,5 +66,23 @@ bool KeyManager::IsTrg(unsigned char key) const
  */
 bool KeyManager::IsRelease(unsigned char key) const
 {
-	return !keys_[key] && keys_back_[key];
+	return !keys_[key].key && keys_[key].key_back;
+}
+
+/*!
+ * @brief キーリピート
+ */
+bool KeyManager::IsRepeat(unsigned char key) const
+{
+	auto& info = keys_[key];
+	if (info.key_count == 0) return false;
+	if (info.key_count >= MasterData::KeyRepeatBase[MasterData::KeyRepeatBase.size() - 1].value) {
+		return info.key_count % 2 == 0;
+	}
+	for (size_t i = 0; i < MasterData::KeyRepeatBase.size(); ++i) {
+		if (info.key_count == MasterData::KeyRepeatBase[i].value) {
+			return true;
+		}
+	}
+	return false;
 }

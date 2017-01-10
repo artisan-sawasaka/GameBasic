@@ -48,6 +48,11 @@ public :
 	 */
 	bool IsRelease(unsigned char key) const;
 
+	/*!
+	 * @brief キーリピート
+	 */
+	bool IsRepeat(unsigned char key) const;
+
 	static KeyManager* GetInstance() {
 		static KeyManager v;
 		return &v;
@@ -55,7 +60,12 @@ public :
 
 private :
 	KeyManager();
-	bool keys_[256];
-	bool keys_back_[256];
-	bool keys_temp_[256];
+
+	struct Info {
+		bool key;
+		bool key_back;
+		bool key_temp;
+		int key_count;
+	};
+	Info keys_[256];
 };

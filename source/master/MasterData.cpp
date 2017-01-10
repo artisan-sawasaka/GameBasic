@@ -5,6 +5,7 @@
 namespace MasterData
 {
     ConstData Const;
+    std::vector<KeyRepeatBaseData> KeyRepeatBase;
     std::map<std::string, TitleImageListData> TitleImageList;
     std::vector<TitleUIData> TitleUI;
     std::map<std::string, TitleInOutData> TitleInOut;
@@ -19,6 +20,13 @@ namespace MasterData
         buffer = File::ReadAllBytes(path + "/Const.dat");
         reader = StreamReader(buffer);
         Const.Load(reader);
+
+        buffer = File::ReadAllBytes(path + "/KeyRepeatBase.dat");
+        reader = StreamReader(buffer);
+        KeyRepeatBase.resize(reader.ReadInt());
+        for (size_t i = 0; i < KeyRepeatBase.size(); ++i) {
+            KeyRepeatBase[i].Load(reader);
+        }
 
         buffer = File::ReadAllBytes(path + "/TitleImageList.dat");
         reader = StreamReader(buffer);

@@ -146,13 +146,6 @@ bool SceneTitle::ActionSelect_(float df)
 		} else if (KeyManager::GetInstance()->IsTrg(VK_RETURN)) {
 			// 決定
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
-			if (cursor_ == Start) {
-				// 開始
-			} else if (cursor_ == Option) {
-				// オプション
-			} else {
-				// 終了
-			}
 			return true;
 		}
 	}
