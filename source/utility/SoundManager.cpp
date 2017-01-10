@@ -63,7 +63,7 @@ void SoundManager::Initialize(const InitializeParam& param)
     // ファイル構造体初期化
     CriFsConfig fs_config;
     criFs_SetDefaultConfig(&fs_config);
-    fs_config.num_loaders = max_sound * 3 / 2;
+    fs_config.num_loaders = max_sound * 3;
     fs_config.max_files = fs_config.num_loaders;
     
     // AtomEx初期化用コンフィグ

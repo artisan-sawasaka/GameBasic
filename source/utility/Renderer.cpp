@@ -184,7 +184,7 @@ Gdiplus::Font* Renderer::GetFont(int size)
 	if (it != fonts_.end()) {
 		return fonts_[size].get();
 	}
-	auto p = new Gdiplus::Font(L"‚l‚r ƒSƒVƒbƒN" , static_cast<Gdiplus::REAL>(size));
+	std::shared_ptr<Gdiplus::Font> p(new Gdiplus::Font(L"‚l‚r ƒSƒVƒbƒN", static_cast<Gdiplus::REAL>(size)));
 	fonts_.insert(std::pair<int, std::shared_ptr<Gdiplus::Font>>(size, p));
-	return p;
+	return p.get();
 }
