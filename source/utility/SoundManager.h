@@ -263,12 +263,6 @@ private :
         std::string file;
         CriAtomExAcbHn data;
     };
-    
-	struct PlayerInfo {
-		CriAtomExPlayerHn player;
-		float wait_time;
-		std::function<int()> func;
-	};
 
     SoundManager();
 	~SoundManager();
@@ -289,7 +283,7 @@ private :
     CriAtomExAcbHn base_bgm_data_;
     CriAtomExAcbHn base_se_data_;
     std::list<AcbInfo> voice_list_;
-    std::vector<PlayerInfo> player_infos_;
+    std::vector<CriAtomExPlayerHn> player_;
     std::string last_bgm_name_;
     int last_bgm_id_;
     

@@ -112,12 +112,10 @@ void SoundManager::Initialize(const InitializeParam& param)
 	hca_mx_pool_ = criAtomExVoicePool_AllocateHcaMxVoicePool(&hca_mx_config, nullptr, 0);
 
     // プレイヤーの生成
-    player_infos_.resize(max_sound);
-	for (size_t i = 0; i < player_infos_.size(); ++i) {
-		auto& info = player_infos_[i];
-		info.player = criAtomExPlayer_Create(nullptr, nullptr, 0);
-        criAtomExPlayer_AttachFader(info.player, nullptr, nullptr, 0);
-		info.wait_time = 0;
+    player_.resize(max_sound);
+	for (size_t i = 0; i < player_.size(); ++i) {
+		player_[i] = criAtomExPlayer_Create(nullptr, nullptr, 0);
+        criAtomExPlayer_AttachFader(player_[i], nullptr, nullptr, 0);
     }
     
     // ACFファイルの設定
@@ -138,8 +136,8 @@ void SoundManager::Finalize()
     StopAll(0);
     
 	// プレイヤーの解放
-	for (size_t i = 0; i < player_infos_.size(); ++i) {
-		auto& player = player_infos_[i].player;
+	for (size_t i = 0; i < player_.size(); ++i) {
+		auto& player = player_[i];
 		while (true) {
 			auto state = criAtomExPlayer_GetStatus(player);
 			if (state == CRIATOMEXPLAYER_STATUS_STOP ||
@@ -152,7 +150,7 @@ void SoundManager::Finalize()
 		}
 		criAtomExPlayer_Destroy(player);
 	}
-	std::vector<PlayerInfo>().swap(player_infos_);
+	std::vector<CriAtomExPlayerHn>().swap(player_);
 
 	// ボイスプール開放
     ReleaseVoicePool_(hca_mx_pool_);
@@ -242,13 +240,10 @@ void SoundManager::StopBgm(float time, int track)
 			StopBgm(time, i);
 		}
 	} else {
-		auto& info = player_infos_[GetTrackIndex_(SoundType::BGM, track)];
-		auto& player = info.player;
-		info.wait_time = 0;
+		auto& player = player_[GetTrackIndex_(SoundType::BGM, track)];
 		if (time == 0) {
 			criAtomExPlayer_StopWithoutReleaseTime(player);
-		}
-		else {
+		} else {
 			criAtomExPlayer_SetFadeOutTime(player, static_cast<CriSint32>(time * 1000));
 			criAtomExPlayer_Stop(player);
 		}
@@ -263,7 +258,7 @@ void SoundManager::SetVolumeBgm(float volume)
     
     bgm_volume_ = volume;
     for (int i = 0; i < param_.max_bgm; ++i) {
-        auto& player = player_infos_[GetTrackIndex_(SoundType::BGM, i)].player;
+        auto& player = player_[GetTrackIndex_(SoundType::BGM, i)];
         criAtomExPlayer_SetVolume(player, volume);
         criAtomExPlayer_UpdateAll(player);
     }
@@ -274,10 +269,8 @@ bool SoundManager::IsStopBgm(int track) const
     if (!initialized_) return true;
 	if (0 < track || track >= param_.max_bgm) return true;
 
-	auto& info = player_infos_[GetTrackIndex_(SoundType::BGM, track)];
-	if (info.wait_time > 0) return false;
-
-	auto state = criAtomExPlayer_GetStatus(info.player);
+	auto& player = player_[GetTrackIndex_(SoundType::BGM, track)];
+	auto state = criAtomExPlayer_GetStatus(player);
     return state == CRIATOMEXPLAYER_STATUS_STOP ||
            state == CRIATOMEXPLAYER_STATUS_PLAYEND ||
            state == CRIATOMEXPLAYER_STATUS_ERROR;
@@ -293,11 +286,11 @@ void SoundManager::PauseBgm(int track)
 
 	if (track < 0) {
 		for (int i = 0; i < param_.max_bgm; ++i) {
-			auto& player = player_infos_[GetTrackIndex_(SoundType::BGM, i)].player;
+			auto& player = player_[GetTrackIndex_(SoundType::BGM, i)];
 			criAtomExPlayer_Pause(player, CRI_TRUE);
 		}
 	} else {
-		auto& player = player_infos_[GetTrackIndex_(SoundType::BGM, track)].player;
+		auto& player = player_[GetTrackIndex_(SoundType::BGM, track)];
 		criAtomExPlayer_Pause(player, CRI_TRUE);
 	}
 }
@@ -312,11 +305,11 @@ void SoundManager::ResumeBgm(int track)
 
 	if (track < 0) {
 		for (int i = 0; i < param_.max_bgm; ++i) {
-			auto& player = player_infos_[GetTrackIndex_(SoundType::BGM, i)].player;
+			auto& player = player_[GetTrackIndex_(SoundType::BGM, i)];
 			criAtomExPlayer_Pause(player, CRI_FALSE);
 		}
 	} else {
-		auto& player = player_infos_[GetTrackIndex_(SoundType::BGM, track)].player;
+		auto& player = player_[GetTrackIndex_(SoundType::BGM, track)];
 		criAtomExPlayer_Pause(player, CRI_FALSE);
 	}
 }
@@ -348,9 +341,7 @@ void SoundManager::StopSe(int track, float time)
             StopSe(i, time);
         }
 	} else {
-		auto& info = player_infos_[GetTrackIndex_(SoundType::SE, track)];
-		auto& player = info.player;
-		info.wait_time = 0;
+		auto& player = player_[GetTrackIndex_(SoundType::SE, track)];
 		if (time == 0) {
 			criAtomExPlayer_StopWithoutReleaseTime(player);
 		} else {
@@ -365,7 +356,7 @@ void SoundManager::SetVolumeSe(float volume)
     
     se_volume_ = volume;
     for (int i = 0; i < param_.max_se; ++i) {
-        auto& player = player_infos_[GetTrackIndex_(SoundType::SE, i)].player;
+        auto& player = player_[GetTrackIndex_(SoundType::SE, i)];
         criAtomExPlayer_SetVolume(player, volume);
         criAtomExPlayer_UpdateAll(player);
     }
@@ -376,10 +367,8 @@ bool SoundManager::IsStopSe(int track) const
     if (!initialized_) return true;
 	if (0 < track || track >= param_.max_se) return true;
 
-	auto& info = player_infos_[GetTrackIndex_(SoundType::SE, track)];
-	if (info.wait_time > 0) return false;
-
-    auto state = criAtomExPlayer_GetStatus(info.player);
+	auto& player = player_[GetTrackIndex_(SoundType::SE, track)];
+    auto state = criAtomExPlayer_GetStatus(player);
     return state == CRIATOMEXPLAYER_STATUS_STOP ||
            state == CRIATOMEXPLAYER_STATUS_PLAYEND ||
            state == CRIATOMEXPLAYER_STATUS_ERROR;
@@ -418,9 +407,7 @@ void SoundManager::StopVoice(int track, float time)
             StopVoice(i, time);
         }
 	} else {
-		auto& info = player_infos_[GetTrackIndex_(SoundType::VOICE, track)];
-		auto& player = info.player;
-		info.wait_time = 0;
+		auto& player = player_[GetTrackIndex_(SoundType::VOICE, track)];
 		if (time == 0) {
 			criAtomExPlayer_StopWithoutReleaseTime(player);
 		} else {
@@ -436,7 +423,7 @@ void SoundManager::SetVolumeVoice(float volume)
     
     voice_volume_ = volume;
     for (int i = 0; i < param_.max_voice; ++i) {
-        auto& player = player_infos_[GetTrackIndex_(SoundType::VOICE, i)].player;
+        auto& player = player_[GetTrackIndex_(SoundType::VOICE, i)];
         criAtomExPlayer_SetVolume(player, volume);
         criAtomExPlayer_UpdateAll(player);
     }
@@ -447,10 +434,8 @@ bool SoundManager::IsStopVoice(int track) const
     if (!initialized_) return true;
     if (track >= param_.max_voice) return true;
     
-	auto& info = player_infos_[GetTrackIndex_(SoundType::VOICE, track)];
-	if (info.wait_time > 0) return false;
-
-	auto state = criAtomExPlayer_GetStatus(info.player);
+	auto& player = player_[GetTrackIndex_(SoundType::VOICE, track)];
+	auto state = criAtomExPlayer_GetStatus(player);
     return state == CRIATOMEXPLAYER_STATUS_STOP ||
            state == CRIATOMEXPLAYER_STATUS_PLAYEND ||
            state == CRIATOMEXPLAYER_STATUS_ERROR;
@@ -464,24 +449,14 @@ void SoundManager::Update(float df)
 	if (!initialized_) return ;
 
 	criAtomEx_ExecuteMain();
-	for (size_t i = 0; i < player_infos_.size(); ++i) {
-		auto& info = player_infos_[i];
-		if (info.wait_time <= 0.0f) continue;
-
-		info.wait_time -= df;
-		if (info.wait_time <= 0) {
-			info.func();
-		}
-	}
 }
 
 void SoundManager::StopAll(float time)
 {
     if (!initialized_) return ;
     
-	for (size_t i = 0; i < player_infos_.size(); ++i) {
-		player_infos_[i].wait_time = 0;
-		auto& player = player_infos_[i].player;
+	for (size_t i = 0; i < player_.size(); ++i) {
+		auto& player = player_[i];
         if (time == 0) {
             criAtomExPlayer_StopWithoutReleaseTime(player);
         } else {
@@ -592,19 +567,14 @@ int SoundManager::PlayBgm_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)
         if (track < 0) return -1;
     }
 
-	auto& info = player_infos_[GetTrackIndex_(SoundType::BGM, track)];
-	if (delay > 0) {
-		info.wait_time = delay;
-		info.func = std::bind(&SoundManager::PlayBgm_, this, acb_func, 0.0f, fadein_time, fadeout_time, track);
-	} else {
-		auto& player = info.player;
-		acb_func(player, base_bgm_data_);
-		criAtomExPlayer_SetFadeInStartOffset(player, static_cast<CriSint32>(delay * 1000));
-		criAtomExPlayer_SetFadeInTime(player, static_cast<CriSint32>(fadein_time * 1000));
-		criAtomExPlayer_SetFadeOutTime(player, static_cast<CriSint32>(fadeout_time * 1000));
-		criAtomExPlayer_UpdateAll(player);
-		criAtomExPlayer_Start(player);
-	}
+
+	auto& player = player_[GetTrackIndex_(SoundType::BGM, track)];
+	acb_func(player, base_bgm_data_);
+	criAtomExPlayer_SetFadeInStartOffset(player, static_cast<CriSint32>(delay * 1000));
+	criAtomExPlayer_SetFadeInTime(player, static_cast<CriSint32>(fadein_time * 1000));
+	criAtomExPlayer_SetFadeOutTime(player, static_cast<CriSint32>(fadeout_time * 1000));
+	criAtomExPlayer_UpdateAll(player);
+	criAtomExPlayer_Start(player);
 
 	return track;
 }
@@ -624,22 +594,16 @@ int SoundManager::PlaySe_(std::function<void(CriAtomExPlayerHn)> acb_func, int t
         if (track < 0) return -1;
     }
 
-	auto& info = player_infos_[GetTrackIndex_(SoundType::SE, track)];
-	if (delay > 0) {
-		info.wait_time = delay;
-		info.func = std::bind(&SoundManager::PlaySe_, this, acb_func, track, 0.0f);
-	} else {
-		auto& player = info.player;
-		criAtomExPlayer_StopWithoutReleaseTime(player);
-		acb_func(player);
-		criAtomExPlayer_SetFadeInStartOffset(player, static_cast<CriSint32>(delay * 1000));
-		criAtomExPlayer_SetFadeInTime(player, 0);
-		criAtomExPlayer_SetFadeOutTime(player, 0);
-		criAtomExPlayer_UpdateAll(player);
-		criAtomExPlayer_Start(player);
-	}
-    
-    return track;
+	auto& player = player_[GetTrackIndex_(SoundType::SE, track)];
+	criAtomExPlayer_StopWithoutReleaseTime(player);
+	acb_func(player);
+	criAtomExPlayer_SetFadeInStartOffset(player, static_cast<CriSint32>(delay * 1000));
+	criAtomExPlayer_SetFadeInTime(player, 0);
+	criAtomExPlayer_SetFadeOutTime(player, 0);
+	criAtomExPlayer_UpdateAll(player);
+	criAtomExPlayer_Start(player);
+
+	return track;
 }
 
 int SoundManager::PlayVoice_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, const std::string& file, int track, float delay)
@@ -655,24 +619,18 @@ int SoundManager::PlayVoice_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbH
         if (track < 0) return -1;
     }
 
-	auto& info = player_infos_[GetTrackIndex_(SoundType::VOICE, track)];
-	if (delay > 0) {
-		info.wait_time = delay;
-		info.func = std::bind(&SoundManager::PlayVoice_, this, acb_func, file, track, 0.0f);
-	} else {
-		// ファイルからacbを取得
-		CriAtomExAcbHn acb_handle = GetAcbData_(voice_list_, file, MAX_KEEP_VOICE_VALUE, false);
-		if (acb_handle == nullptr) return -1;
+	// ファイルからacbを取得
+	CriAtomExAcbHn acb_handle = GetAcbData_(voice_list_, file, MAX_KEEP_VOICE_VALUE, false);
+	if (acb_handle == nullptr) return -1;
 
-		auto& player = info.player;
-		criAtomExPlayer_StopWithoutReleaseTime(player);
-		acb_func(player, acb_handle);
-		criAtomExPlayer_SetFadeInStartOffset(player, static_cast<CriSint32>(delay * 1000));
-		criAtomExPlayer_SetFadeInTime(player, 0);
-		criAtomExPlayer_SetFadeOutTime(player, 0);
-		criAtomExPlayer_UpdateAll(player);
-		criAtomExPlayer_Start(player);
-	}
-    
+	auto& player = player_[GetTrackIndex_(SoundType::VOICE, track)];
+	criAtomExPlayer_StopWithoutReleaseTime(player);
+	acb_func(player, acb_handle);
+	criAtomExPlayer_SetFadeInStartOffset(player, static_cast<CriSint32>(delay * 1000));
+	criAtomExPlayer_SetFadeInTime(player, 0);
+	criAtomExPlayer_SetFadeOutTime(player, 0);
+	criAtomExPlayer_UpdateAll(player);
+	criAtomExPlayer_Start(player);
+
     return track;
 }
