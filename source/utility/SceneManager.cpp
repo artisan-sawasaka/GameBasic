@@ -2,6 +2,7 @@
 #include "scene/SceneBase.h"
 #include "scene/SceneInitialize.h"
 #include "scene/SceneTitle.h"
+#include "scene/SceneOption.h"
 
 /*!
  * @brief ÉVÅ[ÉìêÿÇËë÷Ç¶
@@ -66,6 +67,7 @@ void SceneManager::Update(float df)
 		switch (scene_state_) {
 		case SceneList::Initialize :	scene_.reset(new SceneInitialize());	break;
 		case SceneList::Title :			scene_.reset(new SceneTitle());			break;
+		case SceneList::Option :		scene_.reset(new SceneOption());		break;
 		default : break;
 		}
 

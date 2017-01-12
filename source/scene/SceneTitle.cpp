@@ -59,7 +59,7 @@ void SceneTitle::Update(float df)
 	}
 
 	// カーソルチェック
-	CheckCursor_();
+	UpdateCursor_();
 
 	if (KeyManager::GetInstance()->IsTrg('1')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
@@ -105,7 +105,7 @@ void SceneTitle::Reload_()
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(MasterData::TitleUI);
 }
 
-void SceneTitle::CheckCursor_()
+void SceneTitle::UpdateCursor_()
 {
 	static const char* button[] = { "ButtonGray", "ButtonRed" };
 
@@ -163,10 +163,13 @@ bool SceneTitle::ActionOutAnimation_(float df)
 	if (state_ == ST_OUT_ANIMATION) {
 		animtion_.Update(df);
 		if (animtion_.IsEnd()) {
-			if (cursor_ == Exit) {
+			if (cursor_ == Start) {
+				SceneManager::GetInstance()->Restart();
+			} else if (cursor_ == Option) {
+				SceneManager::GetInstance()->Change(SceneList::Option , nullptr);
+			} else if (cursor_ == Exit) {
 				DeviceManager::GetInstance()->Exit();
 			}
-			SceneManager::GetInstance()->Restart();
 			return true;
 		}
 	}

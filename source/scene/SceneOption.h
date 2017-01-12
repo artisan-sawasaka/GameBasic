@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneBase.h"
+#include "utility/counter.h"
 #include "utility/StateManager.h"
 #include "utility/InOutAnimation.h"
 #include "master/MasterData.hpp"
@@ -8,12 +9,12 @@
 #include <map>
 
 /*!
- * @brief タイトルシーン
+ * @brief オプションシーン
  */
-class SceneTitle : public SceneBase
+class SceneOption : public SceneBase
 {
 public :
-	~SceneTitle(){}
+	~SceneOption(){}
 
 	/*!
 	 * @brief 初期化
@@ -53,26 +54,46 @@ private :
 	};
 	
 	enum Menu {
-		Start,
-		Option,
+		Bgm,
+		Se,
+		Voice,
 		Exit,
 
 		MenuMax,
 	};
 
-	void Reload_();
-	void UpdateCursor_();
+	enum Cursor {
+		BgmLeft,
+		BgmRight,
+		SeLeft,
+		SeRight,
+		VoiceLeft,
+		VoiceRight,
+
+		CursorMax,
+	};
+
+	void Reload_();							// データ再読み込み
+	void SetCursor_();						// カーソルの設定
+	void UpdateCursor_();					// カーソル更新
+	void UpdateSound_();					// サウンド更新
+	int GetCursorMove(Menu menu) const;		// カーソル移動量取得
+	int GetCursorSpeed(Menu menu) const;	// カーソル移動速度取得
 
 	// 処理
 	bool ActionInAnimation_(float df);		// インアニメーション
 	bool ActionSelect_(float df);			// 選択
 	bool ActionOutAnimation_(float df);		// アウトアニメーション
 
-
 	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;				// 画像データ
-	std::map<std::string, MasterData::TitleUIData*> objects_;						// 表示物
-	InOutAnimation<MasterData::TitleUIData, MasterData::TitleInOutData> animtion_;	// InOutアニメーション
+	std::map<std::string, MasterData::OptionUIData*> objects_;						// 表示物
+	InOutAnimation<MasterData::OptionUIData, MasterData::OptionInOutData> animtion_;	// InOutアニメーション
 	StateManager<State> state_;														// 状態管理
 
-	Menu cursor_;	// カーソル
+	Menu cursor_;
+	LoopCounter bgm_cursor_move_;
+	LoopCounter se_cursor_move_;
+	LoopCounter voice_cursor_move_;
+	int cursor_x_[CursorMax];
+	int volume_[CursorMax - 1];
 };

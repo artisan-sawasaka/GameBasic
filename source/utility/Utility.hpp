@@ -26,6 +26,21 @@ public:
 	}
 
 	/*!
+	* @brief マスターデータの再読み込み
+	*/
+	static std::string StringFormat(const char* s, ...)
+	{
+		// テキストフォーマットを変換
+		char text[10240];
+		va_list arg;
+		va_start(arg, s);
+		vsprintf(text, s, arg);
+		va_end(arg);
+
+		return std::string(text);
+	}
+
+	/*!
 	 * @brief SJISをUTF16に変換
 	 *
 	 * @param path ファイルのパス
@@ -54,6 +69,23 @@ public:
 			ret.insert(std::pair<std::string, Data*>(it->name, &(*it)));
 		}
 		return ret;
+	}
+
+	/*!
+	* @brief マスターデータを操作しやすい形にオブジェクトに変換
+	*
+	* @param ui UIデータ
+	*
+	* @return オブジェクトデータ
+	*/
+	template <class Data>
+	static void SetObjectColor(Data* data, const Gdiplus::Color& color)
+	{
+		if (data == nullptr) return;
+		data->r = color.GetR();
+		data->g = color.GetG();
+		data->b = color.GetB();
+		data->a = color.GetA();
 	}
 
 	/*!

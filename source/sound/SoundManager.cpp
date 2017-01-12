@@ -255,9 +255,9 @@ void SoundManager::StopBgm(float time, int track)
 void SoundManager::SetVolumeBgm(float volume)
 {
     if (!initialized_) return ;
-    
-    bgm_volume_ = volume;
-    for (int i = 0; i < param_.max_bgm; ++i) {
+	if (bgm_volume_ == volume) return;
+
+	for (int i = 0; i < param_.max_bgm; ++i) {
         auto& player = player_[GetTrackIndex_(SoundType::BGM, i)];
         criAtomExPlayer_SetVolume(player, volume);
         criAtomExPlayer_UpdateAll(player);
@@ -353,7 +353,8 @@ void SoundManager::StopSe(int track, float time)
 void SoundManager::SetVolumeSe(float volume)
 {
     if (!initialized_) return ;
-    
+	if (se_volume_ == volume) return;
+
     se_volume_ = volume;
     for (int i = 0; i < param_.max_se; ++i) {
         auto& player = player_[GetTrackIndex_(SoundType::SE, i)];
@@ -420,7 +421,8 @@ void SoundManager::StopVoice(int track, float time)
 void SoundManager::SetVolumeVoice(float volume)
 {
     if (!initialized_) return ;
-    
+	if (voice_volume_ == volume) return;
+
     voice_volume_ = volume;
     for (int i = 0; i < param_.max_voice; ++i) {
         auto& player = player_[GetTrackIndex_(SoundType::VOICE, i)];
