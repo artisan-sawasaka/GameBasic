@@ -88,7 +88,9 @@
     <ClCompile Include="source\main\WinMain.cpp" />
     <ClCompile Include="source\master\MasterData.cpp" />
     <ClCompile Include="source\scene\SceneInitialize.cpp" />
+    <ClCompile Include="source\scene\SceneOption.cpp" />
     <ClCompile Include="source\scene\SceneTitle.cpp" />
+    <ClCompile Include="source\sound\SoundManager.cpp" />
     <ClCompile Include="source\utility\bezier.cpp" />
     <ClCompile Include="source\utility\ConsoleManager.cpp" />
     <ClCompile Include="source\utility\counter.cpp" />
@@ -98,7 +100,6 @@
     <ClCompile Include="source\utility\KeyManager.cpp" />
     <ClCompile Include="source\utility\Renderer.cpp" />
     <ClCompile Include="source\utility\SceneManager.cpp" />
-    <ClCompile Include="source\utility\SoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main\main.h" />
@@ -107,9 +108,11 @@
     <ClInclude Include="source\scene\SceneBase.h" />
     <ClInclude Include="source\scene\SceneInitialize.h" />
     <ClInclude Include="source\scene\SceneList.h" />
+    <ClInclude Include="source\scene\SceneOption.h" />
     <ClInclude Include="source\scene\SceneTitle.h" />
     <ClInclude Include="source\sound\Bgm.h" />
     <ClInclude Include="source\sound\Se.h" />
+    <ClInclude Include="source\sound\SoundManager.h" />
     <ClInclude Include="source\utility\bezier.h" />
     <ClInclude Include="source\utility\ConsoleManager.h" />
     <ClInclude Include="source\utility\counter.h" />
@@ -120,7 +123,6 @@
     <ClInclude Include="source\utility\KeyManager.h" />
     <ClInclude Include="source\utility\Renderer.h" />
     <ClInclude Include="source\utility\SceneManager.h" />
-    <ClInclude Include="source\utility\SoundManager.h" />
     <ClInclude Include="source\utility\StateManager.h" />
     <ClInclude Include="source\utility\StreamReader.hpp" />
     <ClInclude Include="source\utility\Utility.hpp" />

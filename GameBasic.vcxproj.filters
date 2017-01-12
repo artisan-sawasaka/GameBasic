@@ -37,6 +37,9 @@
     <ClCompile Include="source\scene\SceneTitle.cpp">
       <Filter>source\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\sound\SoundManager.cpp">
+      <Filter>source\sound</Filter>
+    </ClCompile>
     <ClCompile Include="source\utility\bezier.cpp">
       <Filter>source\utility</Filter>
     </ClCompile>
@@ -64,8 +67,8 @@
     <ClCompile Include="source\utility\SceneManager.cpp">
       <Filter>source\utility</Filter>
     </ClCompile>
-    <ClCompile Include="source\utility\SoundManager.cpp">
-      <Filter>source\utility</Filter>
+    <ClCompile Include="source\scene\SceneOption.cpp">
+      <Filter>source\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +92,15 @@
     </ClInclude>
     <ClInclude Include="source\scene\SceneTitle.h">
       <Filter>source\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\sound\Bgm.h">
+      <Filter>source\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\sound\Se.h">
+      <Filter>source\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\sound\SoundManager.h">
+      <Filter>source\sound</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\bezier.h">
       <Filter>source\utility</Filter>
@@ -120,9 +132,6 @@
     <ClInclude Include="source\utility\SceneManager.h">
       <Filter>source\utility</Filter>
     </ClInclude>
-    <ClInclude Include="source\utility\SoundManager.h">
-      <Filter>source\utility</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\StateManager.h">
       <Filter>source\utility</Filter>
     </ClInclude>
@@ -132,11 +141,8 @@
     <ClInclude Include="source\utility\Utility.hpp">
       <Filter>source\utility</Filter>
     </ClInclude>
-    <ClInclude Include="source\sound\Bgm.h">
-      <Filter>source\sound</Filter>
-    </ClInclude>
-    <ClInclude Include="source\sound\Se.h">
-      <Filter>source\sound</Filter>
+    <ClInclude Include="source\scene\SceneOption.h">
+      <Filter>source\scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
