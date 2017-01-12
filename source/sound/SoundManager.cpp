@@ -257,6 +257,7 @@ void SoundManager::SetVolumeBgm(float volume)
     if (!initialized_) return ;
 	if (bgm_volume_ == volume) return;
 
+	bgm_volume_ = volume;
 	for (int i = 0; i < param_.max_bgm; ++i) {
         auto& player = player_[GetTrackIndex_(SoundType::BGM, i)];
         criAtomExPlayer_SetVolume(player, volume);

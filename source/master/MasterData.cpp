@@ -27,6 +27,7 @@ namespace MasterData
 
         buffer = File::ReadAllBytes(path + "/KeyRepeatBase.dat");
         reader = StreamReader(buffer);
+        std::vector<KeyRepeatBaseData>().swap(KeyRepeatBase);
         KeyRepeatBase.resize(reader.ReadInt());
         for (size_t i = 0; i < KeyRepeatBase.size(); ++i) {
             KeyRepeatBase[i].Load(reader);
@@ -35,6 +36,7 @@ namespace MasterData
         buffer = File::ReadAllBytes(path + "/OptionImageList.dat");
         reader = StreamReader(buffer);
         length = reader.ReadInt();
+        OptionImageList.clear();
         for (int i = 0; i < length; ++i) {
             auto key = reader.ReadStringNoSeek();
             OptionImageList[key].Load(reader);
@@ -42,6 +44,7 @@ namespace MasterData
 
         buffer = File::ReadAllBytes(path + "/OptionUI.dat");
         reader = StreamReader(buffer);
+        std::vector<OptionUIData>().swap(OptionUI);
         OptionUI.resize(reader.ReadInt());
         for (size_t i = 0; i < OptionUI.size(); ++i) {
             OptionUI[i].Load(reader);
@@ -50,6 +53,7 @@ namespace MasterData
         buffer = File::ReadAllBytes(path + "/OptionInOut.dat");
         reader = StreamReader(buffer);
         length = reader.ReadInt();
+        OptionInOut.clear();
         for (int i = 0; i < length; ++i) {
             auto key = reader.ReadStringNoSeek();
             OptionInOut[key].Load(reader);
@@ -62,6 +66,7 @@ namespace MasterData
         buffer = File::ReadAllBytes(path + "/TitleImageList.dat");
         reader = StreamReader(buffer);
         length = reader.ReadInt();
+        TitleImageList.clear();
         for (int i = 0; i < length; ++i) {
             auto key = reader.ReadStringNoSeek();
             TitleImageList[key].Load(reader);
@@ -69,6 +74,7 @@ namespace MasterData
 
         buffer = File::ReadAllBytes(path + "/TitleUI.dat");
         reader = StreamReader(buffer);
+        std::vector<TitleUIData>().swap(TitleUI);
         TitleUI.resize(reader.ReadInt());
         for (size_t i = 0; i < TitleUI.size(); ++i) {
             TitleUI[i].Load(reader);
@@ -77,6 +83,7 @@ namespace MasterData
         buffer = File::ReadAllBytes(path + "/TitleInOut.dat");
         reader = StreamReader(buffer);
         length = reader.ReadInt();
+        TitleInOut.clear();
         for (int i = 0; i < length; ++i) {
             auto key = reader.ReadStringNoSeek();
             TitleInOut[key].Load(reader);

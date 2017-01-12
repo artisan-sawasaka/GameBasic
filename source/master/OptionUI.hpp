@@ -12,6 +12,7 @@ public :
     std::string name;
     int type;
     std::string str;
+    bool visible;
     int anchor;
     int x;
     int y;
@@ -29,6 +30,7 @@ public :
         name = reader.ReadString();
         type = reader.ReadInt();
         str = reader.ReadString();
+        visible = reader.ReadBool();
         anchor = reader.ReadInt();
         x = reader.ReadInt();
         y = reader.ReadInt();

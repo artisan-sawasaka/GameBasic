@@ -72,11 +72,10 @@ public:
 	}
 
 	/*!
-	* @brief マスターデータを操作しやすい形にオブジェクトに変換
+	* @brief 色の設定
 	*
-	* @param ui UIデータ
-	*
-	* @return オブジェクトデータ
+	* @param data UIデータ
+	* @param color 変更する色
 	*/
 	template <class Data>
 	static void SetObjectColor(Data* data, const Gdiplus::Color& color)
@@ -126,6 +125,8 @@ public:
 	{
 		for (auto it = ui.begin(); it != ui.end(); ++it) {
 			const auto& info = *it;
+			if (!info.visible) continue;
+
 			if (info.type == 0) {
 				// 画像描画
 				auto it2 = list.find(info.str);

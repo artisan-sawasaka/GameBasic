@@ -15,6 +15,32 @@ public:
 	}
 
 	/*!
+	 * @brief boolŒ^‚Ì“Ç‚İ‚İ
+	 *
+	 * @return “Ç‚İ‚ñ‚¾boolŒ^‚Ì’l
+	 */
+	bool ReadBool()
+	{
+		if (offset_ + sizeof(bool) > buffer_->size()) return 0;
+		auto ret = (*(unsigned char*)&(*buffer_)[offset_]) != 0;
+		offset_ += sizeof(bool);
+		return ret;
+	}
+
+	/*!
+	 * @brief boolŒ^‚Ì“Ç‚İ‚İ(ƒV[ƒN‚È‚µ)
+	 *
+	 * @return “Ç‚İ‚ñ‚¾boolŒ^‚Ì’l
+	 */
+	bool ReadBoolNoSeek()
+	{
+		auto temp = offset_;
+		auto ret = ReadBool();
+		offset_ = temp;
+		return ret;
+	}
+
+	/*!
 	 * @brief intŒ^‚Ì“Ç‚İ‚İ
 	 *
 	 * @return “Ç‚İ‚ñ‚¾intŒ^‚Ì’l

@@ -149,12 +149,12 @@ void SceneOption::UpdateSound_()
 	objects_["VoiceValue"]->str = Utility::StringFormat("%3d%%", volume_[Voice] * 10);
 
 	// –îˆó‚Ì•\Ž¦‚Ì—L–³
-	objects_["BgmLeftArrow"]->a =  (volume_[Bgm] == 0) ? 0 : 255;
-	objects_["BgmRightArrow"]->a = (volume_[Bgm] == MaxVolume) ? 0 : 255;
-	objects_["SeLeftArrow"]->a = (volume_[Se] == 0) ? 0 : 255;
-	objects_["SeRightArrow"]->a = (volume_[Se] == MaxVolume) ? 0 : 255;
-	objects_["VoiceLeftArrow"]->a = (volume_[Voice] == 0) ? 0 : 255;
-	objects_["VoiceRightArrow"]->a = (volume_[Voice] == MaxVolume) ? 0 : 255;
+	objects_["BgmLeftArrow"]->visible =  (volume_[Bgm] != 0);
+	objects_["BgmRightArrow"]->visible = (volume_[Bgm] != MaxVolume);
+	objects_["SeLeftArrow"]->visible = (volume_[Se] != 0);
+	objects_["SeRightArrow"]->visible = (volume_[Se] != MaxVolume);
+	objects_["VoiceLeftArrow"]->visible = (volume_[Voice] != 0);
+	objects_["VoiceRightArrow"]->visible = (volume_[Voice] != MaxVolume);
 }
 
 /*!
