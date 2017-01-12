@@ -350,6 +350,7 @@ void SoundManager::StopSe(int track, float time)
 		}
 	}
 }
+
 void SoundManager::SetVolumeSe(float volume)
 {
     if (!initialized_) return ;
@@ -568,7 +569,6 @@ int SoundManager::PlayBgm_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)
         }
         if (track < 0) return -1;
     }
-
 
 	auto& player = player_[GetTrackIndex_(SoundType::BGM, track)];
 	acb_func(player, base_bgm_data_);
