@@ -68,7 +68,7 @@ void SceneTitle::Update(float df)
 	} else if (KeyManager::GetInstance()->IsTrg('3')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
 	} else if (KeyManager::GetInstance()->IsTrg('4')) {
-		SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0, 1);
+		SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 	} else if (KeyManager::GetInstance()->IsTrg('5')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
 	} else if (KeyManager::GetInstance()->IsTrg('6')) {
@@ -88,7 +88,7 @@ void SceneTitle::Render()
 }
 
 /*!
- * @brief マスター再読み込み
+ * @brief データ再読み込み
  */
 void SceneTitle::Reload_()
 {
@@ -105,6 +105,9 @@ void SceneTitle::Reload_()
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(MasterData::TitleUI);
 }
 
+/*!
+ * @brief カーソル更新
+ */
 void SceneTitle::UpdateCursor_()
 {
 	static const char* button[] = { "ButtonGray", "ButtonRed" };
@@ -114,6 +117,9 @@ void SceneTitle::UpdateCursor_()
 	objects_["ExitButton"]->str = button[cursor_ == Exit ? 1 : 0];
 }
 
+/*!
+ * @brief インアニメーション
+ */
 bool SceneTitle::ActionInAnimation_(float df)
 {
 	if (state_ == ST_IN_ANIMATION_INIT) {
@@ -130,6 +136,9 @@ bool SceneTitle::ActionInAnimation_(float df)
 	return false;
 }
 
+/*!
+ * @brief 選択
+ */
 bool SceneTitle::ActionSelect_(float df)
 {
 	if (state_ == ST_SELECT_INIT) {
@@ -154,6 +163,9 @@ bool SceneTitle::ActionSelect_(float df)
 	return false;
 }
 
+/*!
+ * @brief アウトアニメーション
+ */
 bool SceneTitle::ActionOutAnimation_(float df)
 {
 	if (state_ == ST_OUT_ANIMATION_INIT) {

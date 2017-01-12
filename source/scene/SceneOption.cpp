@@ -29,7 +29,6 @@ void SceneOption::Update(float df)
 
 	// ‰Šú‰»
 	if (state_ == ST_INIT) {
-		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
 		state_.Change(ST_LOADING, true);
 	}
 	if (state_ == ST_LOADING) {

@@ -60,8 +60,8 @@ private :
 		MenuMax,
 	};
 
-	void Reload_();
-	void UpdateCursor_();
+	void Reload_();							// データ再読み込み
+	void UpdateCursor_();					// カーソル更新
 
 	// 処理
 	bool ActionInAnimation_(float df);		// インアニメーション
