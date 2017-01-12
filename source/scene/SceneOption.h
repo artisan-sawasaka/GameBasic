@@ -85,10 +85,11 @@ private :
 	bool ActionSelect_(float df);			// 選択
 	bool ActionOutAnimation_(float df);		// アウトアニメーション
 
-	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;				// 画像データ
-	std::map<std::string, MasterData::OptionUIData*> objects_;						// 表示物
+	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;					// 画像データ
+	std::vector<MasterData::OptionUIData> ui_;											// UI
+	std::map<std::string, MasterData::OptionUIData*> objects_;							// オブジェクト
 	InOutAnimation<MasterData::OptionUIData, MasterData::OptionInOutData> animtion_;	// InOutアニメーション
-	StateManager<State> state_;														// 状態管理
+	StateManager<State> state_;															// 状態管理
 
 	Menu cursor_;
 	LoopCounter bgm_cursor_move_;

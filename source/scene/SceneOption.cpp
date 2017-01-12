@@ -1,12 +1,10 @@
 #include "SceneOption.h"
 #include "utility/Renderer.h"
 #include "utility/Utility.hpp"
-#include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
 #include "utility/SceneManager.h"
 #include "sound/SoundManager.h"
-#include "sound/Bgm.h"
 #include "sound/Se.h"
 
 static const int MaxVolume = 10;
@@ -16,7 +14,6 @@ static const int MaxVolume = 10;
  */
 void SceneOption::Initialize(const SceneBaseParam* param)
 {
-	cursor_ = Bgm;
 	state_.Change(ST_INIT);
 }
 
@@ -43,7 +40,7 @@ void SceneOption::Update(float df)
 		}
 	}
 
-	// 更新
+	// 選択
 	if (state_.IsRange(ST_SELECT_INIT, ST_SELECT)) {
 		if (ActionSelect_(df)) {
 			state_.Change(ST_OUT_ANIMATION_INIT);
@@ -57,7 +54,7 @@ void SceneOption::Update(float df)
 		}
 	}
 
-	// カーソル
+	// カーソル更新
 	UpdateCursor_();
 }
 
@@ -67,7 +64,7 @@ void SceneOption::Update(float df)
 void SceneOption::Render()
 {
 	// マスターデータに基づく描画処理
-	Utility::BasicRender(MasterData::OptionImageList, MasterData::OptionUI, bitmaps_);
+	Utility::BasicRender(MasterData::OptionImageList, ui_, bitmaps_);
 }
 
 /*!
@@ -75,17 +72,14 @@ void SceneOption::Render()
  */
 void SceneOption::Reload_()
 {
-	// マスターデータを再読み込み
-	Utility::ReloadMasterData();
-
-	// FPSの設定
-	DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
-
 	// 画像を読み込み
 	bitmaps_ = Utility::CreateBitmaps(MasterData::OptionImageList);
 
+	// UIをコピーして保持
+	ui_ = MasterData::OptionUI;
+
 	// 操作しやすいようにオブジェクト化する
-	objects_ = Utility::CreateObjects<MasterData::OptionUIData>(MasterData::OptionUI);
+	objects_ = Utility::CreateObjects<MasterData::OptionUIData>(ui_);
 
 	// カーソルの初期位置を保持
 	cursor_x_[BgmLeft] = objects_["BgmLeftArrow"]->x;
@@ -119,12 +113,14 @@ void SceneOption::SetCursor_()
  */
 void SceneOption::UpdateCursor_()
 {
+	// 選択項目の色変更
 	Utility::SetObjectColor(objects_["BgmValue"], (cursor_ == Bgm) ? Gdiplus::Color::Red : Gdiplus::Color::White);
 	Utility::SetObjectColor(objects_["SeValue"], (cursor_ == Se) ? Gdiplus::Color::Red : Gdiplus::Color::White);
 	Utility::SetObjectColor(objects_["VoiceValue"], (cursor_ == Voice) ? Gdiplus::Color::Red : Gdiplus::Color::White);
 	Utility::SetObjectColor(objects_["Exit"], (cursor_ == Exit) ? Gdiplus::Color::Red : Gdiplus::Color::White);
+
+	// 左右矢印の移動
 	if (state_ == ST_SELECT) {
-		// カーソル移動
 		bgm_cursor_move_++;
 		se_cursor_move_++;
 		voice_cursor_move_++;
@@ -183,7 +179,7 @@ int SceneOption::GetCursorSpeed(Menu menu) const
 bool SceneOption::ActionInAnimation_(float df)
 {
 	if (state_ == ST_IN_ANIMATION_INIT) {
-		animtion_.SetIn(MasterData::OptionUI, MasterData::OptionInOut);
+		animtion_.SetIn(ui_, MasterData::OptionInOut);
 		state_.Change(ST_IN_ANIMATION, true);
 	}
 	if (state_ == ST_IN_ANIMATION) {
@@ -230,7 +226,7 @@ bool SceneOption::ActionSelect_(float df)
 				UpdateSound_();
 			}
 		} else if (KeyManager::GetInstance()->IsTrg(VK_RETURN) && cursor_ == Exit) {
-			// 決定
+			// 終了
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			return true;
 		}
@@ -245,7 +241,7 @@ bool SceneOption::ActionSelect_(float df)
 bool SceneOption::ActionOutAnimation_(float df)
 {
 	if (state_ == ST_OUT_ANIMATION_INIT) {
-		animtion_.SetOut(MasterData::OptionUI, MasterData::OptionInOut);
+		animtion_.SetOut(ui_, MasterData::OptionInOut);
 		state_.Change(ST_OUT_ANIMATION, true);
 	}
 	if (state_ == ST_OUT_ANIMATION) {

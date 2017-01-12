@@ -5,6 +5,7 @@
 #include "utility/FadeManager.h"
 #include "utility/ConsoleManager.h"
 #include "utility/KeyManager.h"
+#include "utility/Utility.hpp"
 #include "sound/SoundManager.h"
 #include <set>
 #include <algorithm>
@@ -59,8 +60,15 @@ void MainApp::Initialize()
 	// デバイスマネージャーの初期化
 	DeviceManager::GetInstance()->Initialize(this);
 
+	// マスターデータ読み込み
+	Utility::ReloadMasterData();
+
+	// FPSの設定
+	DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
+
 	// シーン切り替え
 	SceneManager::GetInstance()->Change(SceneList::Initialize, nullptr);
+
 }
 
 /*!
@@ -82,6 +90,8 @@ void MainApp::Update(float df)
 	if (KeyManager::GetInstance()->IsTrg('R')) {
 		// 現在のシーンの再読み込み
 		SoundManager::GetInstance()->StopAll();
+		Utility::ReloadMasterData();
+		DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
 		SceneManager::GetInstance()->Restart();
 	} else if (KeyManager::GetInstance()->IsTrg('O')) {
 		// デバッグ出力ウインドウを開く

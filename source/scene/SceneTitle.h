@@ -70,7 +70,8 @@ private :
 
 
 	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;				// 画像データ
-	std::map<std::string, MasterData::TitleUIData*> objects_;						// 表示物
+	std::vector<MasterData::TitleUIData> ui_;										// UI
+	std::map<std::string, MasterData::TitleUIData*> objects_;						// オブジェクト
 	InOutAnimation<MasterData::TitleUIData, MasterData::TitleInOutData> animtion_;	// InOutアニメーション
 	StateManager<State> state_;														// 状態管理
 

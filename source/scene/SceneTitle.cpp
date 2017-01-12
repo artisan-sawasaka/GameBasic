@@ -1,7 +1,6 @@
 #include "SceneTitle.h"
 #include "utility/Renderer.h"
 #include "utility/Utility.hpp"
-#include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
 #include "utility/SceneManager.h"
@@ -44,7 +43,7 @@ void SceneTitle::Update(float df)
 		}
 	}
 
-	// 更新
+	// 選択
 	if (state_.IsRange(ST_SELECT_INIT, ST_SELECT)) {
 		if (ActionSelect_(df)) {
 			state_.Change(ST_OUT_ANIMATION_INIT);
@@ -58,7 +57,7 @@ void SceneTitle::Update(float df)
 		}
 	}
 
-	// カーソルチェック
+	// カーソル更新
 	UpdateCursor_();
 
 	if (KeyManager::GetInstance()->IsTrg('1')) {
@@ -84,7 +83,7 @@ void SceneTitle::Update(float df)
 void SceneTitle::Render()
 {
 	// マスターデータに基づく描画処理
-	Utility::BasicRender(MasterData::TitleImageList, MasterData::TitleUI, bitmaps_);
+	Utility::BasicRender(MasterData::TitleImageList, ui_, bitmaps_);
 }
 
 /*!
@@ -92,17 +91,14 @@ void SceneTitle::Render()
  */
 void SceneTitle::Reload_()
 {
-	// マスターデータを再読み込み
-	Utility::ReloadMasterData();
-
-	// FPSの設定
-	DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
-
 	// 画像を読み込み
 	bitmaps_ = Utility::CreateBitmaps(MasterData::TitleImageList);
 
+	// UIをコピーして保持
+	ui_ = MasterData::TitleUI;
+
 	// 操作しやすいようにオブジェクト化する
-	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(MasterData::TitleUI);
+	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(ui_);
 }
 
 /*!
@@ -123,7 +119,7 @@ void SceneTitle::UpdateCursor_()
 bool SceneTitle::ActionInAnimation_(float df)
 {
 	if (state_ == ST_IN_ANIMATION_INIT) {
-		animtion_.SetIn(MasterData::TitleUI, MasterData::TitleInOut);
+		animtion_.SetIn(ui_, MasterData::TitleInOut);
 		state_.Change(ST_IN_ANIMATION, true);
 	}
 	if (state_ == ST_IN_ANIMATION) {
@@ -169,7 +165,7 @@ bool SceneTitle::ActionSelect_(float df)
 bool SceneTitle::ActionOutAnimation_(float df)
 {
 	if (state_ == ST_OUT_ANIMATION_INIT) {
-		animtion_.SetOut(MasterData::TitleUI, MasterData::TitleInOut);
+		animtion_.SetOut(ui_, MasterData::TitleInOut);
 		state_.Change(ST_OUT_ANIMATION, true);
 	}
 	if (state_ == ST_OUT_ANIMATION) {

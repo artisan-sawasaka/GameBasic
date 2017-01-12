@@ -159,10 +159,8 @@ public :
 	}
 
 	/*!
-	* @brief 終了の有無を取得します。
-	*
-	* @param df 前のフレームとの差分時間
-	*/
+	 * @brief 終了の有無を取得します。
+	 */
 	bool IsEnd() const
 	{
 		for (size_t i = 0; i < infos_.size(); ++i) {
