@@ -58,7 +58,7 @@ void SceneManager::Restart()
  */
 void SceneManager::Update(float df)
 {
-	if (scene_state_.Check(df) || is_restart_) {
+	if (scene_state_.Update(df) || is_restart_) {
 		is_restart_ = false;
 		if (scene_) {
 			scene_->Finalize();

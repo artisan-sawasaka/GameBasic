@@ -17,11 +17,11 @@ public :
 	StateManager() : wait_time_(0) {}
 
 	/*!
-	 * @brief 状態を確認する
+	 * @brief 更新
 	 *
 	 * @param df 時間差分を指定
 	 */
-	bool Check(float df) {
+	bool Update(float df) {
 		wait_time_ -= df;
 		if (wait_time_ <= 0) {
 			wait_time_ = 0;

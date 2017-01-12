@@ -25,7 +25,8 @@ void SceneTitle::Initialize(const SceneBaseParam* param)
  */
 void SceneTitle::Update(float df)
 {
-	state_.Check(df);
+	state_.Update(df);
+
 	// ‰Šú‰»
 	if (state_ == ST_INIT) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
