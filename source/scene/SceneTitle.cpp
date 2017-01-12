@@ -4,8 +4,8 @@
 #include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
-#include "utility/SoundManager.h"
 #include "utility/SceneManager.h"
+#include "sound/SoundManager.h"
 #include "sound/Bgm.h"
 #include "sound/Se.h"
 
@@ -67,7 +67,7 @@ void SceneTitle::Update(float df)
 	} else if (KeyManager::GetInstance()->IsTrg('3')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
 	} else if (KeyManager::GetInstance()->IsTrg('4')) {
-		SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
+		SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0, 1);
 	} else if (KeyManager::GetInstance()->IsTrg('5')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
 	} else if (KeyManager::GetInstance()->IsTrg('6')) {

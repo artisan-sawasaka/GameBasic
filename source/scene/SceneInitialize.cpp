@@ -1,7 +1,7 @@
 #include "SceneInitialize.h"
 #include "utility/SceneManager.h"
-#include "utility/SoundManager.h"
 #include "utility/Renderer.h"
+#include "sound/SoundManager.h"
 
 /*!
  * @brief XV

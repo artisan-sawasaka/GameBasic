@@ -5,7 +5,7 @@
 #include "utility/FadeManager.h"
 #include "utility/ConsoleManager.h"
 #include "utility/KeyManager.h"
-#include "utility/SoundManager.h"
+#include "sound/SoundManager.h"
 #include <set>
 #include <algorithm>
 
@@ -22,7 +22,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	return 0;
 }
-
 MainApp::MainApp(TCHAR* wnClassName, TCHAR* title)
 	: AppBase(wnClassName, title)
 	, is_debug_render_(true)
@@ -146,3 +145,4 @@ void MainApp::RenderDebug_()
 		Renderer::GetInstance()->DrawString(ds[i], Renderer::LEFT_TOP, 0, i * 11, 9);
 	}
 }
+

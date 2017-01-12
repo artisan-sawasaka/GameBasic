@@ -1,7 +1,7 @@
 #include "SoundManager.h"
 #include <cri_le_atom_asr.h>
 #include <cri_le_atom_pc.h>
-#include "FileUtility.hpp"
+#include "utility/FileUtility.hpp"
 
 static const int MAX_KEEP_BGM_VALUE		= 10;	// 内部で保持するBGMファイルの最大数
 static const int MAX_KEEP_VOICE_VALUE	= 12;	// 内部で保持するVOICEファイルの最大数
