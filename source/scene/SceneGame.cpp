@@ -2,6 +2,7 @@
 #include "utility/SceneManager.h"
 #include "utility/Renderer.h"
 #include "utility/KeyManager.h"
+#include "utility/ConsoleManager.h"
 
 /*!
  * @brief ‰Šú‰»
@@ -9,6 +10,8 @@
 void SceneGame::Initialize(const SceneBaseParam* param)
 {
 	param_ = *(static_cast<const SceneGameParam*>(param));
+	ConsoleManager::GetInstance()->
+		PrintLine(param_.str.c_str());
 }
 
 /*!

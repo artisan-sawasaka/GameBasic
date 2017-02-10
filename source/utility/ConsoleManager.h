@@ -30,6 +30,11 @@ public :
 	 */
 	void Print(const char* s, ...);
 
+	/*!
+	 * @brief コンソールウインドウに文字改行込みで出力
+	 */
+	void PrintLine(const char* s, ...);
+
 	static ConsoleManager* GetInstance() {
 		static ConsoleManager v;
 		return &v;

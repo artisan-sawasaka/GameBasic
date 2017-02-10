@@ -42,3 +42,22 @@ void ConsoleManager::Print(const char* s, ...)
 	DWORD dwWriteByte;
 	WriteConsoleA(handle_, text, strlen(text), &dwWriteByte, NULL);
 }
+
+/*!
+ * @brief コンソールウインドウに文字を出力
+ */
+void ConsoleManager::PrintLine(const char* s, ...)
+{
+	if (handle_ == 0) return;
+
+	// テキストフォーマットを変換
+	char text[1024];
+	va_list arg;
+	va_start(arg, s);
+	vsprintf(text, s, arg);
+	va_end(arg);
+	strcat(text, "\n");
+
+	DWORD dwWriteByte;
+	WriteConsoleA(handle_, text, strlen(text), &dwWriteByte, NULL);
+}
