@@ -6,6 +6,12 @@ MemoryStream::MemoryStream()
 {
 }
 
+MemoryStream::MemoryStream(int count)
+	: buf_(count)
+	, offset_(0)
+{
+}
+
 MemoryStream::MemoryStream(std::vector<char>& buf)
 	: buf_(buf)
 	, offset_(0)
@@ -39,7 +45,7 @@ int MemoryStream::Read(void* buf, size_t size)
 int MemoryStream::Write(const void* buf, size_t size)
 {
 	if (offset_ + size >= buf_.size()) {
-		buf_.resize(offset_ + size);
+		buf_.resize(buf_.size() * 2);
 	}
 	memcpy(&buf_[offset_], buf, size);
 	offset_ += size;
@@ -66,4 +72,11 @@ int MemoryStream::Position() const
 	if (offset_ >= buf_.size()) return -1;
 
 	return offset_;
+}
+
+std::vector<char> MemoryStream::ToArray()
+{
+	std::vector<char> ret(offset_);
+	memcpy(&ret[0], &buf_[0], ret.size());
+	return ret;
 }
