@@ -14,7 +14,7 @@ void SceneInitialize::Update(float df)
 		8,				//  SEの最大同時再生数
 		4,				//  VOICEの最大同時再生数
 		48000 * 2,		//  最大サンプリングレート
-		60,				//  1FPS
+		60,				//  FPS
 		"data/sound/GameBasic.acf"		//  AFCファイルのパス
 	};
 	SoundManager::GetInstance()->Initialize(param);

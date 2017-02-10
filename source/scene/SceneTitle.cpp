@@ -67,7 +67,7 @@ void SceneTitle::Update(float df)
 	} else if (KeyManager::GetInstance()->IsTrg('3')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
 	} else if (KeyManager::GetInstance()->IsTrg('4')) {
-		SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
+		SoundManager::GetInstance()->PlaySe(CRI_SE_OK);
 	} else if (KeyManager::GetInstance()->IsTrg('5')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
 	} else if (KeyManager::GetInstance()->IsTrg('6')) {
