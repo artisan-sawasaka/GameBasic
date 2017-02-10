@@ -7,6 +7,7 @@
 #include "sound/SoundManager.h"
 #include "sound/Bgm.h"
 #include "sound/Se.h"
+#include "scene/SceneGame.h"
 
 /*!
  * @brief XV
@@ -172,9 +173,12 @@ bool SceneTitle::ActionOutAnimation_(float df)
 		animtion_.Update(df);
 		if (animtion_.IsEnd()) {
 			if (cursor_ == Start) {
-				SceneManager::GetInstance()->Restart();
+				//SceneManager::GetInstance()->Restart();
+				std::shared_ptr<SceneGameParam> param(new SceneGameParam());
+				param->str = "‚ ‚¢‚¤‚¦‚¨";
+				SceneManager::GetInstance()->Change(SceneList::Game, param);
 			} else if (cursor_ == Option) {
-				SceneManager::GetInstance()->Change(SceneList::Option , nullptr);
+				SceneManager::GetInstance()->Change(SceneList::Option, nullptr);
 			} else if (cursor_ == Exit) {
 				DeviceManager::GetInstance()->Exit();
 			}

@@ -3,6 +3,7 @@
 #include "scene/SceneInitialize.h"
 #include "scene/SceneTitle.h"
 #include "scene/SceneOption.h"
+#include "scene/SceneGame.h"
 
 /*!
  * @brief ÉVÅ[ÉìêÿÇËë÷Ç¶
@@ -68,6 +69,7 @@ void SceneManager::Update(float df)
 		case SceneList::Initialize :	scene_.reset(new SceneInitialize());	break;
 		case SceneList::Title :			scene_.reset(new SceneTitle());			break;
 		case SceneList::Option :		scene_.reset(new SceneOption());		break;
+		case SceneList::Game :			scene_.reset(new SceneGame());			break;
 		default : break;
 		}
 

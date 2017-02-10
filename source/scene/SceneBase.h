@@ -3,7 +3,7 @@
 /*!
  * @brief シーンの初期化パラメータの基底クラス
  */
-class SceneBaseParam
+struct SceneBaseParam
 {
 public :
 	virtual ~SceneBaseParam(){}

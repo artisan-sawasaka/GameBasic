@@ -87,6 +87,7 @@
     <ClCompile Include="source\main\main.cpp" />
     <ClCompile Include="source\main\WinMain.cpp" />
     <ClCompile Include="source\master\MasterData.cpp" />
+    <ClCompile Include="source\scene\SceneGame.cpp" />
     <ClCompile Include="source\scene\SceneInitialize.cpp" />
     <ClCompile Include="source\scene\SceneOption.cpp" />
     <ClCompile Include="source\scene\SceneTitle.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="source\main\WinMain.h" />
     <ClInclude Include="source\master\MasterData.hpp" />
     <ClInclude Include="source\scene\SceneBase.h" />
+    <ClInclude Include="source\scene\SceneGame.h" />
     <ClInclude Include="source\scene\SceneInitialize.h" />
     <ClInclude Include="source\scene\SceneList.h" />
     <ClInclude Include="source\scene\SceneOption.h" />
