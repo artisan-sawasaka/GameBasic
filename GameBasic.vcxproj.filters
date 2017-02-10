@@ -20,6 +20,9 @@
     <Filter Include="source\sound">
       <UniqueIdentifier>{f3f8e8d4-e304-425b-bd6b-7486b866340c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\stream">
+      <UniqueIdentifier>{c824e8b8-8d8f-435c-904d-419cf21581c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main\main.cpp">
@@ -69,6 +72,15 @@
     </ClCompile>
     <ClCompile Include="source\scene\SceneOption.cpp">
       <Filter>source\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stream\BinaryReader.cpp">
+      <Filter>source\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stream\FileStream.cpp">
+      <Filter>source\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stream\MemoryStream.cpp">
+      <Filter>source\stream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +155,18 @@
     </ClInclude>
     <ClInclude Include="source\scene\SceneOption.h">
       <Filter>source\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stream\BinaryReader.hpp">
+      <Filter>source\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stream\FileStream.hpp">
+      <Filter>source\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stream\MemoryStream.hpp">
+      <Filter>source\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stream\Stream.hpp">
+      <Filter>source\stream</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
