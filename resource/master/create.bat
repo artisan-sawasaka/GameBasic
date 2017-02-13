@@ -3,11 +3,11 @@
 :: ------------------------------
 :: ïœêîíËã`
 :: ------------------------------
-set TOOL=%CD%\..\Tool\AutoMaster\AutoMaster.exe
+set TOOL=%CD%\..\..\Tool\AutoMaster\AutoMaster.exe
 set XLSX_DIR=%CD%\master
 set XLSX_EDIT_DIR=%CD%\master_edit
-set BINARY_DIR=%CD%\..\data\master
-set SOURCE_DIR=%CD%\..\source\master
+set BINARY_DIR=%CD%\..\..\data\master
+set SOURCE_DIR=%CD%\..\..\source\master
 
 
 :: ------------------------------

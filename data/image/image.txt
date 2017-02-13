@@ -1,0 +1,4 @@
+Arrow.png 130 16965
+Button.png 17095 32904
+OptionBg.png 49999 160102
+TitleBg.png 210101 390939

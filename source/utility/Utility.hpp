@@ -5,8 +5,11 @@
 #include <string>
 #include <set>
 #include <GdiPlus.h>
-#include "master/MasterData.hpp"
 #include <cstdint>
+#include <Shlwapi.h>
+#include <memory>
+#include "master/MasterData.hpp"
+#include "Unpacker.hpp"
 
 class Utility
 {
@@ -101,17 +104,24 @@ public:
 	static std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> CreateBitmaps(const ImageList& list) {
 		std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps;
 		std::set<std::string> images;
+		Unpacker unpacker;
 		for (auto it = list.begin(); it != list.end(); ++it) {
 			images.insert(it->second.path);
 		}
+		unpacker.Set("data/image/image.dat");
 		for (auto it = images.begin(); it != images.end(); ++it) {
-			std::string path = std::string("data/image/") + *it;
-			auto bmp = new Gdiplus::Bitmap(Utility::SJIStoUTF16(path).c_str());
+			const auto& v = unpacker.GetData(*it);
+			if (v.empty()) continue;
+			IStream* is(SHCreateMemStream(reinterpret_cast<const BYTE*>(&v[0]), v.size()));
+			if (is == nullptr) continue;
+
+			auto bmp = new Gdiplus::Bitmap(is);
 			if (bmp->GetLastStatus() == Gdiplus::Ok) {
 				bitmaps[*it].reset(bmp);
 			} else {
 				delete bmp;
 			}
+			is->Release();
 		}
 		return bitmaps;
 	}

@@ -3,9 +3,9 @@
 :: ------------------------------
 :: •Ï”’è‹`
 :: ------------------------------
-set TOOL=%CD%\..\Tool\AutoMaster\AutoMaster.exe
+set TOOL=%CD%\..\..\Tool\AutoMaster\AutoMaster.exe
 set XLSX_DIR=%CD%\master
-set BINARY_DIR=%CD%\..\data\master
+set BINARY_DIR=%CD%\..\..\data\master
 
 
 :: ------------------------------

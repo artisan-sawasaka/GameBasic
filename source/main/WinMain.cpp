@@ -3,6 +3,7 @@
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "Gdiplus.lib")
+#pragma comment(lib, "Shlwapi.lib")
 
 AppBase::AppBase(TCHAR* wnClassName, TCHAR* title)
 	: wnd_x_(32)
