@@ -5,7 +5,13 @@
 class FileStream : public Stream
 {
 public :
-	FileStream(const char* path, bool read);
+	enum Type {
+		TypeRead,
+		TypeWrite,
+		TypeAdd,
+	};
+
+	FileStream(const char* path, Type type);
 	~FileStream();
 	void Close();
 	int Read(void* buf, size_t size);

@@ -104,6 +104,7 @@
     <ClCompile Include="source\utility\KeyManager.cpp" />
     <ClCompile Include="source\utility\Renderer.cpp" />
     <ClCompile Include="source\utility\SceneManager.cpp" />
+    <ClCompile Include="source\utility\Unpacker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main\main.h" />
@@ -134,6 +135,7 @@
     <ClInclude Include="source\utility\SceneManager.h" />
     <ClInclude Include="source\utility\StateManager.h" />
     <ClInclude Include="source\utility\StreamReader.hpp" />
+    <ClInclude Include="source\utility\Unpacker.hpp" />
     <ClInclude Include="source\utility\Utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

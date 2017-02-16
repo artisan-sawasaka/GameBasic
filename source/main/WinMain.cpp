@@ -170,12 +170,11 @@ LRESULT CALLBACK AppBase::WndProc_(HWND hWnd, UINT msg, UINT wParam, LONG lParam
 			PostMessage(hWnd, WM_CLOSE, 0, 0);
 		}
 		break;
-	case WM_PAINT : {
-			if (app != nullptr) {
-				app->Render_();
-			}
-			break;
+	case WM_PAINT :
+		if (app != nullptr) {
+			app->Render_();
 		}
+		break;
 	case WM_ACTIVATE :
 		app->active_ = (wParam != 0);
 		if (!app->active_) {

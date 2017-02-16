@@ -85,6 +85,9 @@
     <ClCompile Include="source\scene\SceneGame.cpp">
       <Filter>source\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\utility\Unpacker.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main\main.h">
@@ -173,6 +176,9 @@
     </ClInclude>
     <ClInclude Include="source\scene\SceneGame.h">
       <Filter>source\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\Unpacker.hpp">
+      <Filter>source\utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

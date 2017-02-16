@@ -1,19 +1,22 @@
 #include "MemoryStream.hpp"
 
 MemoryStream::MemoryStream()
-	: buf_()
+	: write_buf_()
+	, read_buf_(nullptr)
 	, offset_(0)
 {
 }
 
 MemoryStream::MemoryStream(int count)
-	: buf_(count)
+	: write_buf_(count)
+	, read_buf_(nullptr)
 	, offset_(0)
 {
 }
 
-MemoryStream::MemoryStream(std::vector<char>& buf)
-	: buf_(buf)
+MemoryStream::MemoryStream(const std::vector<char>& buf)
+	: write_buf_()
+	, read_buf_(&buf)
 	, offset_(0)
 {
 }
@@ -25,18 +28,19 @@ MemoryStream::~MemoryStream()
 
 void MemoryStream::Close()
 {
-	std::vector<char>().swap(buf_);
+	std::vector<char>().swap(write_buf_);
 	offset_ = 0;
 }
 
 int MemoryStream::Read(void* buf, size_t size)
 {
-	if (offset_ >= buf_.size()) return -1;
+	if (read_buf_ == nullptr) return -1;
+	if (offset_ >= read_buf_->size()) return -1;
 
-	if (offset_ + size >= buf_.size()) {
-		size = buf_.size() - offset_;
+	if (offset_ + size >= read_buf_->size()) {
+		size = read_buf_->size() - offset_;
 	}
-	memcpy(buf, &buf_[offset_], size);
+	memcpy(buf, &(*read_buf_)[offset_], size);
 	offset_ += size;
 
 	return size;
@@ -44,10 +48,12 @@ int MemoryStream::Read(void* buf, size_t size)
 
 int MemoryStream::Write(const void* buf, size_t size)
 {
-	if (offset_ + size >= buf_.size()) {
-		buf_.resize(buf_.size() * 2);
+	if (read_buf_ != nullptr) return -1;
+
+	if (offset_ + size >= write_buf_.size()) {
+		write_buf_.resize(write_buf_.size() * 2);
 	}
-	memcpy(&buf_[offset_], buf, size);
+	memcpy(&write_buf_[offset_], buf, size);
 	offset_ += size;
 
 	return size;
@@ -55,28 +61,33 @@ int MemoryStream::Write(const void* buf, size_t size)
 
 int MemoryStream::Seek(int offset, SeekType type)
 {
-	if (offset_ >= buf_.size()) return -1;
-	
 	if (type == Stream::Begin) {
 		offset_ = offset;
 	} else if (type == Stream::Current) {
 		offset_ += offset;
 	} else if (type == Stream::End) {
-		offset_ = buf_.size() + offset;
+		if (read_buf_ != nullptr) {
+			offset_ = read_buf_->size() + offset;
+		} else {
+			offset_ = write_buf_.size() + offset;
+		}
 	}
+
 	return offset_;
 }
 
 int MemoryStream::Position() const
 {
-	if (offset_ >= buf_.size()) return -1;
-
 	return offset_;
 }
 
 std::vector<char> MemoryStream::ToArray()
 {
-	std::vector<char> ret(offset_);
-	memcpy(&ret[0], &buf_[0], ret.size());
-	return ret;
+	if (read_buf_ != nullptr) {
+		return *read_buf_;
+	} else {
+		std::vector<char> ret(offset_);
+		memcpy(&ret[0], &write_buf_[0], ret.size());
+		return ret;
+	}
 }

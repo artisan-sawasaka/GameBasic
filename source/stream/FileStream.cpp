@@ -1,12 +1,14 @@
 #include "FileStream.hpp"
 
-FileStream::FileStream(const char* path, bool read)
+FileStream::FileStream(const char* path, Type type)
 	: fp_(nullptr)
 {
-	if (read) {
+	if (type == TypeRead) {
 		fp_ = fopen(path, "rb");
-	} else {
+	} else if (type == TypeWrite) {
 		fp_ = fopen(path, "wb");
+	} else if (type == TypeAdd) {
+		fp_ = fopen(path, "ab");
 	}
 }
 

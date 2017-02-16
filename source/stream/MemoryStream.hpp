@@ -7,7 +7,7 @@ class MemoryStream : public Stream
 public :
 	MemoryStream();
 	MemoryStream(int count);
-	MemoryStream(std::vector<char>& buf);
+	MemoryStream(const std::vector<char>& buf);
 	~MemoryStream();
 	void Close();
 	int Read(void* buf, size_t size);
@@ -17,6 +17,7 @@ public :
 	std::vector<char> ToArray();
 
 private :
-	std::vector<char> buf_;
+	std::vector<char> write_buf_;
+	const std::vector<char>* read_buf_;
 	size_t offset_;
 };
