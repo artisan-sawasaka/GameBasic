@@ -1,5 +1,5 @@
 #include "SceneTitle.h"
-#include "utility/Renderer.h"
+#include "render/Renderer.h"
 #include "utility/Utility.hpp"
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
@@ -84,7 +84,7 @@ void SceneTitle::Update(float df)
 void SceneTitle::Render()
 {
 	// マスターデータに基づく描画処理
-	Utility::BasicRender(MasterData::TitleImageList, ui_, bitmaps_);
+	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
 }
 
 /*!
@@ -93,7 +93,7 @@ void SceneTitle::Render()
 void SceneTitle::Reload_()
 {
 	// 画像を読み込み
-	bitmaps_ = Utility::CreateBitmaps(MasterData::TitleImageList);
+	textures_ = Utility::CreateBitmaps(MasterData::TitleImageList);
 
 	// UIをコピーして保持
 	ui_ = MasterData::TitleUI;
@@ -173,7 +173,6 @@ bool SceneTitle::ActionOutAnimation_(float df)
 		animtion_.Update(df);
 		if (animtion_.IsEnd()) {
 			if (cursor_ == Start) {
-				//SceneManager::GetInstance()->Restart();
 				std::shared_ptr<SceneGameParam> param(new SceneGameParam());
 				param->str = "あいうえお";
 				SceneManager::GetInstance()->Change(SceneList::Game, param);

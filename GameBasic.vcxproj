@@ -39,13 +39,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)plugin\cri\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)plugin\cri\libs\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)plugin\cri\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)plugin\cri\libs\x86;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)plugin\cri\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)plugin\cri\libs\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)plugin\cri\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)plugin\cri\libs\x86;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -60,7 +60,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cri_ware_pcx86_le_import.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dinput8.lib;dxguid.lib;winmm.lib;imm32.lib;cri_ware_pcx86_le_import.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -80,13 +80,17 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>cri_ware_pcx86_le_import.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dinput8.lib;dxguid.lib;winmm.lib;imm32.lib;cri_ware_pcx86_le_import.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\main\Device.cpp" />
     <ClCompile Include="source\main\main.cpp" />
     <ClCompile Include="source\main\WinMain.cpp" />
     <ClCompile Include="source\master\MasterData.cpp" />
+    <ClCompile Include="source\render\Color.cpp" />
+    <ClCompile Include="source\render\Renderer.cpp" />
+    <ClCompile Include="source\render\Texture.cpp" />
     <ClCompile Include="source\scene\SceneGame.cpp" />
     <ClCompile Include="source\scene\SceneInitialize.cpp" />
     <ClCompile Include="source\scene\SceneOption.cpp" />
@@ -102,14 +106,18 @@
     <ClCompile Include="source\utility\FadeManager.cpp" />
     <ClCompile Include="source\utility\InOutAnimation.cpp" />
     <ClCompile Include="source\utility\KeyManager.cpp" />
-    <ClCompile Include="source\utility\Renderer.cpp" />
     <ClCompile Include="source\utility\SceneManager.cpp" />
     <ClCompile Include="source\utility\Unpacker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\main\Device.h" />
     <ClInclude Include="source\main\main.h" />
     <ClInclude Include="source\main\WinMain.h" />
     <ClInclude Include="source\master\MasterData.hpp" />
+    <ClInclude Include="source\render\Color.h" />
+    <ClInclude Include="source\render\Renderer.h" />
+    <ClInclude Include="source\render\Texture.h" />
+    <ClInclude Include="source\render\TextureFormat.h" />
     <ClInclude Include="source\scene\SceneBase.h" />
     <ClInclude Include="source\scene\SceneGame.h" />
     <ClInclude Include="source\scene\SceneInitialize.h" />
@@ -131,7 +139,6 @@
     <ClInclude Include="source\utility\FileUtility.hpp" />
     <ClInclude Include="source\utility\InOutAnimation.h" />
     <ClInclude Include="source\utility\KeyManager.h" />
-    <ClInclude Include="source\utility\Renderer.h" />
     <ClInclude Include="source\utility\SceneManager.h" />
     <ClInclude Include="source\utility\StateManager.h" />
     <ClInclude Include="source\utility\StreamReader.hpp" />

@@ -1,6 +1,6 @@
 #include "SceneInitialize.h"
 #include "utility/SceneManager.h"
-#include "utility/Renderer.h"
+#include "render/Renderer.h"
 #include "sound/SoundManager.h"
 
 /*!

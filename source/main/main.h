@@ -27,10 +27,24 @@ public :
 	 * @brief 継承したメインループ
 	 */
 	virtual void Update(float dt);
+	
+	/*!
+	 * @brief 画面クリア
+	 */
+	virtual void ClearScreen();
+
+	/*!
+	 * @brief 3Dレンダリング
+	 */
+	virtual void Render3D();
+
+	/*!
+	 * @brief 2Dレンダリング
+	 */
+	virtual void Render2D();
 
 private :
 	void Update_(float df);
-	void Render_();
 	void RenderDebug_();
 
 	bool is_debug_render_;

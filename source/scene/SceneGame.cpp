@@ -1,6 +1,6 @@
 #include "SceneGame.h"
+#include "render/Renderer.h"
 #include "utility/SceneManager.h"
-#include "utility/Renderer.h"
 #include "utility/KeyManager.h"
 #include "utility/ConsoleManager.h"
 

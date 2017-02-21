@@ -4,12 +4,13 @@
 #include <vector>
 #include <string>
 #include <set>
-#include <GdiPlus.h>
 #include <cstdint>
 #include <Shlwapi.h>
 #include <memory>
 #include "master/MasterData.hpp"
 #include "Unpacker.hpp"
+#include "render/Renderer.h"
+#include "render/Texture.h"
 
 class Utility
 {
@@ -101,8 +102,8 @@ public:
 	 * @return オブジェクトデータ
 	 */
 	template <class ImageList>
-	static std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> CreateBitmaps(const ImageList& list) {
-		std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps;
+	static std::map<std::string, std::shared_ptr<Texture>> CreateBitmaps(const ImageList& list) {
+		std::map<std::string, std::shared_ptr<Texture>> textures;
 		std::set<std::string> images;
 		Unpacker unpacker;
 		for (auto it = list.begin(); it != list.end(); ++it) {
@@ -112,18 +113,15 @@ public:
 		for (auto it = images.begin(); it != images.end(); ++it) {
 			const auto& v = unpacker.GetData(*it);
 			if (v.empty()) continue;
-			IStream* is(SHCreateMemStream(reinterpret_cast<const BYTE*>(&v[0]), v.size()));
-			if (is == nullptr) continue;
-
-			auto bmp = new Gdiplus::Bitmap(is);
-			if (bmp->GetLastStatus() == Gdiplus::Ok) {
-				bitmaps[*it].reset(bmp);
+			Texture* texture = new Texture();
+			if (texture == nullptr) continue;
+			if (texture->CreateFromMemory(&v[0], v.size())) {
+				textures[*it].reset(texture);
 			} else {
-				delete bmp;
+				delete texture;
 			}
-			is->Release();
 		}
-		return bitmaps;
+		return textures;
 	}
 
 	/*!
@@ -134,7 +132,7 @@ public:
 	 * @return オブジェクトデータ
 	 */
 	template <class ImageList, class UI>
-	static void BasicRender(const ImageList& list, const UI& ui, std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>>& bitmaps)
+	static void BasicRender(const ImageList& list, const UI& ui, std::map<std::string, std::shared_ptr<Texture>>& textures)
 	{
 		for (auto it = ui.begin(); it != ui.end(); ++it) {
 			const auto& info = *it;
@@ -145,19 +143,19 @@ public:
 				auto it2 = list.find(info.str);
 				if (it2 == list.end()) continue ;
 				const auto& info2 = it2->second;
-				auto it3 = bitmaps.find(info2.path);
-				if (it3 == bitmaps.end()) continue ;
+				auto it3 = textures.find(info2.path);
+				if (it3 == textures.end()) continue ;
 				Renderer::GetInstance()->DrawImage(it3->second.get(),
 					static_cast<Renderer::Anchor>(info.anchor),
 					info.x,  info.y,  info.w,  info.h,
 					info2.x, info2.y, info2.w, info2.h,
-					Gdiplus::Color(info.a, info.r, info.g, info.b),
+					Color(info.a, info.r, info.g, info.b),
 					info.rotate);
 			} else if (info.type == 1) {
 				// 文字列描画
 				Renderer::GetInstance()->DrawString(info.str.c_str(),
 					static_cast<Renderer::Anchor>(info.anchor), info.x, info.y, info.h, 
-					Gdiplus::Color(info.a, info.r, info.g, info.b));
+					Color(info.a, info.r, info.g, info.b));
 			}
 		}
 	}

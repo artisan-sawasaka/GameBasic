@@ -1,6 +1,6 @@
 #include "main.h"
+#include "render/Renderer.h"
 #include "utility/SceneManager.h"
-#include "utility/Renderer.h"
 #include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
 #include "utility/ConsoleManager.h"
@@ -55,7 +55,7 @@ LRESULT MainApp::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 void MainApp::Initialize()
 {
 	// レンダラーを初期化
-	Renderer::GetInstance()->Initialize(GetBackHDC());
+	Renderer::GetInstance()->Initialize(this);
 
 	// デバイスマネージャーの初期化
 	DeviceManager::GetInstance()->Initialize(this);
@@ -105,9 +105,6 @@ void MainApp::Update(float df)
 
 	// 更新
 	Update_(df);
-
-	// 描画
-	Render_();
 }
 
 void MainApp::Update_(float df)
@@ -122,11 +119,27 @@ void MainApp::Update_(float df)
 	SoundManager::GetInstance()->Update(df);
 }
 
-void MainApp::Render_()
+/*!
+ * @brief 画面クリア
+ */
+void MainApp::ClearScreen()
 {
 	// 画面クリア
-	Renderer::GetInstance()->ClearScreen(Gdiplus::Color(0, 80, 255));
+	Renderer::GetInstance()->ClearScreen(Color(0, 80, 255));
+}
 
+/*!
+ * @brief 3Dレンダリング
+ */
+void MainApp::Render3D()
+{
+}
+
+/*!
+ * @brief 2Dレンダリング
+ */
+void MainApp::Render2D()
+{
 	// シーン
 	SceneManager::GetInstance()->Render();
 
@@ -155,4 +168,3 @@ void MainApp::RenderDebug_()
 		Renderer::GetInstance()->DrawString(ds[i], Renderer::LEFT_TOP, 0, i * 11, 9);
 	}
 }
-

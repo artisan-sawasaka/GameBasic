@@ -45,3 +45,10 @@ void DeviceManager::Exit()
 	PostMessage(app_->GetWindowHandle(), WM_CLOSE, 0, 0);
 }
 
+/*!
+ * @brief デバイス取得
+ */
+LPDIRECT3DDEVICE9 DeviceManager::GetDevice()
+{
+	return app_->GetDevice().GetDevice();
+}

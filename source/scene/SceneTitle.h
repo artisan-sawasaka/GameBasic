@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneBase.h"
+#include "render/Texture.h"
 #include "utility/StateManager.h"
 #include "utility/InOutAnimation.h"
 #include "master/MasterData.hpp"
@@ -69,7 +70,7 @@ private :
 	bool ActionOutAnimation_(float df);		// アウトアニメーション
 
 
-	std::map<std::string, std::shared_ptr<Gdiplus::Bitmap>> bitmaps_;				// 画像データ
+	std::map<std::string, std::shared_ptr<Texture>> textures_;						// 画像データ
 	std::vector<MasterData::TitleUIData> ui_;										// UI
 	std::map<std::string, MasterData::TitleUIData*> objects_;						// オブジェクト
 	InOutAnimation<MasterData::TitleUIData, MasterData::TitleInOutData> animtion_;	// InOutアニメーション

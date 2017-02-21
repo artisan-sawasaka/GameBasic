@@ -118,6 +118,8 @@ bool AppBase::Start()
 	SelectObject(hdc_mem_, bitmap_);
 	ReleaseDC(hwnd_, hdc);
 
+	device_.Initialize(hwnd_, wnd_w_, wnd_h_);
+
 	// 継承先の初期化呼び出し
 	Initialize();
 
@@ -135,16 +137,22 @@ bool AppBase::Start()
 			// 垂直動機待ち
 			float df = VSync_();
 
-			// 継承先のメインループの呼び出し
-			Update(df);
+			if (device_.CheckIdle()) {
+				// 継承先のメインループの呼び出し
+				Update(df);
 
-			// 再描画呼び出し
-			InvalidateRect(hwnd_, NULL, FALSE);
+				// 描画
+				Render_();
+
+				device_.GetDevice()->Present(nullptr, nullptr, nullptr, nullptr);
+			}
 		}
 	}
 	
 	// 継承先の終了化呼び出し
 	Finalize();
+
+	device_.Finalize();
 
 	return true;
 }
@@ -170,15 +178,18 @@ LRESULT CALLBACK AppBase::WndProc_(HWND hWnd, UINT msg, UINT wParam, LONG lParam
 			PostMessage(hWnd, WM_CLOSE, 0, 0);
 		}
 		break;
-	case WM_PAINT :
+	case WM_ACTIVATE :
 		if (app != nullptr) {
-			app->Render_();
+			app->active_ = (wParam != 0);
+			if (!app->active_) {
+				app->fps_count_ = 0;
+			}
 		}
 		break;
-	case WM_ACTIVATE :
-		app->active_ = (wParam != 0);
-		if (!app->active_) {
-			app->fps_count_ = 0;
+	// 入力フォーカスの取得
+	case WM_SETFOCUS :
+		if (app != nullptr) {
+			app->device_.CheckDevice();
 		}
 		break;
 	}
@@ -245,8 +256,19 @@ float AppBase::VSync_()
  */
 void AppBase::Render_()
 {
-	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(hwnd_, &ps);
-	BitBlt(hdc, -1, -1, wnd_w_, wnd_h_, hdc_mem_, 0, 0, SRCCOPY);
-	EndPaint(hwnd_, &ps);
+	auto device = device_.GetDevice();
+
+	ClearScreen();
+
+	// 3D描画
+	device->SetRenderState(D3DRS_ZENABLE, D3DZB_USEW);
+	device->BeginScene();
+	Render3D();
+	device->EndScene();
+
+	// 2D描画
+	device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	device->BeginScene();
+	Render2D();
+	device->EndScene();
 }

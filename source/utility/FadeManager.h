@@ -8,8 +8,8 @@
 #pragma once
 
 #include "bezier.h"
+#include "render/Color.h"
 #include <Windows.h>
-#include <gdiplus.h>
 
 /*!
  * @brief フェード管理クラスを提供します。
@@ -20,12 +20,12 @@ public :
 	/*!
 	 * @brief フェードイン
 	 */
-	void FadeIn(float time = 0.3f, const Gdiplus::Color& color = Gdiplus::Color::Black, float delay = 0.0f);
+	void FadeIn(float time = 0.3f, const Color& color = Color::Black, float delay = 0.0f);
 
 	/*!
 	 * @brief フェードアウト
 	 */
-	void FadeOut(float time = 0.3f, const Gdiplus::Color& color = Gdiplus::Color::Black, float delay = 0.0f);
+	void FadeOut(float time = 0.3f, const Color& color = Color::Black, float delay = 0.0f);
 
 	/*!
 	 * @brief 終了判定
@@ -48,9 +48,9 @@ public :
 	}
 
 private :
-	FadeManager() : delay_time_(0.0f), color_(Gdiplus::Color::Black) { alpha_.Set(255, 255, 0.0f, Bezier::Linear); }
+	FadeManager() : delay_time_(0.0f), color_(Color::Black) { alpha_.Set(255, 255, 0.0f, Bezier::Linear); }
 
 	float delay_time_;
-	Gdiplus::Color color_;
+	Color color_;
 	Bezier::Timer<int> alpha_;
 };

@@ -1,5 +1,5 @@
 #include "SceneOption.h"
-#include "utility/Renderer.h"
+#include "render/Renderer.h"
 #include "utility/Utility.hpp"
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
@@ -64,7 +64,7 @@ void SceneOption::Update(float df)
 void SceneOption::Render()
 {
 	// マスターデータに基づく描画処理
-	Utility::BasicRender(MasterData::OptionImageList, ui_, bitmaps_);
+	Utility::BasicRender(MasterData::OptionImageList, ui_, textures_);
 }
 
 /*!
@@ -73,7 +73,7 @@ void SceneOption::Render()
 void SceneOption::Reload_()
 {
 	// 画像を読み込み
-	bitmaps_ = Utility::CreateBitmaps(MasterData::OptionImageList);
+	textures_ = Utility::CreateBitmaps(MasterData::OptionImageList);
 
 	// UIをコピーして保持
 	ui_ = MasterData::OptionUI;

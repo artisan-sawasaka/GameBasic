@@ -23,6 +23,9 @@
     <Filter Include="source\stream">
       <UniqueIdentifier>{c824e8b8-8d8f-435c-904d-419cf21581c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\render">
+      <UniqueIdentifier>{435bf864-5162-4eac-8b87-18262e1e86ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main\main.cpp">
@@ -64,9 +67,6 @@
     <ClCompile Include="source\utility\KeyManager.cpp">
       <Filter>source\utility</Filter>
     </ClCompile>
-    <ClCompile Include="source\utility\Renderer.cpp">
-      <Filter>source\utility</Filter>
-    </ClCompile>
     <ClCompile Include="source\utility\SceneManager.cpp">
       <Filter>source\utility</Filter>
     </ClCompile>
@@ -87,6 +87,18 @@
     </ClCompile>
     <ClCompile Include="source\utility\Unpacker.cpp">
       <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main\Device.cpp">
+      <Filter>source\main</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Renderer.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Texture.cpp">
+      <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\Color.cpp">
+      <Filter>source\render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +156,6 @@
     <ClInclude Include="source\utility\KeyManager.h">
       <Filter>source\utility</Filter>
     </ClInclude>
-    <ClInclude Include="source\utility\Renderer.h">
-      <Filter>source\utility</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\SceneManager.h">
       <Filter>source\utility</Filter>
     </ClInclude>
@@ -179,6 +188,21 @@
     </ClInclude>
     <ClInclude Include="source\utility\Unpacker.hpp">
       <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\main\Device.h">
+      <Filter>source\main</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\Renderer.h">
+      <Filter>source\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\Texture.h">
+      <Filter>source\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\TextureFormat.h">
+      <Filter>source\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\Color.h">
+      <Filter>source\render</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

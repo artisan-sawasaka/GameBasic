@@ -5,6 +5,7 @@
 #include <vector>
 #include <gdiplus.h>
 #include <memory>
+#include "Device.h"
 
 class AppBase
 {
@@ -68,6 +69,11 @@ public :
 	HDC GetBackHDC() const { return hdc_mem_; }
 	
 	/*!
+	 * @brief デバイスの取得
+	 */
+	Device& GetDevice() { return device_; }
+
+	/*!
 	 * @brief 開始
 	 */
 	bool Start();
@@ -93,6 +99,21 @@ public :
 	 */
 	virtual void Update(float df) = 0;
 
+	/*!
+	 * @brief 画面クリア
+	 */
+	virtual void ClearScreen(){}
+
+	/*!
+	 * @brief 3Dレンダリング
+	 */
+	virtual void Render3D(){}
+
+	/*!
+	 * @brief 2Dレンダリング
+	 */
+	virtual void Render2D(){}
+
 private :
 	static LRESULT CALLBACK WndProc_(HWND hWnd, UINT msg, UINT wParam, LONG lParam);
 
@@ -111,6 +132,7 @@ private :
 	 */
 	void Render_();
 
+	Device device_;
 	TCHAR wndClassName_[256];
 	TCHAR title_[256];
 	TIMECAPS timer_caps_;
