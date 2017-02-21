@@ -134,6 +134,8 @@ public:
 	template <class ImageList, class UI>
 	static void BasicRender(const ImageList& list, const UI& ui, std::map<std::string, std::shared_ptr<Texture>>& textures)
 	{
+		auto render = Renderer::GetInstance();
+		render->SetBlend(Renderer::BLEND_ALPHA);
 		for (auto it = ui.begin(); it != ui.end(); ++it) {
 			const auto& info = *it;
 			if (!info.visible) continue;
@@ -145,7 +147,7 @@ public:
 				const auto& info2 = it2->second;
 				auto it3 = textures.find(info2.path);
 				if (it3 == textures.end()) continue ;
-				Renderer::GetInstance()->DrawImage(it3->second.get(),
+				render->DrawImage(it3->second.get(),
 					static_cast<Renderer::Anchor>(info.anchor),
 					info.x,  info.y,  info.w,  info.h,
 					info2.x, info2.y, info2.w, info2.h,
@@ -153,7 +155,7 @@ public:
 					info.rotate);
 			} else if (info.type == 1) {
 				// •¶Žš—ñ•`‰æ
-				Renderer::GetInstance()->DrawString(info.str.c_str(),
+				render->DrawString(info.str.c_str(),
 					static_cast<Renderer::Anchor>(info.anchor), info.x, info.y, info.h, 
 					Color(info.a, info.r, info.g, info.b));
 			}

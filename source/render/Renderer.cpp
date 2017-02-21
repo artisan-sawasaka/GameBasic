@@ -7,6 +7,30 @@
 
 static const float RotateBase = 6.28318530718f;
 
+
+D3DCMPFUNC ChangeFunc(Renderer::FUNC func)
+{
+	if (func == Renderer::NEVER) return D3DCMP_NEVER;
+	if (func == Renderer::ALWAYS) return D3DCMP_ALWAYS;
+	if (func == Renderer::LESS) return D3DCMP_LESS;
+	if (func == Renderer::EQUAL) return D3DCMP_EQUAL;
+	if (func == Renderer::LESSEQUAL) return D3DCMP_LESSEQUAL;
+	if (func == Renderer::GREATER) return D3DCMP_GREATER;
+	if (func == Renderer::NOTEQUAL) return D3DCMP_NOTEQUAL;
+	if (func == Renderer::GREATEREQUAL) return D3DCMP_GREATEREQUAL;
+	return D3DCMP_FORCE_DWORD;
+}
+
+uint32_t ChangeStencilCaps(Renderer::STENCIL_CAPS caps)
+{
+	if (caps == Renderer::STENCIL_CAPS_KEEP) return D3DSTENCILCAPS_KEEP;
+	if (caps == Renderer::STENCIL_CAPS_ZERO) return D3DSTENCILCAPS_ZERO;
+	if (caps == Renderer::STENCIL_CAPS_REPLACE) return D3DSTENCILCAPS_REPLACE;
+	if (caps == Renderer::STENCIL_CAPS_INVERT) return D3DSTENCILCAPS_INVERT;
+
+	return 0;
+}
+
 Renderer::Renderer()
 {
 }
@@ -21,6 +45,170 @@ Renderer::~Renderer()
 void Renderer::Initialize(AppBase* app)
 {
 	app_ = app;
+}
+
+void Renderer::SetTextureFilter(bool filter)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	if (filter) {
+		device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);		// ミップマップ
+		device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);		// 拡大
+		device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);		// 縮小
+	} else {
+		device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);		// ミップマップ
+		device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_NONE);		// 拡大
+		device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_NONE);		// 縮小
+	}
+}
+
+void Renderer::SetAlphaTest(bool enable, FUNC func, uint8_t ref)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	if (enable) {
+		D3DCMPFUNC f = ChangeFunc(func);
+		if (f == D3DCMP_FORCE_DWORD) return ;
+
+		device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+		device->SetRenderState(D3DRS_ALPHAFUNC, f);
+		device->SetRenderState(D3DRS_ALPHAREF, ref);
+	} else {
+		device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	}
+}
+
+void Renderer::SetBlend(BLEND blend)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	if (blend == BLEND_DISABLE) {
+		// 無効
+		device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	} else if (blend == BLEND_ALPHA) {
+		// アルファブレンド
+		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	} else if (blend == BLEND_ADD) {
+		// 加算
+		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	} else if (blend == BLEND_SUB) {
+		// 減算
+		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR);
+		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+	} else if (blend == BLEND_MUL) {
+		// 乗算
+		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR);
+	}
+}
+
+void Renderer::SetTextureUse(TEXTURE_USE tex)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	if (tex == TEXTURE_USE_DISABLE) {
+		// 無効
+	} else if (tex == TEXTURE_USE_ENABLE) {
+		// 有効
+	} else if (tex == TEXTURE_USE_COLOR) {
+		// カラーのみ有効
+	} else if (tex == TEXTURE_USE_ALPHA) {
+		// アルファのみ有効
+	}
+}
+
+void Renderer::SetStencilState(STENCIL_STATAE stencil)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	if (stencil == STENCIL_DISABLE) {
+		device->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	} else if (stencil == STENCIL_MASK) {
+		// ステンシル設定
+		device->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+		device->SetRenderState(D3DRS_STENCILFUNC,   D3DCMP_ALWAYS);
+		device->SetRenderState(D3DRS_STENCILREF,    0x01);
+		device->SetRenderState(D3DRS_STENCILPASS,   D3DSTENCILOP_REPLACE);
+		device->SetRenderState(D3DRS_STENCILZFAIL,  D3DSTENCILOP_REPLACE);
+		device->SetRenderState(D3DRS_STENCILMASK,   0xff);
+	}else if (stencil == STENCIL_UNMASK) {
+		// ステンシル設定
+		device->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+		device->SetRenderState(D3DRS_STENCILFUNC,   D3DCMP_ALWAYS);
+		device->SetRenderState(D3DRS_STENCILREF,    0x00);
+		device->SetRenderState(D3DRS_STENCILPASS,   D3DSTENCILOP_REPLACE);
+		device->SetRenderState(D3DRS_STENCILZFAIL,  D3DSTENCILOP_REPLACE);
+		device->SetRenderState(D3DRS_STENCILMASK,   0xff);
+	}else if (stencil == STENCIL_DRAW) {
+		device->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+		device->SetRenderState(D3DRS_STENCILFUNC,   D3DCMP_EQUAL);
+		device->SetRenderState(D3DRS_STENCILREF,    0x00);
+		device->SetRenderState(D3DRS_STENCILPASS,   D3DSTENCILOP_KEEP);
+		device->SetRenderState(D3DRS_STENCILZFAIL,  D3DSTENCILOP_KEEP);
+		device->SetRenderState(D3DRS_STENCILMASK,   0xff);
+	}
+}
+
+void Renderer::SetStencil(bool enable, FUNC func, uint8_t ref, STENCIL_CAPS sfail, STENCIL_CAPS zfail, STENCIL_CAPS zpass)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	if (enable) {
+		D3DCMPFUNC f = ChangeFunc(func);
+		uint32_t s1 = ChangeStencilCaps(sfail);
+		uint32_t z1 = ChangeStencilCaps(zfail);
+		uint32_t z2 = ChangeStencilCaps(zpass);
+		if (f == D3DCMP_FORCE_DWORD || s1 == 0 || z1 == 0 || z2 == 0) return ;
+
+		device->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+		device->SetRenderState(D3DRS_STENCILFUNC,   f);
+		device->SetRenderState(D3DRS_STENCILMASK,   0xff);
+		device->SetRenderState(D3DRS_STENCILFAIL,   s1);
+		device->SetRenderState(D3DRS_STENCILPASS,   z1);
+		device->SetRenderState(D3DRS_STENCILZFAIL,  z2);
+	} else {
+		device->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	}
+}
+
+void Renderer::SetZEnable(bool enable, FUNC func)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	if (enable) {
+		D3DCMPFUNC f = ChangeFunc(func);
+		if (f == D3DCMP_FORCE_DWORD) return ;
+
+		device->SetRenderState(D3DRS_ZENABLE, D3DZB_USEW);
+		device->SetRenderState(D3DRS_ZFUNC, f);
+	} else {
+		device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	}
+}
+
+void Renderer::SetZWriteEnable(bool enable)
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	device->SetRenderState(D3DRS_ZWRITEENABLE, enable ? TRUE : FALSE);
 }
 
 /*!
@@ -114,8 +302,6 @@ void Renderer::DrawImage(Texture* texture, Anchor anchor, int dx, int dy, int dw
 	if (rotate != 0) {
 		mat *= *D3DXMatrixRotationZ(&matt, rotate * RotateBase);
 	}
-	mat.m[3][0] += mx;
-	mat.m[3][1] += my;
 
 	// 適応
 	for (int i = 0; i < 4; ++i) {
