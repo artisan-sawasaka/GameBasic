@@ -82,7 +82,7 @@ bool Device::Initialize(HWND hwnd, uint32_t width, uint32_t height)
 	// 表示用のデバイスを作成
 	HRESULT hr;
 
-	// HALで作成
+	// デバイス作成
 	bool ret = false;
 	hr = d3d_->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd_, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp_, &device_);
 	if (!SUCCEEDED(hr)) {
@@ -156,6 +156,79 @@ void Device::CheckDevice()
 	HRESULT hr  = device_->TestCooperativeLevel();
 	if (hr == D3DERR_DEVICELOST) {
 		device_lost_ = true;
+	}
+}
+
+/*!
+ * @brief スクリーンの切り替え
+ */
+void Device::ChangeScreen(bool window)
+{
+	if (device_ == nullptr)  return ;
+
+	static bool last_window;
+
+	screen_window_ = window;
+	if (screen_window_) {
+		d3dpp_ = d3dpp_window_;
+	} else {
+		d3dpp_ = d3dpp_full_;
+		GetWindowRect(hwnd_, &window_rect_);
+	}
+
+	HRESULT hr = device_->Reset(&d3dpp_);
+	if (FAILED(hr)) {
+		if (hr == D3DERR_DEVICELOST) {
+			device_lost_ = true;
+			return ;
+		} else {
+			//GpLog::SetString("%s(%d)：ChangeScreenのリセットに失敗しました。\n", std::strrchr(__FILE__, '\\') + 1, __LINE__);
+			//PostMessage(hwnd_, WM_DESTROY, 0, 0);
+			return ;
+		}
+	}
+	
+	InitRenderState_();
+
+	if (screen_window_) {
+		SetWindowLong(hwnd_, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+		ShowWindow(hwnd_, SW_SHOWNORMAL);
+		UpdateWindow(hwnd_);
+		if (!last_window) {
+			SetWindowPos(hwnd_, HWND_NOTOPMOST,
+						 window_rect_.left, window_rect_.top,
+						 window_rect_.right - window_rect_.left,
+						 window_rect_.bottom - window_rect_.top,
+						 SWP_SHOWWINDOW);
+		}
+	} else {
+		SetWindowLong(hwnd_, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+		ShowWindow(hwnd_, SW_SHOWNORMAL);
+		UpdateWindow(hwnd_);
+	}
+	Sleep(100);
+
+	if (screen_window_) {
+		last_window = true;
+	} else {
+		last_window = false;
+	}
+}
+
+void Device::SetBackBufferSize(uint32_t width, uint32_t height)
+{
+	if (device_ == nullptr)  return ;
+
+	d3dpp_window_.BackBufferWidth = width;
+	d3dpp_window_.BackBufferHeight = height;
+	d3dpp_ = d3dpp_window_;
+	HRESULT hr = device_->Reset(&d3dpp_);
+	if (FAILED(hr)) {
+		if (hr == D3DERR_DEVICELOST) {
+			return ;
+		} else {
+			return ;
+		}
 	}
 }
 
@@ -276,4 +349,7 @@ void Device::InitRenderState_()
 	device_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);		// レンダリング時の色の計算方法の設定
 	device_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);		// テクスチャの色を使用
 	device_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);		// 頂点の色を使用
+
+	D3DVIEWPORT9 view = { 0, 0, width_, height_, 0.0f, 1.0f };
+	device_->SetViewport(&view);
 }

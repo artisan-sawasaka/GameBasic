@@ -14,7 +14,7 @@ AppBase::AppBase(TCHAR* wnClassName, TCHAR* title)
 	, fps_(60)
 	, fps_count_(0)
 	, old_time_(0)
-	, hwnd_(NULL)
+	, hwnd_(nullptr)
 	, style_(WS_OVERLAPPED |  WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX)
 {
 	// タイマー精度の初期化
@@ -30,11 +30,11 @@ AppBase::AppBase(TCHAR* wnClassName, TCHAR* title)
 	wcex_.lpfnWndProc = (WNDPROC)WndProc_;
 	wcex_.cbClsExtra = 0;
 	wcex_.cbWndExtra = 0;
-	wcex_.hInstance = GetModuleHandle(NULL);
-	wcex_.hIcon = LoadIcon(NULL , IDI_APPLICATION);
-	wcex_.hCursor = LoadCursor(NULL , IDC_ARROW) ;
-	wcex_.hIconSm = LoadIcon(NULL , IDI_APPLICATION);
-	wcex_.lpszMenuName = NULL;
+	wcex_.hInstance = GetModuleHandle(nullptr);
+	wcex_.hIcon = LoadIcon(nullptr , IDI_APPLICATION);
+	wcex_.hCursor = LoadCursor(nullptr , IDC_ARROW) ;
+	wcex_.hIconSm = LoadIcon(nullptr , IDI_APPLICATION);
+	wcex_.lpszMenuName = nullptr;
 	wcex_.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex_.lpszClassName = wndClassName_;
 }
@@ -51,8 +51,8 @@ void AppBase::SetWindowPosition(int x, int y)
 {
 	wnd_x_ = x;
 	wnd_y_ = y;
-	if (hwnd_ != NULL) {
-		MoveWindow(hwnd_, wnd_x_, wnd_y_, wnd_w_, wnd_h_, TRUE);
+	if (hwnd_ != nullptr) {
+		SetWindowPos(hwnd_, HWND_NOTOPMOST, wnd_x_, wnd_y_, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
 	}
 }
 
@@ -63,9 +63,9 @@ void AppBase::SetWindowSize(int w, int h)
 {
 	wnd_w_ = w;
 	wnd_h_ = h;
-	if (hwnd_ != NULL) {
+	if (hwnd_ != nullptr) {
 		SIZE size = GetClientSize_(wnd_w_, wnd_h_);
-		MoveWindow(hwnd_, wnd_x_, wnd_y_, size.cx, size.cy, TRUE);
+		SetWindowPos(hwnd_, HWND_NOTOPMOST, 0, 0, size.cx, size.cy, SWP_NOMOVE | SWP_SHOWWINDOW);
 	}
 }
 
@@ -89,11 +89,11 @@ bool AppBase::Start()
 		wnd_y_,
 		size.cx,
 		size.cy,
-		NULL,
-		NULL,
-		GetModuleHandle(NULL),
+		nullptr,
+		nullptr,
+		GetModuleHandle(nullptr),
 		this);
-	if (hwnd_ == NULL) {
+	if (hwnd_ == nullptr) {
 		return false;
 	}
 	ShowWindow(hwnd_, SW_SHOWNORMAL);

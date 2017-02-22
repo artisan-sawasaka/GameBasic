@@ -44,6 +44,9 @@ LRESULT MainApp::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 		KeyManager::GetInstance()->Up(wParam);
 	} else if (msg == WM_ACTIVATE && wParam == 0) {
 		KeyManager::GetInstance()->Clear();
+	} else if (msg == WM_SYSKEYDOWN) {
+		if (wParam == VK_RETURN) {
+		}
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -61,10 +64,7 @@ void MainApp::Initialize()
 	DeviceManager::GetInstance()->Initialize(this);
 
 	// マスターデータ読み込み
-	Utility::ReloadMasterData();
-
-	// FPSの設定
-	DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
+	ReloadMasterData_();
 
 	// シーン切り替え
 	SceneManager::GetInstance()->Change(SceneList::Initialize, nullptr);
@@ -92,8 +92,7 @@ void MainApp::Update(float df)
 	if (KeyManager::GetInstance()->IsTrg('R')) {
 		// 現在のシーンの再読み込み
 		SoundManager::GetInstance()->StopAll();
-		Utility::ReloadMasterData();
-		DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
+		ReloadMasterData_();
 		SceneManager::GetInstance()->Restart();
 	} else if (KeyManager::GetInstance()->IsTrg('O')) {
 		// デバッグ出力ウインドウを開く
@@ -170,3 +169,12 @@ void MainApp::RenderDebug_()
 		Renderer::GetInstance()->DrawString(ds[i], Renderer::LEFT_TOP, 0, i * 11, 9);
 	}
 }
+
+void MainApp::ReloadMasterData_()
+{
+	Utility::ReloadMasterData();
+	DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
+	SetWindowSize(MasterData::Const.window_width, MasterData::Const.window_height);
+	GetDevice().SetBackBufferSize(MasterData::Const.backbuffer_width, MasterData::Const.backbuffer_height);
+}
+

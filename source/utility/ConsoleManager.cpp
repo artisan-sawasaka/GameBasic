@@ -40,7 +40,7 @@ void ConsoleManager::Print(const char* s, ...)
 	va_end(arg);
 
 	DWORD dwWriteByte;
-	WriteConsoleA(handle_, text, strlen(text), &dwWriteByte, NULL);
+	WriteConsoleA(handle_, text, strlen(text), &dwWriteByte, nullptr);
 }
 
 /*!
@@ -59,5 +59,5 @@ void ConsoleManager::PrintLine(const char* s, ...)
 	strcat(text, "\n");
 
 	DWORD dwWriteByte;
-	WriteConsoleA(handle_, text, strlen(text), &dwWriteByte, NULL);
+	WriteConsoleA(handle_, text, strlen(text), &dwWriteByte, nullptr);
 }

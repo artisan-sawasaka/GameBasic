@@ -246,6 +246,7 @@ private :
 	Renderer();
 	LPD3DXFONT GetFont_(int size);
 	void CreateVertex2D_(Vertex2D* v, Texture* texture, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Color& color, float rotate);
+	LPDIRECT3DDEVICE9 GetDevice_();
 
 	AppBase* app_;
 	std::map<int, LPD3DXFONT> fonts_;

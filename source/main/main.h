@@ -46,6 +46,7 @@ public :
 private :
 	void Update_(float df);
 	void RenderDebug_();
+	void ReloadMasterData_();
 
 	bool is_debug_render_;
 };

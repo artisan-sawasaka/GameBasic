@@ -15,6 +15,9 @@ public :
 	bool CheckIdle();
 	void CheckDevice();
 	LPDIRECT3DDEVICE9 GetDevice() const { return device_; }
+	bool IsFullScreen() const { return !screen_window_; }
+	void ChangeScreen(bool window);
+	void SetBackBufferSize(uint32_t width, uint32_t height);
 
 private :
 	void InitRenderState_();

@@ -45,10 +45,10 @@ Renderer::~Renderer()
 void Renderer::Initialize(AppBase* app)
 {
 	Finalize();
-	auto device = app->GetDevice().GetDevice();
+	app_ = app;
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
-	app_ = app;
 	stocks_.resize(1024);
 	stock_count_ = 0;
 }
@@ -67,7 +67,7 @@ void Renderer::Finalize()
 
 void Renderer::SetTextureFilter(bool filter)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	if (filter) {
@@ -83,7 +83,7 @@ void Renderer::SetTextureFilter(bool filter)
 
 void Renderer::SetAlphaTest(bool enable, FUNC func, uint8_t ref)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	if (enable) {
@@ -100,7 +100,7 @@ void Renderer::SetAlphaTest(bool enable, FUNC func, uint8_t ref)
 
 void Renderer::SetBlend(BLEND blend)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	if (blend == BLEND_DISABLE) {
@@ -135,7 +135,7 @@ void Renderer::SetBlend(BLEND blend)
 
 void Renderer::SetTextureUse(TEXTURE_USE tex)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	if (tex == TEXTURE_USE_DISABLE) {
@@ -151,7 +151,7 @@ void Renderer::SetTextureUse(TEXTURE_USE tex)
 
 void Renderer::SetStencilState(STENCIL_STATAE stencil)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	if (stencil == STENCIL_DISABLE) {
@@ -184,7 +184,7 @@ void Renderer::SetStencilState(STENCIL_STATAE stencil)
 
 void Renderer::SetStencil(bool enable, FUNC func, uint8_t ref, STENCIL_CAPS sfail, STENCIL_CAPS zfail, STENCIL_CAPS zpass)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	if (enable) {
@@ -207,7 +207,7 @@ void Renderer::SetStencil(bool enable, FUNC func, uint8_t ref, STENCIL_CAPS sfai
 
 void Renderer::SetZEnable(bool enable, FUNC func)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	if (enable) {
@@ -223,7 +223,7 @@ void Renderer::SetZEnable(bool enable, FUNC func)
 
 void Renderer::SetZWriteEnable(bool enable)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	device->SetRenderState(D3DRS_ZWRITEENABLE, enable ? TRUE : FALSE);
@@ -234,10 +234,10 @@ void Renderer::SetZWriteEnable(bool enable)
  */
 void Renderer::ClearScreen(const Color& color)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
-	device->Clear(0, NULL, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color.GetARGB(), 1.0f, 0);
+	device->Clear(0, nullptr, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color.GetARGB(), 1.0f, 0);
 }
 
 /*!
@@ -245,7 +245,7 @@ void Renderer::ClearScreen(const Color& color)
  */
 void Renderer::FillRect(int x, int y, int w, int h, const Color& color)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	const float left = static_cast<float>(x);
@@ -266,7 +266,7 @@ void Renderer::FillRect(int x, int y, int w, int h, const Color& color)
 
 	HRESULT hr;
 	hr = device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-	hr = device->SetTexture(0, NULL);
+	hr = device->SetTexture(0, nullptr);
 	hr = device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(VERTEX2D));
 }
 
@@ -285,7 +285,7 @@ void Renderer::DrawImage(Texture* texture, Anchor anchor, int x, int y)
 void Renderer::DrawImage(Texture* texture, Anchor anchor, int dx, int dy, int dw, int dh,
 	int sx, int sy, int sw, int sh, const Color& color, float rotate)
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 	if (texture == nullptr) return ;
 	if (color.GetA() == 0) return ;
@@ -330,7 +330,7 @@ void Renderer::ImageStock(Texture* texture, Anchor anchor, int dx, int dy, int d
  */
 void Renderer::DrawStock()
 {
-	auto device = app_->GetDevice().GetDevice();
+	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
 	/*
@@ -360,6 +360,8 @@ void Renderer::DrawString(const wchar_t* s, Anchor anchor, int x, int y, int siz
 	if (color.GetA() == 0) return ;
 
 	auto* font = GetFont_(size);
+	if (font == nullptr) return ;
+
 	RECT rect;
 	rect.left = x;
 	rect.right = x + 1;
@@ -376,7 +378,7 @@ void Renderer::DrawString(const wchar_t* s, Anchor anchor, int x, int y, int siz
 		rect.bottom = rect.top + height;
 	}
 
-	int n = font->DrawTextW(nullptr, s, wcslen(s), &rect, DT_NOCLIP, color.GetARGB());
+	font->DrawTextW(nullptr, s, wcslen(s), &rect, DT_NOCLIP, color.GetARGB());
 }
 
 /*!
@@ -478,5 +480,11 @@ void Renderer::CreateVertex2D_(Vertex2D* v, Texture* texture, Anchor anchor, int
 			v[i].z = dout.z;
 		}
 	}
+}
+
+LPDIRECT3DDEVICE9 Renderer::GetDevice_()
+{
+	if (app_ == nullptr) return nullptr;
+	return app_->GetDevice().GetDevice();
 }
 
