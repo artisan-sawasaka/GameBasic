@@ -62,11 +62,6 @@ public :
 	 * @brief 平均FPSの取得
 	 */
 	float GetAverageFPS() const { return average_fps_; }
-
-	/*!
-	 * @brief バックバッファのHDC取得
-	 */
-	HDC GetBackHDC() const { return hdc_mem_; }
 	
 	/*!
 	 * @brief デバイスの取得
@@ -149,8 +144,4 @@ private :
 	HWND hwnd_;
 	DWORD style_;
 	bool active_;
-
-	// バックバッファ
-	HBITMAP bitmap_;
-	HDC hdc_mem_;
 };

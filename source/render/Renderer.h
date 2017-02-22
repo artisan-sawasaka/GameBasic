@@ -82,6 +82,12 @@ public :
 		GREATEREQUAL,			//!< 新しいピクセル値が、現在のピクセル値以上のときに応じる。
 	};
 
+	struct Vertex2D {
+		float x, y, z, rhw;
+		uint32_t color;
+		float u, v;
+	};
+
 	~Renderer();
 
 	/*!
@@ -194,6 +200,21 @@ public :
 	void DrawImage(Texture* texture, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Color& color = Color::White, float rotate = 0.0f);
 
 	/*!
+	 * @brief ストッククリア
+	 */
+	void ClearStock();
+
+	/*!
+	 * @brief 画像ストック
+	 */
+	void ImageStock(Texture* texture, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Color& color = Color::White, float rotate = 0.0f);
+
+	/*!
+	 * @brief ストック描画
+	 */
+	void DrawStock();
+
+	/*!
 	 * @brief 文字列描画
 	 */
 	void DrawString(const char* s, Anchor anchor, int x, int y, int size = 20, const Color& color = Color::White);
@@ -224,7 +245,10 @@ public :
 private :
 	Renderer();
 	LPD3DXFONT GetFont_(int size);
+	void CreateVertex2D_(Vertex2D* v, Texture* texture, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Color& color, float rotate);
 
 	AppBase* app_;
 	std::map<int, LPD3DXFONT> fonts_;
+	std::vector<Vertex2D> stocks_;
+	size_t stock_count_;
 };

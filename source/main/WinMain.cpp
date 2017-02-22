@@ -16,8 +16,6 @@ AppBase::AppBase(TCHAR* wnClassName, TCHAR* title)
 	, old_time_(0)
 	, hwnd_(NULL)
 	, style_(WS_OVERLAPPED |  WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX)
-	, bitmap_(NULL)
-	, hdc_mem_(NULL)
 {
 	// タイマー精度の初期化
 	timeGetDevCaps(&timer_caps_, sizeof(TIMECAPS));
@@ -43,12 +41,6 @@ AppBase::AppBase(TCHAR* wnClassName, TCHAR* title)
 
 AppBase::~AppBase()
 {
-	if (bitmap_ != NULL) {
-		DeleteObject(bitmap_);
-	}
-	if (hdc_mem_ != NULL) {
-		DeleteDC(hdc_mem_);
-	}
 	timeEndPeriod(timer_caps_.wPeriodMin);
 }
 
@@ -111,13 +103,7 @@ bool AppBase::Start()
 	old_time_ = timeGetTime();
 	start_time_ = old_time_;
 
-	// ダブルバッファ作成
-	HDC hdc = GetDC(hwnd_);
-	hdc_mem_ = CreateCompatibleDC(hdc);
-	bitmap_ = CreateCompatibleBitmap(hdc, wnd_w_, wnd_h_);
-	SelectObject(hdc_mem_, bitmap_);
-	ReleaseDC(hwnd_, hdc);
-
+	// デバイス初期化
 	device_.Initialize(hwnd_, wnd_w_, wnd_h_);
 
 	// 継承先の初期化呼び出し
@@ -143,8 +129,6 @@ bool AppBase::Start()
 
 				// 描画
 				Render_();
-
-				device_.GetDevice()->Present(nullptr, nullptr, nullptr, nullptr);
 			}
 		}
 	}
@@ -152,6 +136,7 @@ bool AppBase::Start()
 	// 継承先の終了化呼び出し
 	Finalize();
 
+	// デバイス終了
 	device_.Finalize();
 
 	return true;
@@ -271,4 +256,6 @@ void AppBase::Render_()
 	device->BeginScene();
 	Render2D();
 	device->EndScene();
+
+	device->Present(nullptr, nullptr, nullptr, nullptr);
 }

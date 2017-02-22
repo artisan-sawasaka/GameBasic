@@ -49,6 +49,8 @@ void Renderer::Initialize(AppBase* app)
 	if (device == nullptr) return ;
 
 	app_ = app;
+	stocks_.resize(1024);
+	stock_count_ = 0;
 }
 
 /*!
@@ -60,6 +62,7 @@ void Renderer::Finalize()
 		it->second->Release();
 	}
 	fonts_.clear();
+	std::vector<Vertex2D>().swap(stocks_);
 }
 
 void Renderer::SetTextureFilter(bool filter)
@@ -287,60 +290,56 @@ void Renderer::DrawImage(Texture* texture, Anchor anchor, int dx, int dy, int dw
 	if (texture == nullptr) return ;
 	if (color.GetA() == 0) return ;
 
-	dx -= (dw >> 1) * (anchor % 3);
-	dy -= (dh >> 1) * (anchor / 3);
+	Vertex2D v[4];
+	CreateVertex2D_(v, texture, anchor, dx, dy, dw, dh, sx, sy, sw, sh, color, rotate);
 
-	const float left = static_cast<float>(dx);
-	const float top = static_cast<float>(dy);
-	const float right = static_cast<float>(dw) + left;
-	const float bottom = static_cast<float>(dh) + top;
-	const float tl = static_cast<float>(sx + 0.5f) / texture->GetWidth();
-	const float tt = static_cast<float>(sy + 0.5f) / texture->GetHeight();
-	const float tr = static_cast<float>(sw) / texture->GetWidth() + tl;
-	const float tb = static_cast<float>(sh) / texture->GetHeight() + tt;
-	const uint32_t col = color.GetARGB();
-
-	struct VERTEX2D {
-		float x, y, z, rhw;
-		uint32_t color;
-		float u, v;
-	} v[] = {
-		left,  top,    0.0f, 1.0f, col, tl, tt,
-		right, top,    0.0f, 1.0f, col, tr, tt,
-		left,  bottom, 0.0f, 1.0f, col, tl, tb,
-		right, bottom, 0.0f, 1.0f, col, tr, tb,
-	};
-
-	float mx = static_cast<float>((dw >> 1) * (anchor % 3));
-	float my = static_cast<float>((dh >> 1) * (anchor / 3));
-		
-
-	// 回転行列を書き込む
-	if (rotate != 0) {
-		D3DXMATRIX mat, matt;
-		D3DXMatrixTranslation(&mat, -left, -top, 0);
-		mat *= *D3DXMatrixRotationZ(&matt, rotate * RotateBase);
-		mat.m[3][0] += left;
-		mat.m[3][1] += top;
-
-		for (int i = 0; i < 4; ++i) {
-			D3DXVECTOR3 din, dout;
-			din.x = v[i].x;
-			din.y = v[i].y;
-			din.z = v[i].z;
-			D3DXVec3TransformCoord(&dout, &din, &mat);
-			v[i].x = dout.x;
-			v[i].y = dout.y;
-			v[i].z = dout.z;
-		}
-	}
-
-	// 適応
-
+	// 描画
 	HRESULT hr;
 	hr = device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 	hr = device->SetTexture(0, texture->GetTexture());
-	hr = device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(VERTEX2D));
+	hr = device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(Vertex2D));
+}
+
+
+/*!
+ * @brief ストッククリア
+ */
+void Renderer::ClearStock()
+{
+	stock_count_ = 0;
+}
+
+/*!
+ * @brief 画像ストック
+ */
+void Renderer::ImageStock(Texture* texture, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Color& color, float rotate)
+{
+	if (texture == nullptr) return ;
+	if (color.GetA() == 0) return ;
+
+	size_t index = stock_count_ * 4;
+	if (index >= stocks_.size()) {
+		stocks_.resize(stocks_.size() * 2);
+	}
+	CreateVertex2D_(&stocks_[index], texture, anchor, dx, dy, dw, dh, sx, sy, sw, sh, color, rotate);
+	++stock_count_;
+}
+
+/*!
+ * @brief ストック描画
+ */
+void Renderer::DrawStock()
+{
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
+	/*
+	// 描画
+	HRESULT hr;
+	hr = device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	hr = device->SetTexture(0, texture->GetTexture());
+	hr = device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(Vertex2D));
+	*/
 }
 
 /*!
@@ -363,9 +362,9 @@ void Renderer::DrawString(const wchar_t* s, Anchor anchor, int x, int y, int siz
 	auto* font = GetFont_(size);
 	RECT rect;
 	rect.left = x;
-	rect.right = 10000;
+	rect.right = x + 1;
 	rect.top = y;
-	rect.bottom = 10000;
+	rect.bottom = y + 1;
 
 	// アンカーを基準にして表示座標を変える
 	if (anchor != LEFT_TOP) {
@@ -432,3 +431,52 @@ LPD3DXFONT Renderer::GetFont_(int size)
 	fonts_.insert(std::pair<int, LPD3DXFONT>(size, font));
 	return font;
 }
+
+void Renderer::CreateVertex2D_(Vertex2D* v, Texture* texture, Anchor anchor, int dx, int dy, int dw, int dh, int sx, int sy, int sw, int sh, const Color& color, float rotate)
+{
+	if (texture == nullptr) return ;
+	if (color.GetA() == 0) return ;
+
+	dx -= (dw >> 1) * (anchor % 3);
+	dy -= (dh >> 1) * (anchor / 3);
+
+	const float left = static_cast<float>(dx);
+	const float top = static_cast<float>(dy);
+	const float right = static_cast<float>(dw) + left;
+	const float bottom = static_cast<float>(dh) + top;
+	const float tl = static_cast<float>(sx + 0.5f) / texture->GetWidth();
+	const float tt = static_cast<float>(sy + 0.5f) / texture->GetHeight();
+	const float tr = static_cast<float>(sw) / texture->GetWidth() + tl;
+	const float tb = static_cast<float>(sh) / texture->GetHeight() + tt;
+	const uint32_t col = color.GetARGB();
+
+	Vertex2D* v0 = &v[0];
+	Vertex2D* v1 = &v[1];
+	Vertex2D* v2 = &v[2];
+	Vertex2D* v3 = &v[3];
+	v0->x = left;  v0->y = top;    v0->z = 0.0f; v0->rhw = 1.0f; v0->color = col; v0->u = tl; v0->v = tt;
+	v1->x = right; v1->y = top;    v1->z = 0.0f; v1->rhw = 1.0f; v1->color = col; v1->u = tr; v1->v = tt;
+	v2->x = left;  v2->y = bottom; v2->z = 0.0f; v2->rhw = 1.0f; v2->color = col; v2->u = tl; v2->v = tb;
+	v3->x = right; v3->y = bottom; v3->z = 0.0f; v3->rhw = 1.0f; v3->color = col; v3->u = tr; v3->v = tb;
+
+	// 回転行列を書き込む
+	if (rotate != 0) {
+		D3DXMATRIX mat, matt;
+		D3DXMatrixTranslation(&mat, -left, -top, 0);
+		mat *= *D3DXMatrixRotationZ(&matt, rotate * RotateBase);
+		mat.m[3][0] += left;
+		mat.m[3][1] += top;
+
+		for (int i = 0; i < 4; ++i) {
+			D3DXVECTOR3 din, dout;
+			din.x = v[i].x;
+			din.y = v[i].y;
+			din.z = v[i].z;
+			D3DXVec3TransformCoord(&dout, &din, &mat);
+			v[i].x = dout.x;
+			v[i].y = dout.y;
+			v[i].z = dout.z;
+		}
+	}
+}
+
