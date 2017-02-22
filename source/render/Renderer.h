@@ -10,6 +10,7 @@
 #include <Windows.h>
 #include <gdiplus.h>
 #include <memory>
+#include <d3d9.h>
 #include "master/MasterData.hpp"
 #include "Texture.h"
 #include "Color.h"
@@ -87,6 +88,11 @@ public :
 	 * @brief 初期化
 	 */
 	void Initialize(AppBase* app);
+
+	/*!
+	 * @brief 終了化
+	 */
+	void Finalize();
 
 	/*!
 	 * @brief テクスチャーフィルタの有無を設定します。
@@ -217,6 +223,8 @@ public :
 
 private :
 	Renderer();
+	LPD3DXFONT GetFont_(int size);
 
 	AppBase* app_;
+	std::map<int, LPD3DXFONT> fonts_;
 };

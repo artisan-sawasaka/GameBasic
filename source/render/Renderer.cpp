@@ -7,7 +7,6 @@
 
 static const float RotateBase = 6.28318530718f;
 
-
 D3DCMPFUNC ChangeFunc(Renderer::FUNC func)
 {
 	if (func == Renderer::NEVER) return D3DCMP_NEVER;
@@ -32,6 +31,7 @@ uint32_t ChangeStencilCaps(Renderer::STENCIL_CAPS caps)
 }
 
 Renderer::Renderer()
+	: app_(nullptr)
 {
 }
 
@@ -44,7 +44,22 @@ Renderer::~Renderer()
  */
 void Renderer::Initialize(AppBase* app)
 {
+	Finalize();
+	auto device = app->GetDevice().GetDevice();
+	if (device == nullptr) return ;
+
 	app_ = app;
+}
+
+/*!
+ * @brief 終了化
+ */
+void Renderer::Finalize()
+{
+	for (auto it = fonts_.begin(); it != fonts_.end(); ++it) {
+		it->second->Release();
+	}
+	fonts_.clear();
 }
 
 void Renderer::SetTextureFilter(bool filter)
@@ -272,6 +287,9 @@ void Renderer::DrawImage(Texture* texture, Anchor anchor, int dx, int dy, int dw
 	if (texture == nullptr) return ;
 	if (color.GetA() == 0) return ;
 
+	dx -= (dw >> 1) * (anchor % 3);
+	dy -= (dh >> 1) * (anchor / 3);
+
 	const float left = static_cast<float>(dx);
 	const float top = static_cast<float>(dy);
 	const float right = static_cast<float>(dw) + left;
@@ -296,24 +314,28 @@ void Renderer::DrawImage(Texture* texture, Anchor anchor, int dx, int dy, int dw
 	float mx = static_cast<float>((dw >> 1) * (anchor % 3));
 	float my = static_cast<float>((dh >> 1) * (anchor / 3));
 		
+
 	// 回転行列を書き込む
-	D3DXMATRIX mat, matt;
-	D3DXMatrixTranslation(&mat, -mx, -my, 0);
 	if (rotate != 0) {
+		D3DXMATRIX mat, matt;
+		D3DXMatrixTranslation(&mat, -left, -top, 0);
 		mat *= *D3DXMatrixRotationZ(&matt, rotate * RotateBase);
+		mat.m[3][0] += left;
+		mat.m[3][1] += top;
+
+		for (int i = 0; i < 4; ++i) {
+			D3DXVECTOR3 din, dout;
+			din.x = v[i].x;
+			din.y = v[i].y;
+			din.z = v[i].z;
+			D3DXVec3TransformCoord(&dout, &din, &mat);
+			v[i].x = dout.x;
+			v[i].y = dout.y;
+			v[i].z = dout.z;
+		}
 	}
 
 	// 適応
-	for (int i = 0; i < 4; ++i) {
-		D3DXVECTOR3 din, dout;
-		din.x = v[i].x;
-		din.y = v[i].y;
-		din.z = v[i].z;
-		D3DXVec3TransformCoord(&dout, &din, &mat);
-		v[i].x = dout.x;
-		v[i].y = dout.y;
-		v[i].z = dout.z;
-	}
 
 	HRESULT hr;
 	hr = device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
@@ -338,6 +360,24 @@ void Renderer::DrawString(const wchar_t* s, Anchor anchor, int x, int y, int siz
 {
 	if (color.GetA() == 0) return ;
 
+	auto* font = GetFont_(size);
+	RECT rect;
+	rect.left = x;
+	rect.right = 10000;
+	rect.top = y;
+	rect.bottom = 10000;
+
+	// アンカーを基準にして表示座標を変える
+	if (anchor != LEFT_TOP) {
+		int height = font->DrawTextW(nullptr, s, -1, &rect, DT_CALCRECT | DT_SINGLELINE, color.GetARGB());
+		int width = rect.right - rect.left;
+		rect.left -= width  / 2 * (anchor % 3);
+		rect.top -= height / 2 * (anchor / 3);
+		rect.right = rect.left + width;
+		rect.bottom = rect.top + height;
+	}
+
+	int n = font->DrawTextW(nullptr, s, wcslen(s), &rect, DT_NOCLIP, color.GetARGB());
 }
 
 /*!
@@ -372,4 +412,23 @@ void Renderer::DrawStringFormat(Anchor anchor, int x, int y, int size, const Col
 	va_end(arg);
 
 	this->DrawString(text, anchor, x, y, size, color);
+}
+
+/*!
+ * @brief フォントの取得
+ */
+LPD3DXFONT Renderer::GetFont_(int size)
+{
+	auto it = fonts_.find(size);
+	if (it != fonts_.end()) {
+		return fonts_[size];
+	}
+
+	auto device = app_->GetDevice().GetDevice();
+	if (device == nullptr) return nullptr;
+
+	LPD3DXFONT font;
+	D3DXCreateFont(device, size, 0, FW_BOLD, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, 0, L"ＭＳ ゴシック", &font);
+	fonts_.insert(std::pair<int, LPD3DXFONT>(size, font));
+	return font;
 }

@@ -76,6 +76,8 @@ void MainApp::Initialize()
  */
 void MainApp::Finalize()
 {
+	// ƒŒƒ“ƒ_ƒ‰[‚ðI—¹‰»
+	Renderer::GetInstance()->Finalize();
 }
 
 /*!

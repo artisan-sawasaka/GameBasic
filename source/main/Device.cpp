@@ -55,7 +55,8 @@ bool Device::Initialize(HWND hwnd, uint32_t width, uint32_t height)
 	d3dpp_window_.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp_window_.Flags = 0;
 	d3dpp_window_.FullScreen_RefreshRateInHz = 0;
-	d3dpp_window_.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	//d3dpp_window_.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	d3dpp_window_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	// D3DDeviceオブジェクトの設定(フルスクリーン・モード)
 	::ZeroMemory(&d3dpp_full_, sizeof(d3dpp_full_));
@@ -72,7 +73,8 @@ bool Device::Initialize(HWND hwnd, uint32_t width, uint32_t height)
 	d3dpp_full_.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp_full_.Flags = 0;
 	d3dpp_full_.FullScreen_RefreshRateInHz = 60;
-	d3dpp_full_.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	//d3dpp_full_.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	d3dpp_full_.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	// D3DDeviceオブジェクトの作成
 	d3dpp_ = d3dpp_window_;
