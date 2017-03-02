@@ -28,6 +28,6 @@ void SceneInitialize::Update(float df)
 /*!
  * @brief •`‰æ
  */
-void SceneInitialize::Render()
+void SceneInitialize::Render2D()
 {
 }

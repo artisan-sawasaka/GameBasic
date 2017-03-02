@@ -126,7 +126,7 @@ void MainApp::Update_(float df)
 void MainApp::ClearScreen()
 {
 	// 画面クリア
-	Renderer::GetInstance()->ClearScreen(Color(0, 80, 255));
+	Renderer::GetInstance()->ClearScreen(Color(255, 0, 255));
 }
 
 /*!
@@ -134,6 +134,8 @@ void MainApp::ClearScreen()
  */
 void MainApp::Render3D()
 {
+	// シーン
+	SceneManager::GetInstance()->Render3D();
 }
 
 /*!
@@ -142,7 +144,7 @@ void MainApp::Render3D()
 void MainApp::Render2D()
 {
 	// シーン
-	SceneManager::GetInstance()->Render();
+	SceneManager::GetInstance()->Render2D();
 
 	// フェード
 	FadeManager::GetInstance()->Render();

@@ -86,9 +86,19 @@ void SceneManager::Update(float df)
 /*!
  * @brief •`‰æ
  */
-void SceneManager::Render()
+void SceneManager::Render3D()
 {
 	if (scene_) {
-		scene_->Render();
+		scene_->Render3D();
+	}
+}
+
+/*!
+ * @brief •`‰æ
+ */
+void SceneManager::Render2D()
+{
+	if (scene_) {
+		scene_->Render2D();
 	}
 }

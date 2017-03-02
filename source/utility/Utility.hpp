@@ -241,4 +241,67 @@ public:
 
 		return crc32;
 	}
+
+	/*!
+	 * @brief フルパスからファイル名なしのパスを取得します
+	 */
+	static std::string GetDirectoryName(const char* str)
+	{
+		const char* p = strrchr(str, '\\');
+		if (p == NULL) {
+			p = strrchr(str, '/');
+			if (p == NULL) {
+				return std::string(str);
+			}
+		}
+		return std::string(str, p - str);
+	}
+
+	/*!
+	 * @brief 指定したパス文字列のファイル名と拡張子を返します。
+	 */
+	static std::string GetFileName(const char* str)
+	{
+		const char* p = strrchr(str, '\\');
+		if (p == NULL) {
+			p = strrchr(str, '/');
+			if (p == NULL) {
+				return std::string(str);
+			}
+		}
+		return std::string(p + 1);
+	}
+
+	/*!
+	 * @brief 指定したパス文字列のファイル名を拡張子を付けずに返します。
+	 */
+	static std::string GetFileNameWithoutExtension(const char* str)
+	{
+		const char* p = strrchr(str, '\\');
+		if (p == NULL) {
+			p = strrchr(str, '/');
+		}
+		if (p == NULL){
+			p = str;
+		} else {
+			p++;
+		}
+		const char* pp = strrchr(p, '.');
+		if (pp == NULL) {
+			return std::string(p);
+		}
+		return std::string(p, pp - p);
+	}
+
+	/*!
+	 * @brief 指定したパス文字列の拡張子を返します。
+	 */
+	static std::string GetExtension(const char* str)
+	{
+		const char* pp = strrchr(str, '.');
+		if (pp == NULL) {
+			return std::string(str);
+		}
+		return std::string(pp + 1);
+	}
 };

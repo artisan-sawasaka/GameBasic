@@ -34,6 +34,6 @@ void SceneGame::Update(float df)
 /*!
  * @brief •`‰æ
  */
-void SceneGame::Render()
+void SceneGame::Render2D()
 {
 }

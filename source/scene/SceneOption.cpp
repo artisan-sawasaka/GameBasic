@@ -61,7 +61,7 @@ void SceneOption::Update(float df)
 /*!
  * @brief 描画
  */
-void SceneOption::Render()
+void SceneOption::Render2D()
 {
 	// マスターデータに基づく描画処理
 	Utility::BasicRender(MasterData::OptionImageList, ui_, textures_);

@@ -26,6 +26,9 @@
     <Filter Include="source\render">
       <UniqueIdentifier>{435bf864-5162-4eac-8b87-18262e1e86ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\model">
+      <UniqueIdentifier>{f0930b36-6b60-4f9e-8fe4-5d1829ecf5c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main\main.cpp">
@@ -99,6 +102,9 @@
     </ClCompile>
     <ClCompile Include="source\render\Color.cpp">
       <Filter>source\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\model\Model.cpp">
+      <Filter>source\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="source\render\Color.h">
       <Filter>source\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\model\Model.h">
+      <Filter>source\model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

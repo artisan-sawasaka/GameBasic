@@ -35,7 +35,12 @@ public :
 	virtual void Update(float df){}
 
 	/*!
-	 * @brief •`‰æ
+	 * @brief 3D•`‰æ
 	 */
-	virtual void Render(){}
+	virtual void Render3D(){}
+
+	/*!
+	 * @brief 2D•`‰æ
+	 */
+	virtual void Render2D(){}
 };

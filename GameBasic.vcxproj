@@ -88,6 +88,7 @@
     <ClCompile Include="source\main\main.cpp" />
     <ClCompile Include="source\main\WinMain.cpp" />
     <ClCompile Include="source\master\MasterData.cpp" />
+    <ClCompile Include="source\model\Model.cpp" />
     <ClCompile Include="source\render\Color.cpp" />
     <ClCompile Include="source\render\Renderer.cpp" />
     <ClCompile Include="source\render\Texture.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="source\main\main.h" />
     <ClInclude Include="source\main\WinMain.h" />
     <ClInclude Include="source\master\MasterData.hpp" />
+    <ClInclude Include="source\model\Model.h" />
     <ClInclude Include="source\render\Color.h" />
     <ClInclude Include="source\render\Renderer.h" />
     <ClInclude Include="source\render\Texture.h" />

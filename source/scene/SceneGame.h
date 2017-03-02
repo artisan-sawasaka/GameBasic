@@ -39,7 +39,7 @@ public :
 	/*!
 	 * @brief •`‰æ
 	 */
-	void Render();
+	void Render2D();
 
 private :
 	SceneGameParam param_;

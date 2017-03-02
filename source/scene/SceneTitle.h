@@ -5,6 +5,7 @@
 #include "utility/StateManager.h"
 #include "utility/InOutAnimation.h"
 #include "master/MasterData.hpp"
+#include "model/Model.h"
 #include <memory>
 #include <map>
 
@@ -29,9 +30,14 @@ public :
 	void Update(float df);
 
 	/*!
-	 * @brief 描画
+	 * @brief 3D描画
 	 */
-	void Render();
+	void Render3D();
+
+	/*!
+	 * @brief 2D描画
+	 */
+	void Render2D();
 
 private :
 	enum State {
@@ -76,5 +82,6 @@ private :
 	InOutAnimation<MasterData::TitleUIData, MasterData::TitleInOutData> animtion_;	// InOutアニメーション
 	StateManager<State> state_;														// 状態管理
 
+	Model model_;
 	Menu cursor_;	// カーソル
 };

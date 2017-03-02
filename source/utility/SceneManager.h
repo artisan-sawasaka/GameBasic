@@ -52,9 +52,14 @@ public :
 	void Update(float df);
 
 	/*!
-	* @brief •`‰æ
-	*/
-	void Render();
+	 * @brief 3D•`‰æ
+	 */
+	void Render3D();
+
+	/*!
+	 * @brief 2D•`‰æ
+	 */
+	void Render2D();
 
 	static SceneManager* GetInstance() {
 		static SceneManager v;

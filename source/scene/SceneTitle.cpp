@@ -79,9 +79,17 @@ void SceneTitle::Update(float df)
 }
 
 /*!
+ * @brief 3D描画
+ */
+void SceneTitle::Render3D()
+{
+	model_.Render();
+}
+
+/*!
  * @brief 描画
  */
-void SceneTitle::Render()
+void SceneTitle::Render2D()
 {
 	// マスターデータに基づく描画処理
 	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
@@ -100,6 +108,8 @@ void SceneTitle::Reload_()
 
 	// 操作しやすいようにオブジェクト化する
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(ui_);
+
+	model_.LoadFile("data/model/ch00_stand00.x");
 }
 
 /*!
