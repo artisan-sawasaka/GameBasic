@@ -29,7 +29,8 @@ bool Model::LoadFile(const char* path)
 	//Xファイルロード
 	DWORD material_num;
 	LPD3DXBUFFER buffer;
-	auto ret = D3DXLoadMeshFromXA(path, D3DXMESH_IB_MANAGED, device, nullptr, &buffer, nullptr, &material_num, &mesh_);	if (ret != D3D_OK) {
+	auto ret = D3DXLoadMeshFromXA(path, D3DXMESH_IB_MANAGED, device, nullptr, &buffer, nullptr, &material_num, &mesh_);
+	if (ret != D3D_OK) {
 		return false;
 	}
 	

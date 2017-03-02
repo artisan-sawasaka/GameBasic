@@ -11,6 +11,7 @@
 #include <memory>
 #include <d3d9.h>
 #include "master/MasterData.hpp"
+#include "main/DeviceLostListener.h"
 #include "Texture.h"
 #include "Color.h"
 
@@ -19,7 +20,7 @@ class AppBase;
 /*!
  * @brief レンダリングクラス
  */
-class Renderer
+class Renderer : public DeviceLostListener
 {
 public :
 	enum Anchor
@@ -240,6 +241,8 @@ public :
 		static Renderer v;
 		return &v;
 	}
+	virtual void OnLostDevice();
+	virtual void OnResetDevice();
 
 private :
 	Renderer();
@@ -251,4 +254,5 @@ private :
 	std::map<int, LPD3DXFONT> fonts_;
 	std::vector<Vertex2D> stocks_;
 	size_t stock_count_;
+	bool device_lost_;
 };

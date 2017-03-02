@@ -67,5 +67,5 @@ private :
 		bool key_temp;
 		int key_count;
 	};
-	Info keys_[256];
+	Info infos_[256];
 };

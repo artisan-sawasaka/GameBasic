@@ -9,11 +9,11 @@ KeyManager::KeyManager()
 }
 
 /*!
- * @brief ‰Ÿ‚µ‚½Žž
+ * @brief ƒNƒŠƒA
  */
 void KeyManager::Clear()
 {
-	memset(keys_, false , sizeof(keys_));
+	memset(infos_, false , sizeof(infos_));
 }
 
 /*!
@@ -21,7 +21,7 @@ void KeyManager::Clear()
  */
 void KeyManager::Down(unsigned char key)
 {
-	keys_[key].key_temp = true;
+	infos_[key].key_temp = true;
 }
 
 /*!
@@ -29,7 +29,7 @@ void KeyManager::Down(unsigned char key)
  */
 void KeyManager::Up(unsigned char key)
 {
-	keys_[key].key_temp = false;
+	infos_[key].key_temp = false;
 }
 
 /*!
@@ -37,8 +37,8 @@ void KeyManager::Up(unsigned char key)
  */
 void KeyManager::Update()
 {
-	for (int i = 0; i < sizeof(keys_) / sizeof(*keys_); ++i) {
-		auto& info = keys_[i];
+	for (int i = 0; i < sizeof(infos_) / sizeof(*infos_); ++i) {
+		auto& info = infos_[i];
 		info.key_back = info.key;
 		info.key = info.key_temp;
 		info.key_count = info.key ? info.key_count + 1 : 0;
@@ -50,7 +50,7 @@ void KeyManager::Update()
  */
 bool KeyManager::IsPress(unsigned char key) const
 {
-	return keys_[key].key;
+	return infos_[key].key;
 }
 
 /*!
@@ -58,7 +58,7 @@ bool KeyManager::IsPress(unsigned char key) const
  */
 bool KeyManager::IsTrg(unsigned char key) const
 {
-	return keys_[key].key && !keys_[key].key_back;
+	return infos_[key].key && !infos_[key].key_back;
 }
 
 /*!
@@ -66,7 +66,7 @@ bool KeyManager::IsTrg(unsigned char key) const
  */
 bool KeyManager::IsRelease(unsigned char key) const
 {
-	return !keys_[key].key && keys_[key].key_back;
+	return !infos_[key].key && infos_[key].key_back;
 }
 
 /*!
@@ -74,7 +74,7 @@ bool KeyManager::IsRelease(unsigned char key) const
  */
 bool KeyManager::IsRepeat(unsigned char key) const
 {
-	auto& info = keys_[key];
+	auto& info = infos_[key];
 	if (info.key_count == 0) return false;
 	if (info.key_count >= MasterData::KeyRepeatBase[MasterData::KeyRepeatBase.size() - 1].value) {
 		return info.key_count % 2 == 0;

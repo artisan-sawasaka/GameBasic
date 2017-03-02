@@ -32,6 +32,7 @@ uint32_t ChangeStencilCaps(Renderer::STENCIL_CAPS caps)
 
 Renderer::Renderer()
 	: app_(nullptr)
+	, device_lost_(false)
 {
 }
 
@@ -49,6 +50,7 @@ void Renderer::Initialize(AppBase* app)
 	auto device = GetDevice_();
 	if (device == nullptr) return ;
 
+	app_->GetDevice().AddDeviceLostListener(this);
 	stocks_.resize(1024);
 	stock_count_ = 0;
 }
@@ -415,11 +417,29 @@ void Renderer::DrawStringFormat(Anchor anchor, int x, int y, int size, const Col
 	this->DrawString(text, anchor, x, y, size, color);
 }
 
+void Renderer::OnLostDevice()
+{
+	for (auto it = fonts_.begin(); it != fonts_.end(); ++it) {
+		it->second->OnLostDevice();
+	}
+	device_lost_ = true;
+}
+
+void Renderer::OnResetDevice()
+{
+	for (auto it = fonts_.begin(); it != fonts_.end(); ++it) {
+		it->second->OnResetDevice();
+	}
+	device_lost_ = false;
+}
+
 /*!
  * @brief ƒtƒHƒ“ƒg‚ÌŽæ“¾
  */
 LPD3DXFONT Renderer::GetFont_(int size)
 {
+	if (device_lost_) return nullptr;
+
 	auto it = fonts_.find(size);
 	if (it != fonts_.end()) {
 		return fonts_[size];

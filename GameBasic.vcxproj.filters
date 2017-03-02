@@ -26,7 +26,7 @@
     <Filter Include="source\render">
       <UniqueIdentifier>{435bf864-5162-4eac-8b87-18262e1e86ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\model">
+    <Filter Include="source\3d">
       <UniqueIdentifier>{f0930b36-6b60-4f9e-8fe4-5d1829ecf5c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -103,8 +103,17 @@
     <ClCompile Include="source\render\Color.cpp">
       <Filter>source\render</Filter>
     </ClCompile>
-    <ClCompile Include="source\model\Model.cpp">
-      <Filter>source\model</Filter>
+    <ClCompile Include="source\3d\Camera.cpp">
+      <Filter>source\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="source\3d\Model.cpp">
+      <Filter>source\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\MouseManager.cpp">
+      <Filter>source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="source\3d\DebugCamera.cpp">
+      <Filter>source\3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -210,8 +219,17 @@
     <ClInclude Include="source\render\Color.h">
       <Filter>source\render</Filter>
     </ClInclude>
-    <ClInclude Include="source\model\Model.h">
-      <Filter>source\model</Filter>
+    <ClInclude Include="source\3d\Camera.h">
+      <Filter>source\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="source\3d\Model.h">
+      <Filter>source\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\MouseManager.h">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\3d\DebugCamera.h">
+      <Filter>source\3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

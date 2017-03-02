@@ -5,6 +5,7 @@
 #include "utility/FadeManager.h"
 #include "utility/ConsoleManager.h"
 #include "utility/KeyManager.h"
+#include "utility/MouseManager.h"
 #include "utility/Utility.hpp"
 #include "sound/SoundManager.h"
 #include <set>
@@ -44,10 +45,12 @@ LRESULT MainApp::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 		KeyManager::GetInstance()->Up(wParam);
 	} else if (msg == WM_ACTIVATE && wParam == 0) {
 		KeyManager::GetInstance()->Clear();
+		MouseManager::GetInstance()->Clear();
 	} else if (msg == WM_SYSKEYDOWN) {
 		if (wParam == VK_RETURN) {
 		}
 	}
+	MouseManager::GetInstance()->WndProc(hWnd, msg, wParam, lParam);
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
@@ -85,11 +88,14 @@ void MainApp::Finalize()
  */
 void MainApp::Update(float df)
 {
-	// カメラの更新
-	camera_.Update(df);
-
 	// キーの更新
 	KeyManager::GetInstance()->Update();
+
+	// マウス更新
+	MouseManager::GetInstance()->Update();
+
+	// カメラの更新
+	camera_.Update(df);
 
 	// デバッグ機能
 	if (KeyManager::GetInstance()->IsTrg('R')) {
@@ -180,6 +186,6 @@ void MainApp::ReloadMasterData_()
 {
 	Utility::ReloadMasterData();
 	DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
-//	SetWindowSize(MasterData::Const.window_width, MasterData::Const.window_height);
-//	GetDevice().SetBackBufferSize(MasterData::Const.backbuffer_width, MasterData::Const.backbuffer_height);
+	SetWindowSize(MasterData::Const.window_width, MasterData::Const.window_height);
+	GetDevice().SetBackBufferSize(MasterData::Const.backbuffer_width, MasterData::Const.backbuffer_height);
 }

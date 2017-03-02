@@ -127,6 +127,7 @@ bool Device::CheckIdle()
 				return false;	// 予期せぬエラー
 			}
 
+			OnLostDevice_();
 			hr = device_->Reset(&d3dpp_); // 復元を試みる
 			if (FAILED(hr)) {
 				if (hr == D3DERR_DEVICELOST) {
@@ -175,6 +176,7 @@ void Device::ChangeScreen(bool window)
 		d3dpp_ = d3dpp_full_;
 		GetWindowRect(hwnd_, &window_rect_);
 	}
+	OnLostDevice_();
 
 	HRESULT hr = device_->Reset(&d3dpp_);
 	if (FAILED(hr)) {
@@ -222,6 +224,8 @@ void Device::SetBackBufferSize(uint32_t width, uint32_t height)
 	d3dpp_window_.BackBufferWidth = width;
 	d3dpp_window_.BackBufferHeight = height;
 	d3dpp_ = d3dpp_window_;
+
+	OnLostDevice_();
 	HRESULT hr = device_->Reset(&d3dpp_);
 	if (FAILED(hr)) {
 		if (hr == D3DERR_DEVICELOST) {
@@ -231,6 +235,16 @@ void Device::SetBackBufferSize(uint32_t width, uint32_t height)
 		}
 	}
 	InitRenderState_();
+}
+
+void Device::AddDeviceLostListener(DeviceLostListener* listener)
+{
+	device_lost_listeners_.insert(listener);
+}
+
+void Device::RemoveDeviceLostListener(DeviceLostListener* listener)
+{
+	device_lost_listeners_.erase(listener);
 }
 
 /*!
@@ -365,4 +379,21 @@ void Device::InitRenderState_()
 	light.Direction = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
 	device_->SetLight(0, &light);
 	device_->LightEnable(0, TRUE);
+
+	// デバイスリセット
+	OnResetDevice_();
+}
+
+void Device::OnLostDevice_()
+{
+	for (auto it = device_lost_listeners_.begin(); it != device_lost_listeners_.end(); ++it) {
+		(*it)->OnLostDevice();
+	}
+}
+
+void Device::OnResetDevice_()
+{
+	for (auto it = device_lost_listeners_.begin(); it != device_lost_listeners_.end(); ++it) {
+		(*it)->OnResetDevice();
+	}
 }

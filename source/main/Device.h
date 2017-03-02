@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <d3dx9.h>
 #include <cstdint>
+#include <set>
+#include "DeviceLostListener.h"
 
 class Device
 {
@@ -18,9 +20,13 @@ public :
 	bool IsFullScreen() const { return !screen_window_; }
 	void ChangeScreen(bool window);
 	void SetBackBufferSize(uint32_t width, uint32_t height);
+	void AddDeviceLostListener(DeviceLostListener* listener);
+	void RemoveDeviceLostListener(DeviceLostListener* listener);
 
 private :
 	void InitRenderState_();
+	void OnLostDevice_();
+	void OnResetDevice_();
 
 private :
 	LPDIRECT3D9 d3d_;
@@ -34,4 +40,5 @@ private :
 	RECT window_rect_;
 	bool device_lost_;
 	bool screen_window_;
+	std::set<DeviceLostListener*> device_lost_listeners_;
 };

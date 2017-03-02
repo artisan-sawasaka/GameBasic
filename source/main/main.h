@@ -1,7 +1,7 @@
 #pragma once
 
 #include "WinMain.h"
-#include "3d/Camera.h"
+#include "3d/DebugCamera.h"
 
 class MainApp : public AppBase
 {
@@ -50,5 +50,5 @@ private :
 	void ReloadMasterData_();
 
 	bool is_debug_render_;
-	Camera camera_;
+	DebugCamera camera_;
 };

@@ -1,13 +1,14 @@
 #include "Camera.h"
 #include "utility/DeviceManager.h"
 #include "utility/Utility.hpp"
-#include "utility/KeyManager.h"
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
 
 Camera::Camera()
+	: mode_(Normal)
 {
 	SetPosition(0.0f, 5.0f, -14);
+	SetRotate(0.0f, 0.0f, 0.0f);
 	SetLookAt(0.0f, 5.0f, 0.0f);
 	SetFov(D3DXToRadian(45));
 	SetAspect(16.0f / 9.0f);
@@ -21,7 +22,14 @@ Camera::~Camera()
 
 void Camera::Apply()
 {
-	D3DXMatrixLookAtLH(&view_, &position_, &lookat_, &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+	if (mode_ == Normal) {
+		D3DXMATRIX mat;
+		D3DXMatrixRotationYawPitchRoll(&mat, rotate_.y, rotate_.x, rotate_.z);
+		mat.m[3][0] += position_.x; mat.m[3][1] += position_.y; mat.m[3][2] += position_.z;
+		D3DXMatrixInverse(&view_, nullptr, &mat);
+	} else {
+		D3DXMatrixLookAtLH(&view_, &position_, &lookat_, &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+	}
 	D3DXMatrixPerspectiveFovLH(&projection_, fov_, aspect_, znear_, zfar_);
 }
 
@@ -30,15 +38,6 @@ void Camera::Update(float df)
 	auto device = DeviceManager::GetInstance()->GetDevice();
 	if (device == nullptr) return ;
 
-	// デバッグ機能
-	if (KeyManager::GetInstance()->IsPress(VK_UP)) {
-		position_.z += 0.1f;
-		Apply();
-	} else if (KeyManager::GetInstance()->IsPress(VK_DOWN)) {
-		position_.z -= 0.1f;
-		Apply();
-	}
-
 	device->SetTransform(D3DTS_VIEW, &view_);
 	device->SetTransform(D3DTS_PROJECTION, &projection_);
 }
@@ -46,6 +45,11 @@ void Camera::Update(float df)
 void Camera::SetPosition(float x, float y, float z)
 {
 	position_ = D3DXVECTOR3(x, y, z);
+}
+
+void Camera::SetRotate(float x, float y, float z)
+{
+	rotate_ = D3DXVECTOR3(x, y, z);
 }
 
 void Camera::SetLookAt(float x, float y, float z)
