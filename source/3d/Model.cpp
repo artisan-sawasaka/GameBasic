@@ -94,77 +94,78 @@ void Model::Render()
 	auto device = DeviceManager::GetInstance()->GetDevice();
 	if (device == nullptr || mesh_ == nullptr) return ;
 
-	D3DXMATRIX mat;
-	D3DXVECTOR3* scale = (scale_ == D3DXVECTOR3(1.0f, 1.0f, 1.0f) ? nullptr : &scale_);
-	if (rotate_ == D3DXVECTOR3(0.0f, 0.0f, 0.0f)) {
-		// ‰ñ“]‚È‚µ
-		D3DXMatrixTransformation(&mat, nullptr, nullptr, scale, nullptr, nullptr, nullptr);
-	} else {
-		// ‰ñ“]‚ ‚è
-		D3DXMATRIX matr, matt;
-		D3DXMatrixIdentity(&matr);
-		if (rotate_.y != 0) {
-			matr *= *D3DXMatrixRotationY(&matt, rotate_.y);
-		}
-		if (rotate_.x != 0) {
-			matr *= *D3DXMatrixRotationX(&matt, rotate_.x);
-		}
-		if (rotate_.z != 0) {
-			matr *= *D3DXMatrixRotationZ(&matt, rotate_.z);
-		}
-		D3DXQUATERNION q;
-		D3DXQuaternionRotationMatrix(&q, &matr);
-		D3DXMatrixTransformation(&mat, nullptr, nullptr, scale, nullptr, &q, nullptr);
-	}
+	D3DXMATRIX mat, matt;
+	D3DXMatrixIdentity(&mat);
 
+	// Šgk
+	if (scale_ != D3DXVECTOR3(1.0f, 1.0f, 1.0f)) {
+		mat *= *D3DXMatrixScaling(&matt, scale_.x, scale_.y, scale_.z);
+	}
+	// Y‰ñ“]
+	if (rotate_.y != 0) {
+		mat *= *D3DXMatrixRotationY(&matt, rotate_.y);
+	}
+	// X‰ñ“]
+	if (rotate_.x != 0) {
+		mat *= *D3DXMatrixRotationX(&matt, rotate_.x);
+	}
+	// Z‰ñ“]
+	if (rotate_.z != 0) {
+		mat *= *D3DXMatrixRotationZ(&matt, rotate_.z);
+	}
+	// ˆÚ“®
 	mat.m[3][0] += position_.x;
 	mat.m[3][1] += position_.y;
 	mat.m[3][2] += position_.z;
 	device->SetTransform(D3DTS_WORLD, &mat);
 
 	// ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh
-	device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
 
 	device->SetVertexShader(nullptr);
 	device->SetFVF(mesh_->GetFVF());
 
+	/*
 	static bool hoge = false;
 	if (KeyManager::GetInstance()->IsTrg('L')) {
 		hoge = !hoge;
 	}
-	if (hoge) {
+	*/
+
+	float r = color_.GetR() / 255.0f;
+	float g = color_.GetG() / 255.0f;
+	float b = color_.GetB() / 255.0f;
+	float a = color_.GetA() / 255.0f;
+	if (a < 1.0f) {
+		// ”¼“§–¾‚ ‚è
 		device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 		for (size_t i = 0; i < materials_.size(); ++i) {
 			materials_[i].Diffuse.a = 0;
-
 			device->SetMaterial(&materials_[i]);
 			device->SetTexture(0, nullptr);
 			mesh_->DrawSubset(i);
 		}
-		device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 		for (size_t i = 0; i < materials_.size(); ++i) {
 			auto& dst_diff = materials_[i].Diffuse;
 			auto& src_diff = diffuses_[i];
-			dst_diff.r = src_diff.r * color_.GetR() / 255.0f;
-			dst_diff.g = src_diff.g * color_.GetG() / 255.0f;
-			dst_diff.b = src_diff.b * color_.GetB() / 255.0f;
-			dst_diff.a = src_diff.a * color_.GetA() / 255.0f;
+			dst_diff.r = src_diff.r * r;
+			dst_diff.g = src_diff.g * g;
+			dst_diff.b = src_diff.b * b;
+			dst_diff.a = src_diff.a * a;
 
 			device->SetMaterial(&materials_[i]);
 			device->SetTexture(0, textures_[i]);
 			mesh_->DrawSubset(i);
 		}
 	} else {
+		// ”¼“§–¾‚È‚µ
 		for (size_t i = 0; i < materials_.size(); ++i) {
 			auto& dst_diff = materials_[i].Diffuse;
 			auto& src_diff = diffuses_[i];
-			dst_diff.r = src_diff.r * color_.GetR() / 255.0f;
-			dst_diff.g = src_diff.g * color_.GetG() / 255.0f;
-			dst_diff.b = src_diff.b * color_.GetB() / 255.0f;
-			dst_diff.a = src_diff.a * color_.GetA() / 255.0f;
+			dst_diff.r = src_diff.r * r;
+			dst_diff.g = src_diff.g * g;
+			dst_diff.b = src_diff.b * b;
+			dst_diff.a = src_diff.a * a;
 
 			device->SetMaterial(&materials_[i]);
 			device->SetTexture(0, textures_[i]);
