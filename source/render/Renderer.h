@@ -8,7 +8,6 @@
 #pragma once
 
 #include <Windows.h>
-#include <gdiplus.h>
 #include <memory>
 #include <d3d9.h>
 #include "master/MasterData.hpp"

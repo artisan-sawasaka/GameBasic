@@ -16,6 +16,7 @@ class Color{
 public :
 	static Color Black;
 	static Color White;
+	static Color Red;
 
 public :
 	/*!

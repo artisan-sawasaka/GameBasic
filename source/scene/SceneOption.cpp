@@ -114,10 +114,10 @@ void SceneOption::SetCursor_()
 void SceneOption::UpdateCursor_()
 {
 	// 選択項目の色変更
-	Utility::SetObjectColor(objects_["BgmValue"], (cursor_ == Bgm) ? Gdiplus::Color::Red : Gdiplus::Color::White);
-	Utility::SetObjectColor(objects_["SeValue"], (cursor_ == Se) ? Gdiplus::Color::Red : Gdiplus::Color::White);
-	Utility::SetObjectColor(objects_["VoiceValue"], (cursor_ == Voice) ? Gdiplus::Color::Red : Gdiplus::Color::White);
-	Utility::SetObjectColor(objects_["Exit"], (cursor_ == Exit) ? Gdiplus::Color::Red : Gdiplus::Color::White);
+	Utility::SetObjectColor(objects_["BgmValue"], (cursor_ == Bgm) ? Color::Red : Color::White);
+	Utility::SetObjectColor(objects_["SeValue"], (cursor_ == Se) ? Color::Red : Color::White);
+	Utility::SetObjectColor(objects_["VoiceValue"], (cursor_ == Voice) ? Color::Red : Color::White);
+	Utility::SetObjectColor(objects_["Exit"], (cursor_ == Exit) ? Color::Red : Color::White);
 
 	// 左右矢印の移動
 	if (state_ == ST_SELECT) {

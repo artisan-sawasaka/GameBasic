@@ -138,13 +138,13 @@ public :
 			if (type == FadeIn) {
 				// フェードイン
 				if (!info.is_start) {
-					FadeManager::GetInstance()->FadeIn(info.anim->time, Gdiplus::Color::Black, info.anim->in_delay);
+					FadeManager::GetInstance()->FadeIn(info.anim->time, Color::Black, info.anim->in_delay);
 					info.is_start = true;
 				}
 			} else if (type == FadeOut) {
 				// フェードアウト
 				if (!info.is_start) {
-					FadeManager::GetInstance()->FadeOut(info.anim->time, Gdiplus::Color::Black, info.anim->in_delay);
+					FadeManager::GetInstance()->FadeOut(info.anim->time, Color::Black, info.anim->in_delay);
 					info.is_start = true;
 				}
 			} else if (type == Move) {

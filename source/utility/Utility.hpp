@@ -85,7 +85,7 @@ public:
 	* @param color •ÏX‚·‚éF
 	*/
 	template <class Data>
-	static void SetObjectColor(Data* data, const Gdiplus::Color& color)
+	static void SetObjectColor(Data* data, const Color& color)
 	{
 		if (data == nullptr) return;
 		data->r = color.GetR();

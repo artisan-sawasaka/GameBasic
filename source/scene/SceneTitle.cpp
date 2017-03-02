@@ -8,6 +8,7 @@
 #include "sound/Bgm.h"
 #include "sound/Se.h"
 #include "scene/SceneGame.h"
+#include <algorithm>
 
 /*!
  * @brief 更新
@@ -92,7 +93,7 @@ void SceneTitle::Render3D()
 void SceneTitle::Render2D()
 {
 	// マスターデータに基づく描画処理
-	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
+	//Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
 }
 
 /*!
@@ -110,6 +111,8 @@ void SceneTitle::Reload_()
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(ui_);
 
 	model_.LoadFile("data/model/ch00_stand00.x");
+	//model_.LoadFile("data/model/sample.x");
+	
 }
 
 /*!
@@ -164,6 +167,28 @@ bool SceneTitle::ActionSelect_(float df)
 			// 決定
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			return true;
+		} else if (KeyManager::GetInstance()->IsPress('Q')) {
+			auto rotate = model_.GetRotate();
+			rotate.x += 0.1f;
+			model_.SetRotate(rotate);
+		} else if (KeyManager::GetInstance()->IsPress('W')) {
+			auto rotate = model_.GetRotate();
+			rotate.y += 0.1f;
+			model_.SetRotate(rotate);
+		} else if (KeyManager::GetInstance()->IsPress('E')) {
+			auto rotate = model_.GetRotate();
+			rotate.z += 0.1f;
+			model_.SetRotate(rotate);
+		} else if (KeyManager::GetInstance()->IsPress('Z')) {
+			model_.SetRotate(0, 0, 0);
+		} else if (KeyManager::GetInstance()->IsPress('B')) {
+			auto color = model_.GetColor();
+			color.SetA(128);
+			model_.SetColor(color);
+		} else if (KeyManager::GetInstance()->IsPress('V')) {
+			auto color = model_.GetColor();
+			color.SetA(255);
+			model_.SetColor(color);
 		}
 	}
 

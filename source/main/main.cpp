@@ -85,6 +85,9 @@ void MainApp::Finalize()
  */
 void MainApp::Update(float df)
 {
+	// カメラの更新
+	camera_.Update(df);
+
 	// キーの更新
 	KeyManager::GetInstance()->Update();
 
@@ -153,7 +156,7 @@ void MainApp::Render2D()
 	RenderDebug_();
 
 	// FPS表示
-	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 16, Gdiplus::Color::White, _T("FPS:%.1f"), GetAverageFPS());
+	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 16, Color::White, _T("FPS:%.1f"), GetAverageFPS());
 }
 
 void MainApp::RenderDebug_()
@@ -161,14 +164,15 @@ void MainApp::RenderDebug_()
 	if (!is_debug_render_) return;
 
 	// 操作説明
-	static const char* ds[] = {
+	const std::string ds[] = {
+		camera_.GetInfo(),
 		"R:シーンリセット",
 		"O:コンソールを開く",
 		"C:コンソールを閉じる",
 		"Q:デバッグの表示/非表示",
 	};
 	for (int i = 0; i < sizeof(ds) / sizeof(*ds); ++i) {
-		Renderer::GetInstance()->DrawString(ds[i], Renderer::LEFT_TOP, 0, i * 11, 9);
+		Renderer::GetInstance()->DrawString(ds[i].c_str(), Renderer::LEFT_TOP, 0, i * 12, 12);
 	}
 }
 
@@ -176,7 +180,6 @@ void MainApp::ReloadMasterData_()
 {
 	Utility::ReloadMasterData();
 	DeviceManager::GetInstance()->SetFPS(MasterData::Const.FPS);
-	SetWindowSize(MasterData::Const.window_width, MasterData::Const.window_height);
-	GetDevice().SetBackBufferSize(MasterData::Const.backbuffer_width, MasterData::Const.backbuffer_height);
+//	SetWindowSize(MasterData::Const.window_width, MasterData::Const.window_height);
+//	GetDevice().SetBackBufferSize(MasterData::Const.backbuffer_width, MasterData::Const.backbuffer_height);
 }
-

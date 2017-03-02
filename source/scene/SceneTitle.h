@@ -5,7 +5,7 @@
 #include "utility/StateManager.h"
 #include "utility/InOutAnimation.h"
 #include "master/MasterData.hpp"
-#include "model/Model.h"
+#include "3d/Model.h"
 #include <memory>
 #include <map>
 

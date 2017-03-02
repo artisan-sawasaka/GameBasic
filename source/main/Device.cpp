@@ -230,6 +230,7 @@ void Device::SetBackBufferSize(uint32_t width, uint32_t height)
 			return ;
 		}
 	}
+	InitRenderState_();
 }
 
 /*!
@@ -336,8 +337,8 @@ void Device::InitRenderState_()
 	device_->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);									// レンダリング ステートの D3DRS_ALPHABLENDENABLE が TRUE に設定されている場合に、個別のアルファ ブレンディングに適用する算術演算の選択に使う値。 
 	device_->SetRenderState(D3DRS_ZENABLE, D3DZB_USEW);												// Zバッファを有効
 	device_->SetRenderState(D3DRS_AMBIENT, 0xffffffff);												// アンビエントライト
-	device_->SetRenderState(D3DRS_LIGHTING, FALSE);													// ライトを無効
-	device_->SetRenderState(D3DRS_CULLMODE , D3DCULL_NONE);											// カリングの設定
+	device_->SetRenderState(D3DRS_LIGHTING, TRUE);													// ライトを有効
+	device_->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);											// カリングの設定
 	device_->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);											// アルファブレンドを有効
 
 	// フィルタ設定
@@ -350,6 +351,18 @@ void Device::InitRenderState_()
 	device_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);		// テクスチャの色を使用
 	device_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);		// 頂点の色を使用
 
+	// ビューポート
 	D3DVIEWPORT9 view = { 0, 0, width_, height_, 0.0f, 1.0f };
 	device_->SetViewport(&view);
+
+	// ライト
+	D3DLIGHT9 light;
+	ZeroMemory(&light, sizeof(D3DLIGHT9));
+	light.Type = D3DLIGHT_DIRECTIONAL;
+	light.Diffuse.r = 1.0f;
+	light.Diffuse.g = 1.0f;
+	light.Diffuse.b = 1.0f;
+	light.Direction = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+	device_->SetLight(0, &light);
+	device_->LightEnable(0, TRUE);
 }

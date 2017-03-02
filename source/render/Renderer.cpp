@@ -487,4 +487,3 @@ LPDIRECT3DDEVICE9 Renderer::GetDevice_()
 	if (app_ == nullptr) return nullptr;
 	return app_->GetDevice().GetDevice();
 }
-

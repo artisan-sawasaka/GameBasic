@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <vector>
-#include <gdiplus.h>
 #include <memory>
 #include "Device.h"
 
