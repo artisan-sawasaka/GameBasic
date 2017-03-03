@@ -15,13 +15,12 @@ class Model
 {
 public :
 	Model();
-	~Model();
+	virtual ~Model();
 
 	virtual bool LoadFile(const char* path, std::function<std::shared_ptr<Texture>(const char* name)> texture_func = nullptr);
-	void Release();
-
+	virtual void Release();
 	virtual void Update(float df);
-	void Render();
+	virtual void Render();
 
 	void SetPotision(const D3DXVECTOR3& position) { position_ = position; }
 	void SetPotision(float x, float y, float z) { position_ = D3DXVECTOR3(x, y, z); }
@@ -36,7 +35,7 @@ public :
 	const D3DXVECTOR3& GetScale() const { return scale_; }
 	const Color& GetColor() const { return color_; }
 
-private :
+protected :
 	LPD3DXMESH mesh_;
 	std::vector<D3DMATERIAL9> materials_;
 	std::vector<D3DCOLORVALUE> diffuses_;
