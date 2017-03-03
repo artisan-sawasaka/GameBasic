@@ -20,7 +20,7 @@ Model::~Model()
 	Release();
 }
 
-bool Model::LoadFile(const char* path)
+bool Model::LoadFile(const char* path, std::function<std::shared_ptr<Texture>(const char* name)> texture_func)
 {
 	auto device = DeviceManager::GetInstance()->GetDevice();
 	if (device == nullptr || path == nullptr) return false;
@@ -57,16 +57,19 @@ bool Model::LoadFile(const char* path)
 		diffuses_[i] = materials_[i].Diffuse;
 
 		//テクスチャをロード
-		textures_[i] = nullptr;
+		textures_[i].reset(new Texture());
 		if (d3dxmatrs[i].pTextureFilename == nullptr)
-			continue ;
+			continue;
 
-		auto dir = Utility::GetDirectoryName(path);
 		auto name = Utility::GetFileName(d3dxmatrs[i].pTextureFilename);
-		auto tex_path = Utility::StringFormat("%s/%s", dir.c_str(), name.c_str());
+		if (texture_func) {
+			textures_[i] = texture_func(name.c_str());
+		} else {
+			auto dir = Utility::GetDirectoryName(path);
+			auto tex_path = Utility::StringFormat("%s/%s", dir.c_str(), name.c_str());
 
-		if (S_OK != D3DXCreateTextureFromFileA(device, tex_path.c_str(), &textures_[i])) {
-			textures_[i] = nullptr;
+			textures_[i].reset(new Texture());
+			textures_[i]->CreateFromFile(tex_path.c_str());
 		}
 	}
 	buffer->Release();
@@ -76,10 +79,7 @@ bool Model::LoadFile(const char* path)
 
 void Model::Release()
 {
-	for (size_t i = 0; i < textures_.size(); ++i) {
-		SAFE_RELEASE(textures_[i]);
-	}
-	std::vector<LPDIRECT3DTEXTURE9>().swap(textures_);
+	std::vector<std::shared_ptr<Texture>>().swap(textures_);
 	std::vector<D3DMATERIAL9>().swap(materials_);
 	SAFE_RELEASE(mesh_);
 }
@@ -167,7 +167,7 @@ void Model::Render()
 			dst_diff.a = src_diff.a * a;
 
 			device->SetMaterial(&materials_[i]);
-			device->SetTexture(0, textures_[i]);
+			textures_[i]->Apply();
 			mesh_->DrawSubset(i);
 		}
 	} else {
@@ -181,7 +181,7 @@ void Model::Render()
 			dst_diff.a = src_diff.a * a;
 
 			device->SetMaterial(&materials_[i]);
-			device->SetTexture(0, textures_[i]);
+			textures_[i]->Apply();
 			mesh_->DrawSubset(i);
 		}
 	}

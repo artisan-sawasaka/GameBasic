@@ -298,7 +298,7 @@ void Renderer::DrawImage(Texture* texture, Anchor anchor, int dx, int dy, int dw
 	// •`‰æ
 	HRESULT hr;
 	hr = device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
-	hr = device->SetTexture(0, texture->GetTexture());
+	texture->Apply();
 	hr = device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(Vertex2D));
 }
 

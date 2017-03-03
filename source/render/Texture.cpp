@@ -24,6 +24,17 @@ Texture::~Texture()
 }
 
 /*!
+ * @brief テクスチャーをデバイスに適応します。
+ */
+void Texture::Apply(int index)
+{
+	auto device = DeviceManager::GetInstance()->GetDevice();
+	if (device == nullptr) return ;
+
+	device->SetTexture(index, texture_);
+}
+
+/*!
  * @brief ファイルからテクスチャーを作成します。
  */
 bool Texture::CreateFromFile(const char* path, MIPMAP mipmap)

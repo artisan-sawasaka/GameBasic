@@ -20,12 +20,12 @@ public :
 	Texture();
 	~Texture();
 
+	void Apply(int index = 0);
 	bool CreateFromFile(const char* path, MIPMAP mipmap = MIPMAP_DEFAULT);
 	bool CreateFromMemory(const char* buffer, uint32_t size, MIPMAP mipmap = MIPMAP_DEFAULT);
 	bool CreateRenderTarget(TEXTURE_FORMAT format, uint32_t width, uint32_t height);
 	uint32_t GetWidth() const { return desc_.Width; }
 	uint32_t GetHeight() const  { return desc_.Height; }
-	LPDIRECT3DTEXTURE9 GetTexture() { return texture_; }
 
 private :
 	LPDIRECT3DTEXTURE9 texture_;

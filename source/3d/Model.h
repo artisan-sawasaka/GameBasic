@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 #include <d3dx9.h>
+#include <functional>
+#include <memory>
+#include "render/Texture.h"
 #include "render/Color.h"
 
 /*!
@@ -14,10 +17,10 @@ public :
 	Model();
 	~Model();
 
-	bool LoadFile(const char* path);
+	virtual bool LoadFile(const char* path, std::function<std::shared_ptr<Texture>(const char* name)> texture_func = nullptr);
 	void Release();
 
-	void Update(float df);
+	virtual void Update(float df);
 	void Render();
 
 	void SetPotision(const D3DXVECTOR3& position) { position_ = position; }
@@ -37,7 +40,7 @@ private :
 	LPD3DXMESH mesh_;
 	std::vector<D3DMATERIAL9> materials_;
 	std::vector<D3DCOLORVALUE> diffuses_;
-	std::vector<LPDIRECT3DTEXTURE9> textures_;
+	std::vector<std::shared_ptr<Texture>> textures_;
 	D3DXVECTOR3 position_;
 	D3DXVECTOR3 rotate_;
 	D3DXVECTOR3 scale_;

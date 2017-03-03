@@ -93,7 +93,7 @@ void SceneTitle::Render3D()
 void SceneTitle::Render2D()
 {
 	// マスターデータに基づく描画処理
-	//Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
+	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
 }
 
 /*!
