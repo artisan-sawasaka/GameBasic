@@ -7,13 +7,7 @@
 Camera::Camera()
 	: mode_(Normal)
 {
-	SetPosition(0.0f, 5.0f, -14);
-	SetRotate(0.0f, 0.0f, 0.0f);
-	SetLookAt(0.0f, 5.0f, 0.0f);
-	SetFov(D3DXToRadian(45));
-	SetAspect(16.0f / 9.0f);
-	SetDepth(0.1f, 1000.0f);
-	Apply();
+	Initialize_();
 }
 
 Camera::~Camera()
@@ -80,3 +74,13 @@ std::string Camera::GetInfo() const
 		lookat_.x, lookat_.y, lookat_.z);
 }
 
+void Camera::Initialize_()
+{
+	SetPosition(0.0f, 5.0f, -14);
+	SetRotate(0.0f, 0.0f, 0.0f);
+	SetLookAt(0.0f, 5.0f, 0.0f);
+	SetFov(D3DXToRadian(45));
+	SetAspect(16.0f / 9.0f);
+	SetDepth(0.1f, 1000.0f);
+	Apply();
+}

@@ -4,6 +4,7 @@
 #include "utility/KeyManager.h"
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
+static const float RotateBase = 6.28318530718f;
 
 Model::Model()
 	: mesh_(nullptr)
@@ -29,11 +30,11 @@ bool Model::LoadFile(const char* path)
 	//Xファイルロード
 	DWORD material_num;
 	LPD3DXBUFFER buffer;
-	auto ret = D3DXLoadMeshFromXA(path, D3DXMESH_IB_MANAGED, device, nullptr, &buffer, nullptr, &material_num, &mesh_);
+	auto ret = D3DXLoadMeshFromXA(path, D3DXMESH_MANAGED, device, nullptr, &buffer, nullptr, &material_num, &mesh_);
 	if (ret != D3D_OK) {
 		return false;
 	}
-	
+
 	//Xファイルに法線がない場合は、法線を書き込む
 	if ((mesh_->GetFVF() & D3DFVF_NORMAL) == 0) {
 		ID3DXMesh* mesh = NULL;
@@ -101,18 +102,30 @@ void Model::Render()
 	if (scale_ != D3DXVECTOR3(1.0f, 1.0f, 1.0f)) {
 		mat *= *D3DXMatrixScaling(&matt, scale_.x, scale_.y, scale_.z);
 	}
-	// Y回転
-	if (rotate_.y != 0) {
-		mat *= *D3DXMatrixRotationY(&matt, rotate_.y);
+	bool rotate = false;
+	D3DXQUATERNION q = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
+	// Z回転
+	if (rotate_.z != 0) {
+		D3DXQUATERNION tq = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
+		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(0, 0, 1), rotate_.z * RotateBase);
+		rotate = true;
 	}
 	// X回転
 	if (rotate_.x != 0) {
-		mat *= *D3DXMatrixRotationX(&matt, rotate_.x);
+		D3DXQUATERNION tq = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
+		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(1, 0, 0), rotate_.x * RotateBase);
+		rotate = true;
 	}
-	// Z回転
-	if (rotate_.z != 0) {
-		mat *= *D3DXMatrixRotationZ(&matt, rotate_.z);
+	// Y回転
+	if (rotate_.y != 0) {
+		D3DXQUATERNION tq = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
+		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(0, 1, 0), rotate_.y * RotateBase);
+		rotate = true;
 	}
+	if (rotate) {
+		mat *= *D3DXMatrixRotationQuaternion(&matt, &q);
+	}
+
 	// 移動
 	mat.m[3][0] += position_.x;
 	mat.m[3][1] += position_.y;

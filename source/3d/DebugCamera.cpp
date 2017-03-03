@@ -34,6 +34,10 @@ void DebugCamera::Update(float df)
 	}
 	rotate_ += D3DXVECTOR3(move_[4], move_[3], 0.0f);
 
+	if (ms->IsPress(MouseManager::LBUTTON) && ms->IsPress(MouseManager::RBUTTON)) {
+		Initialize_();
+	}
+
 	Apply();
 
 	// Šµ«

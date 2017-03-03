@@ -229,11 +229,11 @@ void Device::SetBackBufferSize(uint32_t width, uint32_t height)
 	HRESULT hr = device_->Reset(&d3dpp_);
 	if (FAILED(hr)) {
 		if (hr == D3DERR_DEVICELOST) {
-			return ;
-		} else {
-			return ;
+			device_lost_ = true;
+			return;
 		}
 	}
+
 	InitRenderState_();
 }
 

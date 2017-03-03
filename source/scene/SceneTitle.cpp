@@ -169,15 +169,15 @@ bool SceneTitle::ActionSelect_(float df)
 			return true;
 		} else if (KeyManager::GetInstance()->IsPress('Q')) {
 			auto rotate = model_.GetRotate();
-			rotate.x += 0.1f;
+			rotate.x += 0.01f;
 			model_.SetRotate(rotate);
 		} else if (KeyManager::GetInstance()->IsPress('W')) {
 			auto rotate = model_.GetRotate();
-			rotate.y += 0.1f;
+			rotate.y += 0.01f;
 			model_.SetRotate(rotate);
 		} else if (KeyManager::GetInstance()->IsPress('E')) {
 			auto rotate = model_.GetRotate();
-			rotate.z += 0.1f;
+			rotate.z += 0.01f;
 			model_.SetRotate(rotate);
 		} else if (KeyManager::GetInstance()->IsPress('Z')) {
 			model_.SetRotate(0, 0, 0);

@@ -38,6 +38,8 @@ public :
 	std::string GetInfo() const;
 
 protected :
+	void Initialize_();
+
 	Mode mode_;
 	D3DXMATRIX view_;
 	D3DXMATRIX projection_;
