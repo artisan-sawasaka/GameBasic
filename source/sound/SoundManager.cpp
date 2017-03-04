@@ -213,7 +213,8 @@ int SoundManager::PlayBgm(int id, float delay, float fadein_time, float fadeout_
         last_bgm_name_ = "";
         last_bgm_id_ = id;
     };
-    return PlayBgm_(acb_func, delay, fadein_time, fadeout_time, track);
+    return PlayBgm_(delay, fadein_time, fadeout_time, track, acb_func);
+    //return PlayBgm_(nullptr, delay, fadein_time, fadeout_time, track);
 }
 
 int SoundManager::PlayBgm(const std::string& cue, float delay, float fadein_time, float fadeout_time, int track)
@@ -222,12 +223,12 @@ int SoundManager::PlayBgm(const std::string& cue, float delay, float fadein_time
     if (cue == last_bgm_name_) return -1;
 	if (track >= param_.max_bgm) return -1;
 
-    auto acb_func = [this, cue](CriAtomExPlayerHn player, CriAtomExAcbHn acb){
+	auto acb_func = [this, cue](CriAtomExPlayerHn player, CriAtomExAcbHn acb){
         criAtomExPlayer_SetCueName(player, acb, cue.c_str());
         last_bgm_name_ = cue;
         last_bgm_id_ = -1;
     };
-    return PlayBgm_(acb_func, delay, fadein_time, fadeout_time, track);
+    return PlayBgm_(delay, fadein_time, fadeout_time, track, acb_func);
 }
 
 void SoundManager::StopBgm(float time, int track)
@@ -322,14 +323,14 @@ int SoundManager::PlaySe(int id, int track, float delay)
 {
     if (!initialized_) return -1;
     if (track >= param_.max_se) return -1;
-    return PlaySe_([this, id](CriAtomExPlayerHn player){criAtomExPlayer_SetCueId(player, base_se_data_, id);}, track, delay);
+    return PlaySe_(track, delay, [this, id](CriAtomExPlayerHn player){criAtomExPlayer_SetCueId(player, base_se_data_, id);});
 }
 
 int SoundManager::PlaySe(const std::string& cue, int track, float delay)
 {
     if (!initialized_) return -1;
     if (track >= param_.max_se) return -1;
-    return PlaySe_([this, cue](CriAtomExPlayerHn player){criAtomExPlayer_SetCueName(player, base_se_data_, cue.c_str());}, track, delay);
+    return PlaySe_(track, delay, [this, cue](CriAtomExPlayerHn player){criAtomExPlayer_SetCueName(player, base_se_data_, cue.c_str());});
 }
 
 void SoundManager::StopSe(int track, float time)
@@ -387,7 +388,7 @@ int SoundManager::PlayVoice(const std::string& file, int id, int track, float de
     auto acb_func = [id](CriAtomExPlayerHn player, CriAtomExAcbHn acb){
         criAtomExPlayer_SetCueId(player, acb, id);
     };
-    return PlayVoice_(acb_func, file, track, delay);
+    return PlayVoice_(file, track, delay, acb_func);
 }
 
 int SoundManager::PlayVoice(const std::string& file, const std::string& cue, int track, float delay)
@@ -397,7 +398,7 @@ int SoundManager::PlayVoice(const std::string& file, const std::string& cue, int
     auto acb_func = [cue](CriAtomExPlayerHn player, CriAtomExAcbHn acb){
         criAtomExPlayer_SetCueName(player, acb, cue.c_str());
     };
-    return PlayVoice_(acb_func, file, track, delay);
+    return PlayVoice_(file, track, delay, acb_func);
 }
 
 void SoundManager::StopVoice(int track, float time)
@@ -556,7 +557,7 @@ CriAtomExAcbHn SoundManager::GetAcbData_(std::list<AcbInfo>& acb_infos, const st
     return info.data;
 }
 
-int SoundManager::PlayBgm_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, float delay, float fadein_time, float fadeout_time, int track)
+int SoundManager::PlayBgm_(float delay, float fadein_time, float fadeout_time, int track, std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func)
 {
     if (base_bgm_data_ == nullptr) return -1 ;
 
@@ -582,7 +583,7 @@ int SoundManager::PlayBgm_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)
 	return track;
 }
 
-int SoundManager::PlaySe_(std::function<void(CriAtomExPlayerHn)> acb_func, int track, float delay)
+int SoundManager::PlaySe_(int track, float delay, std::function<void(CriAtomExPlayerHn)> acb_func)
 {
     if (base_se_data_ == nullptr) return -1;
 	
@@ -609,7 +610,7 @@ int SoundManager::PlaySe_(std::function<void(CriAtomExPlayerHn)> acb_func, int t
 	return track;
 }
 
-int SoundManager::PlayVoice_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, const std::string& file, int track, float delay)
+int SoundManager::PlayVoice_(const std::string& file, int track, float delay, std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func)
 {
     // 空いているトラックを確認
     if (track < 0) {

@@ -4,74 +4,120 @@
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
 static const float RotateBase = 6.28318530718f;
-struct OXD3DXFRAME : public D3DXFRAME {
-	DWORD id;
-	D3DXMATRIX offsetMatrix;
-	OXD3DXFRAME() : id(0xffffffff) {
-		D3DXMatrixIdentity(&offsetMatrix);
-	}
-};
 
-struct OXD3DXMESHCONTAINER : public D3DXMESHCONTAINER {
+struct CD3DXMeshContainer : public D3DXMESHCONTAINER {
 	DWORD maxFaceInfl;
 	DWORD numBoneCombinations;
 	ID3DXBuffer *boneCombinationTable;
-	OXD3DXMESHCONTAINER() : maxFaceInfl(1), numBoneCombinations(0), boneCombinationTable(0) {}
+	CD3DXMeshContainer() : maxFaceInfl(1), numBoneCombinations(0), boneCombinationTable(0) {}
+};
+
+struct CD3DXFrame : public D3DXFRAME {
+	DWORD id;
+	D3DXMATRIX offsetMatrix;
+	CD3DXFrame() : id(0xffffffff) {
+		D3DXMatrixIdentity(&offsetMatrix);
+	}
+
+	CD3DXMeshContainer* GetMeshContainer() {
+		return GetMeshContainer_(this);
+	}
+
+	void InitializeFrameId() {
+		ID3DXSkinInfo *info = GetMeshContainer()->pSkinInfo;
+		std::map<std::string, DWORD> nameToIdMap;
+		for (DWORD i = 0; i < info->GetNumBones(); ++i) {
+			nameToIdMap[info->GetBoneName(i)] = i;
+		}
+
+		SetFrameIdAndMatrix_(nameToIdMap, info, this);
+	}
+
+	void UpdateCombMatrix(D3DXMATRIX& mat)	{
+		UpdateCombMatrix_(combMatrixMap_, mat, this);
+	}
+
+	D3DXMATRIX* GetMatrix(int id) {
+		return &combMatrixMap_[id];
+	}
+private :
+	CD3DXMeshContainer* GetMeshContainer_(D3DXFRAME* frame) {
+		if (frame->pMeshContainer != nullptr)
+			return (CD3DXMeshContainer*)frame->pMeshContainer;
+		if (frame->pFrameFirstChild != nullptr)
+			return GetMeshContainer_(frame->pFrameFirstChild);
+		if (frame->pFrameSibling != nullptr)
+			return GetMeshContainer_(frame->pFrameSibling);
+		return 0;
+	}
+
+	void SetFrameIdAndMatrix_(std::map<std::string, DWORD>& nameToIdMap, ID3DXSkinInfo *info, CD3DXFrame* frame) {
+		if (nameToIdMap.find(frame->Name) != nameToIdMap.end()) {
+			frame->id = nameToIdMap[frame->Name];
+			frame->offsetMatrix = *info->GetBoneOffsetMatrix(frame->id);
+		}
+		if (frame->pFrameFirstChild) {
+			SetFrameIdAndMatrix_(nameToIdMap, info, (CD3DXFrame*)frame->pFrameFirstChild);
+		}
+		if (frame->pFrameSibling) {
+			SetFrameIdAndMatrix_(nameToIdMap, info, (CD3DXFrame*)frame->pFrameSibling);
+		}
+	}
+
+	void UpdateCombMatrix_(std::map<DWORD, D3DXMATRIX>& combMatrixMap, D3DXMATRIX& parentBoneMatrix, CD3DXFrame* frame) {
+		D3DXMATRIX &localBoneMatrix = frame->TransformationMatrix;
+		D3DXMATRIX boneMatrix = localBoneMatrix * parentBoneMatrix;
+		if (frame->id != 0xffffffff) {
+			combMatrixMap[frame->id] = frame->offsetMatrix * boneMatrix;
+		}
+		if (frame->pFrameFirstChild) {
+			UpdateCombMatrix_(combMatrixMap, boneMatrix, (CD3DXFrame*)frame->pFrameFirstChild);
+		}
+		if (frame->pFrameSibling) {
+			UpdateCombMatrix_(combMatrixMap, parentBoneMatrix, (CD3DXFrame*)frame->pFrameSibling);
+		}
+	}
+
+	std::map<DWORD, D3DXMATRIX> combMatrixMap_;
 };
 
 class AllocateHierarchy : public ID3DXAllocateHierarchy {
-	char *copyName(const char* name) {
-		char *n = 0;
-		if (!name || name[0] == '\0') {
-			n = new char[1];
-			n[0] = '\0';
-		} else {
-			size_t len = strlen(name);
-			n = new char[strlen(name) + 1];
-			strcpy_s(n, strlen(name) + 1, name);
-		}
-		return n;
-	}
-
 public:
+	AllocateHierarchy(
+		std::vector<D3DMATERIAL9>& materials,
+		std::vector<std::shared_ptr<Texture>>& textures,
+		std::function<std::shared_ptr<Texture>(const char* name)> texture_func,
+		const char* path)
+		: materials_(materials)
+		, textures_(textures)
+		, texture_func_(texture_func)
+		, path_(path)
+	{}
+
 	STDMETHOD(CreateFrame)(THIS_ LPCSTR Name, LPD3DXFRAME *ppNewFrame) {
-		OXD3DXFRAME *newFrame = new OXD3DXFRAME;
-		newFrame->Name = copyName(Name);
-		newFrame->pFrameFirstChild = 0;
-		newFrame->pFrameSibling = 0;
-		newFrame->pMeshContainer = 0;
-		D3DXMatrixIdentity(&newFrame->TransformationMatrix);
-		*ppNewFrame = newFrame;
-
-		return D3D_OK;
-	}
-
-	STDMETHOD(DestroyFrame)(THIS_ LPD3DXFRAME pFrameToFree) {
-		if (pFrameToFree->pFrameFirstChild)
-			DestroyFrame(pFrameToFree->pFrameFirstChild);
-		if (pFrameToFree->pFrameSibling)
-			DestroyFrame(pFrameToFree->pFrameSibling);
-		if (pFrameToFree->pMeshContainer)
-			DestroyMeshContainer(pFrameToFree->pMeshContainer);
-
-		delete[] pFrameToFree->Name;
-		delete pFrameToFree;
+		CD3DXFrame* frame = new CD3DXFrame();
+		frame->Name = copyName(Name);
+		frame->pFrameFirstChild = nullptr;
+		frame->pFrameSibling = nullptr;
+		frame->pMeshContainer = nullptr;
+		D3DXMatrixIdentity(&frame->TransformationMatrix);
+		*ppNewFrame = frame;
 
 		return D3D_OK;
 	}
 
 	STDMETHOD(CreateMeshContainer)(THIS_
 		LPCSTR Name,
-		CONST D3DXMESHDATA *pMeshData,
-		CONST D3DXMATERIAL *pMaterials,
-		CONST D3DXEFFECTINSTANCE *pEffectInstances,
+		CONST D3DXMESHDATA* pMeshData,
+		CONST D3DXMATERIAL* pMaterials,
+		CONST D3DXEFFECTINSTANCE* pEffectInstances,
 		DWORD NumMaterials,
-		CONST DWORD *pAdjacency,
+		CONST DWORD* pAdjacency,
 		LPD3DXSKININFO pSkinInfo,
-		LPD3DXMESHCONTAINER *ppNewMeshContainer
+		LPD3DXMESHCONTAINER* ppNewMeshContainer
 		)
 	{
-		OXD3DXMESHCONTAINER *newCont = new OXD3DXMESHCONTAINER;
+		CD3DXMeshContainer *newCont = new CD3DXMeshContainer();
 		newCont->Name = copyName(Name);
 
 		newCont->pAdjacency = new DWORD[pMeshData->pMesh->GetNumFaces() * 3];
@@ -85,10 +131,33 @@ public:
 		newCont->NumMaterials = NumMaterials;
 		newCont->pMaterials = new D3DXMATERIAL[NumMaterials];
 		memcpy(newCont->pMaterials, pMaterials, NumMaterials * sizeof(D3DXMATERIAL));
+		materials_.resize(NumMaterials);
+		textures_.resize(NumMaterials);
+		for (DWORD i = 0; i < NumMaterials; ++i) {
+			//マテリアル複写
+			materials_[i] = pMaterials[i].MatD3D;
+
+			//テクスチャをロード
+			textures_[i].reset(new Texture());
+			const char* texture_path = pMaterials[i].pTextureFilename;
+			if (texture_path == nullptr)
+				continue;
+
+			auto name = Utility::GetFileName(texture_path);
+			if (texture_func_) {
+				textures_[i] = texture_func_(name.c_str());
+			} else {
+				auto dir = Utility::GetDirectoryName(path_.c_str());
+				auto tex_path = Utility::StringFormat("%s/%s", dir.c_str(), name.c_str());
+
+				textures_[i].reset(new Texture());
+				textures_[i]->CreateFromFile(tex_path.c_str());
+			}
+		}
 
 		newCont->pEffects = 0;
-		if (pEffectInstances) {
-			newCont->pEffects = new D3DXEFFECTINSTANCE;
+		if (pEffectInstances != nullptr) {
+			newCont->pEffects = new D3DXEFFECTINSTANCE();
 			newCont->pEffects->pEffectFilename = copyName(pEffectInstances->pEffectFilename);
 			newCont->pEffects->NumDefaults = pEffectInstances->NumDefaults;
 			newCont->pEffects->pDefaults = new D3DXEFFECTDEFAULT[pEffectInstances->NumDefaults];
@@ -111,11 +180,37 @@ public:
 		return D3D_OK;
 	}
 
+	STDMETHOD(DestroyFrame)(THIS_ LPD3DXFRAME pFrameToFree) {
+		if (pFrameToFree->pFrameFirstChild != nullptr) {
+			DestroyFrame(pFrameToFree->pFrameFirstChild);
+			pFrameToFree->pFrameFirstChild = nullptr;
+		}
+		if (pFrameToFree->pFrameSibling != nullptr) {
+			DestroyFrame(pFrameToFree->pFrameSibling);
+			pFrameToFree->pFrameSibling = nullptr;
+		}
+		if (pFrameToFree->pMeshContainer != nullptr) {
+			DestroyMeshContainer(pFrameToFree->pMeshContainer);
+			pFrameToFree->pMeshContainer = nullptr;
+		}
+
+		delete[] pFrameToFree->Name;
+		delete pFrameToFree;
+
+		return D3D_OK;
+	}
+
 	STDMETHOD(DestroyMeshContainer)(THIS_ LPD3DXMESHCONTAINER pMeshContainerToFree)
 	{
-		OXD3DXMESHCONTAINER *m = (OXD3DXMESHCONTAINER*)pMeshContainerToFree;
+		// 解放済みのアドレスが来ることがあるので既に解放したものを弾く
+		if (deletes_.find(pMeshContainerToFree) != deletes_.end()) {
+			return D3D_OK;
+		}
+		deletes_.insert(pMeshContainerToFree);
 
-		m->MeshData.pMesh->Release();
+		CD3DXMeshContainer *m = (CD3DXMeshContainer*)pMeshContainerToFree;
+
+		SAFE_RELEASE(m->MeshData.pMesh);
 		delete[] m->Name;
 		delete[] m->pAdjacency;
 		if (m->pEffects) {
@@ -130,89 +225,56 @@ public:
 		}
 		delete[] m->pMaterials;
 
-		if (m->pSkinInfo)
-			m->pSkinInfo->Release();
-
-		if (m->boneCombinationTable)
-			m->boneCombinationTable->Release();
+		SAFE_RELEASE(m->pSkinInfo);
+		SAFE_RELEASE(m->boneCombinationTable);
 
 		delete m;
 
 		return D3D_OK;
 	}
+
+	void InitializeDelete() {
+		deletes_.clear();
+	}
+private :
+	char *copyName(const char* name) {
+		char *n = 0;
+		if (name == nullptr) {
+			n = new char[1];
+			n[0] = '\0';
+		} else {
+			n = new char[strlen(name) + 1];
+			strcpy(n, name);
+		}
+		return n;
+	}
+
+	std::set<LPD3DXMESHCONTAINER> deletes_;
+	std::vector<D3DMATERIAL9>& materials_;
+	std::vector<std::shared_ptr<Texture>>& textures_;
+	std::function<std::shared_ptr<Texture>(const char* name)> texture_func_;
+	std::string path_;
 };
 
-
 struct SkinData {
-	AllocateHierarchy allocater;
-	OXD3DXFRAME* pRootFrame;
+	CD3DXFrame* frame;
+	std::shared_ptr<AllocateHierarchy> allocater;
 	ID3DXAnimationController* controller;
-	OXD3DXMESHCONTAINER* container;
 	SkinData()
-		: pRootFrame(nullptr), controller(nullptr), container(nullptr)
+		: frame(nullptr), controller(nullptr)
 	{}
 
 	~SkinData() {
-		if (pRootFrame != nullptr) {
-			allocater.DestroyFrame(pRootFrame);
+		if (frame != nullptr) {
+			allocater->InitializeDelete();
+			D3DXFrameDestroy(frame, allocater.get());
 		}
 		SAFE_RELEASE(controller);
 	}
 };
 
-OXD3DXMESHCONTAINER *getMeshContainer(D3DXFRAME *frame)
-{
-	if (frame->pMeshContainer)
-		return (OXD3DXMESHCONTAINER*)frame->pMeshContainer;
-	if (frame->pFrameFirstChild)
-		return getMeshContainer(frame->pFrameFirstChild);
-	if (frame->pFrameSibling)
-		return getMeshContainer(frame->pFrameSibling);
-	return 0;
-}
 
-void setFrameId(OXD3DXFRAME *frame, ID3DXSkinInfo *info)
-{
-	std::map<std::string, DWORD> nameToIdMap;
-	for (DWORD i = 0; i < info->GetNumBones(); i++)
-		nameToIdMap[info->GetBoneName(i)] = i;
-
-	struct create {
-		static void f(std::map<std::string, DWORD> nameToIdMap, ID3DXSkinInfo *info, OXD3DXFRAME* frame)
-		{
-			if (nameToIdMap.find(frame->Name) != nameToIdMap.end()) {
-				frame->id = nameToIdMap[frame->Name];
-				frame->offsetMatrix = *info->GetBoneOffsetMatrix(frame->id);
-			}
-			if (frame->pFrameFirstChild)
-				f(nameToIdMap, info, (OXD3DXFRAME*)frame->pFrameFirstChild);
-			if (frame->pFrameSibling)
-				f(nameToIdMap, info, (OXD3DXFRAME*)frame->pFrameSibling);
-		}
-	};
-	create::f(nameToIdMap, info, frame);
-}
-
-void updateCombMatrix(std::map<DWORD, D3DXMATRIX> &combMatrixMap, OXD3DXFRAME *frame)
-{
-	struct update {
-		static void f(std::map<DWORD, D3DXMATRIX> &combMatrixMap, D3DXMATRIX &parentBoneMatrix, OXD3DXFRAME *frame)
-		{
-			D3DXMATRIX &localBoneMatrix = frame->TransformationMatrix;
-			D3DXMATRIX boneMatrix = localBoneMatrix * parentBoneMatrix;
-			if (frame->id != 0xffffffff)
-				combMatrixMap[frame->id] = frame->offsetMatrix * boneMatrix;
-			if (frame->pFrameFirstChild)
-				f(combMatrixMap, boneMatrix, (OXD3DXFRAME*)frame->pFrameFirstChild);
-			if (frame->pFrameSibling)
-				f(combMatrixMap, parentBoneMatrix, (OXD3DXFRAME*)frame->pFrameSibling);
-		}
-	};
-	D3DXMATRIX iden;
-	D3DXMatrixIdentity(&iden);
-	update::f(combMatrixMap, iden, frame);
-}
-
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 SkinModel::SkinModel()
 {
@@ -231,12 +293,21 @@ bool SkinModel::LoadFile(const char* path, std::function<std::shared_ptr<Texture
 	Release();
 
 	data_.reset(new SkinData());
-	auto ret = D3DXLoadMeshHierarchyFromXA(path, D3DXMESH_MANAGED, device, &data_->allocater, 0, (D3DXFRAME**)&data_->pRootFrame, &data_->controller);
+	data_->allocater.reset(new AllocateHierarchy(materials_, textures_, texture_func, path));
+	auto ret = D3DXLoadMeshHierarchyFromXA(path, D3DXMESH_MANAGED, device, data_->allocater.get(), 0, (D3DXFRAME**)&data_->frame, &data_->controller);
 	if (ret != D3D_OK) {
 		return false;
 	}
 
-	setFrameId(data_->pRootFrame, cont->pSkinInfo);
+	// フレーム初期化
+	data_->frame->InitializeFrameId();
+	Update(0);
+
+	// アルファ用初期化
+	diffuses_.resize(materials_.size());
+	for (size_t i = 0; i < materials_.size(); ++i) {
+		diffuses_[i] = materials_[i].Diffuse;
+	}
 
 	return true;
 }
@@ -244,10 +315,98 @@ bool SkinModel::LoadFile(const char* path, std::function<std::shared_ptr<Texture
 void SkinModel::Release()
 {
 	data_.reset();
+	Model::Release();
 }
 
 void SkinModel::Update(float df)
 {
+	D3DXMATRIX mat;
+	CreateWorldMatrix_(mat);
+
+	data_->controller->AdvanceTime(df, nullptr);
+	data_->frame->UpdateCombMatrix(mat);
+}
+
+void SkinModel::Render()
+{
 	auto device = DeviceManager::GetInstance()->GetDevice();
-	if (device == nullptr || mesh_ == nullptr) return;
+	if (device == nullptr) return ;
+
+
+	// アルファブレンド
+	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
+	float r = color_.GetR() / 255.0f;
+	float g = color_.GetG() / 255.0f;
+	float b = color_.GetB() / 255.0f;
+	float a = color_.GetA() / 255.0f;
+	for (size_t i = 0; i < materials_.size(); ++i) {
+		auto& dst_diff = materials_[i].Diffuse;
+		auto& src_diff = diffuses_[i];
+		dst_diff.r = src_diff.r * r;
+		dst_diff.g = src_diff.g * g;
+		dst_diff.b = src_diff.b * b;
+		dst_diff.a = src_diff.a * a;
+	}
+
+	// 頂点
+	auto* frame = data_->frame;
+	auto* container = frame->GetMeshContainer();
+	auto* combs = static_cast<D3DXBONECOMBINATION*>(container->boneCombinationTable->GetBufferPointer());
+	auto* mesh = container->MeshData.pMesh;
+	device->SetVertexShader(nullptr);
+	device->SetFVF(mesh->GetFVF());
+
+	// 描画
+	if (a < 1.0f) {
+		// 半透明あり
+		Renderer::GetInstance()->SetBlend(Renderer::BLEND_DEST);
+		for (DWORD i = 0; i < container->numBoneCombinations; ++i) {
+			DWORD boneNum = 0;
+			for (DWORD j = 0; j < container->maxFaceInfl; ++j) {
+				DWORD id = combs[i].BoneId[j];
+				if (id != UINT_MAX) {
+					device->SetTransform(D3DTS_WORLDMATRIX(j), frame->GetMatrix(id));
+					boneNum = j;
+				}
+			}
+			int index = combs[i].AttribId;
+			device->SetRenderState(D3DRS_VERTEXBLEND, boneNum);
+			device->SetMaterial(&materials_[index]);
+			device->SetTexture(0, nullptr);
+			mesh->DrawSubset(i);
+		}
+		Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
+		for (DWORD i = 0; i < container->numBoneCombinations; ++i) {
+			DWORD boneNum = 0;
+			for (DWORD j = 0; j < container->maxFaceInfl; ++j) {
+				DWORD id = combs[i].BoneId[j];
+				if (id != UINT_MAX) {
+					device->SetTransform(D3DTS_WORLDMATRIX(j), frame->GetMatrix(id));
+					boneNum = j;
+				}
+			}
+			int index = combs[i].AttribId;
+			device->SetRenderState(D3DRS_VERTEXBLEND, boneNum);
+			device->SetMaterial(&materials_[index]);
+			textures_[index]->Apply();
+			mesh->DrawSubset(i);
+		}
+	} else {
+		// 半透明なし
+		for (DWORD i = 0; i < container->numBoneCombinations; ++i) {
+			DWORD boneNum = 0;
+			for (DWORD j = 0; j < container->maxFaceInfl; ++j) {
+				DWORD id = combs[i].BoneId[j];
+				if (id != UINT_MAX) {
+					device->SetTransform(D3DTS_WORLDMATRIX(j), frame->GetMatrix(id));
+					boneNum = j;
+				}
+			}
+			int index = combs[i].AttribId;
+			device->SetRenderState(D3DRS_VERTEXBLEND, boneNum);
+			device->SetMaterial(&materials_[index]);
+			textures_[index]->Apply();
+			mesh->DrawSubset(i);
+		}
+	}
 }

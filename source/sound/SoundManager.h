@@ -273,9 +273,9 @@ private :
     void ReleaseVoicePool_(CriAtomExVoicePoolHn& handle);
 	CriAtomExAcbHn GetAcbData_(std::list<AcbInfo>& acb_infos, const std::string& file, int max_value, bool is_awb);
     
-    int PlayBgm_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, float delay, float fadein_time, float fadeout_time, int track);
-    int PlaySe_(std::function<void(CriAtomExPlayerHn)> acb_func, int track, float delay);
-    int PlayVoice_(std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func, const std::string& file, int track, float delay);
+    int PlayBgm_(float delay, float fadein_time, float fadeout_time, int track, std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func);
+    int PlaySe_(int track, float delay, std::function<void(CriAtomExPlayerHn)> acb_func);
+    int PlayVoice_(const std::string& file, int track, float delay, std::function<void(CriAtomExPlayerHn, CriAtomExAcbHn)> acb_func);
 
     InitializeParam param_;
     bool initialized_;

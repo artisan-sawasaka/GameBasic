@@ -5,7 +5,7 @@
 #include "utility/StateManager.h"
 #include "utility/InOutAnimation.h"
 #include "master/MasterData.hpp"
-#include "3d/Model.h"
+#include "3d/SkinModel.h"
 #include <memory>
 #include <map>
 
@@ -82,6 +82,7 @@ private :
 	InOutAnimation<MasterData::TitleUIData, MasterData::TitleInOutData> animtion_;	// InOutアニメーション
 	StateManager<State> state_;														// 状態管理
 
-	Model model_;
+	//Model model_;
+	SkinModel model_;
 	Menu cursor_;	// カーソル
 };

@@ -43,6 +43,7 @@ public :
 		BLEND_ADD,				//!< ‰ÁŽZ
 		BLEND_SUB,				//!< Œ¸ŽZ
 		BLEND_MUL,				//!< æŽZ
+		BLEND_DEST,				//!< Z‚âƒXƒeƒ“ƒVƒ‹‚Ì‚Ý‘‚«ž‚Ý
 	};
 
 	enum TEXTURE_USE

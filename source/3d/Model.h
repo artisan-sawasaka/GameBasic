@@ -36,6 +36,8 @@ public :
 	const Color& GetColor() const { return color_; }
 
 protected :
+	void CreateWorldMatrix_(D3DXMATRIX& mat);
+
 	LPD3DXMESH mesh_;
 	std::vector<D3DMATERIAL9> materials_;
 	std::vector<D3DCOLORVALUE> diffuses_;

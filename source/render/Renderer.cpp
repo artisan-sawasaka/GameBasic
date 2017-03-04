@@ -111,27 +111,38 @@ void Renderer::SetBlend(BLEND blend)
 	} else if (blend == BLEND_ALPHA) {
 		// アルファブレンド
 		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	} else if (blend == BLEND_ADD) {
 		// 加算
 		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	} else if (blend == BLEND_SUB) {
 		// 減算
 		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR);
 		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
 	} else if (blend == BLEND_MUL) {
 		// 乗算
 		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
 		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR);
+	} else if (blend == BLEND_DEST) {
+		// Zやステンシルのみ書き込み
+		device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+		device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	}
 }
 

@@ -162,7 +162,7 @@ void MainApp::Render2D()
 	RenderDebug_();
 
 	// FPS•\Ž¦
-	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 16, Color::White, _T("FPS:%.1f"), GetAverageFPS());
+	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 12, Color::White, _T("FPS:%.1f"), GetAverageFPS());
 }
 
 void MainApp::RenderDebug_()

@@ -87,6 +87,7 @@
     <ClCompile Include="source\3d\Camera.cpp" />
     <ClCompile Include="source\3d\DebugCamera.cpp" />
     <ClCompile Include="source\3d\Model.cpp" />
+    <ClCompile Include="source\3d\SkinModel.cpp" />
     <ClCompile Include="source\main\Device.cpp" />
     <ClCompile Include="source\main\main.cpp" />
     <ClCompile Include="source\main\WinMain.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="source\3d\Camera.h" />
     <ClInclude Include="source\3d\DebugCamera.h" />
     <ClInclude Include="source\3d\Model.h" />
+    <ClInclude Include="source\3d\SkinModel.h" />
     <ClInclude Include="source\main\Device.h" />
     <ClInclude Include="source\main\main.h" />
     <ClInclude Include="source\main\WinMain.h" />

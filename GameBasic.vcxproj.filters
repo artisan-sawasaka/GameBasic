@@ -115,6 +115,9 @@
     <ClCompile Include="source\3d\DebugCamera.cpp">
       <Filter>source\3d</Filter>
     </ClCompile>
+    <ClCompile Include="source\3d\SkinModel.cpp">
+      <Filter>source\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main\main.h">
@@ -229,6 +232,9 @@
       <Filter>source\utility</Filter>
     </ClInclude>
     <ClInclude Include="source\3d\DebugCamera.h">
+      <Filter>source\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="source\3d\SkinModel.h">
       <Filter>source\3d</Filter>
     </ClInclude>
   </ItemGroup>

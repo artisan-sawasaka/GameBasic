@@ -1,7 +1,7 @@
 #include "Model.h"
 #include "utility/DeviceManager.h"
 #include "utility/Utility.hpp"
-#include "utility/KeyManager.h"
+//#include "utility/KeyManager.h"
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
 static const float RotateBase = 6.28318530718f;
@@ -53,7 +53,6 @@ bool Model::LoadFile(const char* path, std::function<std::shared_ptr<Texture>(co
 	for (DWORD i = 0; i < material_num; ++i) {
 		//マテリアル複写
 		materials_[i] = d3dxmatrs[i].MatD3D;
-		materials_[i].Ambient = materials_[i].Diffuse;
 		diffuses_[i] = materials_[i].Diffuse;
 
 		//テクスチャをロード
@@ -86,8 +85,6 @@ void Model::Release()
 
 void Model::Update(float df)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
-	if (device == nullptr || mesh_ == nullptr) return;
 }
 
 void Model::Render()
@@ -95,7 +92,68 @@ void Model::Render()
 	auto device = DeviceManager::GetInstance()->GetDevice();
 	if (device == nullptr || mesh_ == nullptr) return ;
 
-	D3DXMATRIX mat, matt;
+	// ワードルマトリクス設定
+	D3DXMATRIX mat;
+	CreateWorldMatrix_(mat);
+	device->SetTransform(D3DTS_WORLD, &mat);
+
+	// 頂点
+	device->SetVertexShader(nullptr);
+	device->SetFVF(mesh_->GetFVF());
+
+	// アルファブレンド
+	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
+	float r = color_.GetR() / 255.0f;
+	float g = color_.GetG() / 255.0f;
+	float b = color_.GetB() / 255.0f;
+	float a = color_.GetA() / 255.0f;
+	for (size_t i = 0; i < materials_.size(); ++i) {
+		auto& dst_diff = materials_[i].Diffuse;
+		auto& src_diff = diffuses_[i];
+		dst_diff.r = src_diff.r * r;
+		dst_diff.g = src_diff.g * g;
+		dst_diff.b = src_diff.b * b;
+		dst_diff.a = src_diff.a * a;
+	}
+
+	/*
+	static bool hoge = false;
+	if (KeyManager::GetInstance()->IsTrg('L')) {
+		hoge = !hoge;
+	}
+	*/
+
+	// 描画
+	if (a < 1.0f) {
+		// 半透明あり
+		Renderer::GetInstance()->SetBlend(Renderer::BLEND_DEST);
+		for (size_t i = 0; i < materials_.size(); ++i) {
+			device->SetMaterial(&materials_[i]);
+			device->SetTexture(0, nullptr);
+			mesh_->DrawSubset(i);
+		}
+		Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
+		for (size_t i = 0; i < materials_.size(); ++i) {
+			device->SetMaterial(&materials_[i]);
+			textures_[i]->Apply();
+			mesh_->DrawSubset(i);
+		}
+	} else {
+		// 半透明なし
+		for (size_t i = 0; i < materials_.size(); ++i) {
+			device->SetMaterial(&materials_[i]);
+			textures_[i]->Apply();
+			mesh_->DrawSubset(i);
+		}
+	}
+}
+
+void Model::CreateWorldMatrix_(D3DXMATRIX& mat)
+{
+	auto device = DeviceManager::GetInstance()->GetDevice();
+	if (device == nullptr) return ;
+
+	D3DXMATRIX matt;
 	D3DXMatrixIdentity(&mat);
 
 	// 拡縮
@@ -130,59 +188,4 @@ void Model::Render()
 	mat.m[3][0] += position_.x;
 	mat.m[3][1] += position_.y;
 	mat.m[3][2] += position_.z;
-	device->SetTransform(D3DTS_WORLD, &mat);
-
-	// アルファブレンド
-	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
-
-	device->SetVertexShader(nullptr);
-	device->SetFVF(mesh_->GetFVF());
-
-	/*
-	static bool hoge = false;
-	if (KeyManager::GetInstance()->IsTrg('L')) {
-		hoge = !hoge;
-	}
-	*/
-
-	float r = color_.GetR() / 255.0f;
-	float g = color_.GetG() / 255.0f;
-	float b = color_.GetB() / 255.0f;
-	float a = color_.GetA() / 255.0f;
-	if (a < 1.0f) {
-		// 半透明あり
-		device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-		for (size_t i = 0; i < materials_.size(); ++i) {
-			materials_[i].Diffuse.a = 0;
-			device->SetMaterial(&materials_[i]);
-			device->SetTexture(0, nullptr);
-			mesh_->DrawSubset(i);
-		}
-		for (size_t i = 0; i < materials_.size(); ++i) {
-			auto& dst_diff = materials_[i].Diffuse;
-			auto& src_diff = diffuses_[i];
-			dst_diff.r = src_diff.r * r;
-			dst_diff.g = src_diff.g * g;
-			dst_diff.b = src_diff.b * b;
-			dst_diff.a = src_diff.a * a;
-
-			device->SetMaterial(&materials_[i]);
-			textures_[i]->Apply();
-			mesh_->DrawSubset(i);
-		}
-	} else {
-		// 半透明なし
-		for (size_t i = 0; i < materials_.size(); ++i) {
-			auto& dst_diff = materials_[i].Diffuse;
-			auto& src_diff = diffuses_[i];
-			dst_diff.r = src_diff.r * r;
-			dst_diff.g = src_diff.g * g;
-			dst_diff.b = src_diff.b * b;
-			dst_diff.a = src_diff.a * a;
-
-			device->SetMaterial(&materials_[i]);
-			textures_[i]->Apply();
-			mesh_->DrawSubset(i);
-		}
-	}
 }
