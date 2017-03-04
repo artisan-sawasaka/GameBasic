@@ -97,7 +97,10 @@ void SceneTitle::Render2D()
 	// マスターデータに基づく描画処理
 	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
 
+	Renderer::GetInstance()->PushState();
+	Renderer::GetInstance()->SetZEnable(true);
 	model_.Render();
+	Renderer::GetInstance()->PopState();
 }
 
 /*!
@@ -115,7 +118,8 @@ void SceneTitle::Reload_()
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(ui_);
 
 	model_.LoadFile("data/model/ch00_stand00.x");
-	model_.SetPotision(5.0f, 0, 0);
+	model_.SetPotision(6.0f, 0, 0);
+	model_.SetRotate(0, 0.075f, 0);
 }
 
 /*!

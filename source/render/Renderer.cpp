@@ -243,6 +243,32 @@ void Renderer::SetZWriteEnable(bool enable)
 }
 
 /*!
+ * @brief 現在の状態をプッシュします。
+ */
+void Renderer::PushState()
+{
+	auto device = GetDevice_();
+	if (device == nullptr) return ;
+
+	IDirect3DStateBlock9* block;
+	device->CreateStateBlock(D3DSBT_PIXELSTATE, &block);
+	state_block_.push(block);
+}
+
+/*!
+ * @brief 状態をポップします。
+ */
+void Renderer::PopState()
+{
+	auto device = GetDevice_();
+	if (device == nullptr || state_block_.empty()) return ;
+
+	state_block_.top()->Apply();
+	state_block_.top()->Release();
+	state_block_.pop();
+}
+
+/*!
  * @brief 画面クリア
  */
 void Renderer::ClearScreen(const Color& color)

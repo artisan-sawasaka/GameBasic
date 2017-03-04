@@ -10,6 +10,7 @@
 #include <Windows.h>
 #include <memory>
 #include <d3d9.h>
+#include <stack>
 #include "master/MasterData.hpp"
 #include "main/DeviceLostListener.h"
 #include "Texture.h"
@@ -181,6 +182,20 @@ public :
 	void SetZWriteEnable(bool enable);
 
 	/*!
+	 * @brief 現在の状態をプッシュします。
+	 *
+	 * @return なし
+	 */
+	void PushState();
+
+	/*!
+	 * @brief 状態をポップします。
+	 *
+	 * @return なし
+	 */
+	void PopState();
+
+	/*!
 	 * @brief 画面クリア
 	 */
 	void ClearScreen(const Color& color);
@@ -256,4 +271,5 @@ private :
 	std::vector<Vertex2D> stocks_;
 	size_t stock_count_;
 	bool device_lost_;
+	std::stack<IDirect3DStateBlock9*> state_block_;
 };

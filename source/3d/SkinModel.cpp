@@ -332,11 +332,7 @@ void SkinModel::Render()
 	auto device = DeviceManager::GetInstance()->GetDevice();
 	if (device == nullptr) return ;
 
-	IDirect3DStateBlock9* block;
-	device->CreateStateBlock(D3DSBT_PIXELSTATE, &block);
-
 	// アルファブレンド
-	Renderer::GetInstance()->SetZEnable(true);
 	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
 	float r = color_.GetR() / 255.0f;
 	float g = color_.GetG() / 255.0f;
@@ -354,8 +350,8 @@ void SkinModel::Render()
 	// 頂点
 	auto* frame = data_->frame;
 	auto* container = frame->GetMeshContainer();
-	auto* combs = static_cast<D3DXBONECOMBINATION*>(container->boneCombinationTable->GetBufferPointer());
 	auto* mesh = container->MeshData.pMesh;
+	auto* combs = static_cast<D3DXBONECOMBINATION*>(container->boneCombinationTable->GetBufferPointer());
 	device->SetVertexShader(nullptr);
 	device->SetFVF(mesh->GetFVF());
 
@@ -412,6 +408,4 @@ void SkinModel::Render()
 			mesh->DrawSubset(i);
 		}
 	}
-	block->Apply();
-	SAFE_RELEASE(block);
 }
