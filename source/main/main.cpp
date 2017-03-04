@@ -94,6 +94,9 @@ void MainApp::Update(float df)
 	// マウス更新
 	MouseManager::GetInstance()->Update();
 
+	// カメラの更新
+	camera_.Update(df);
+
 	// デバッグ機能
 	if (KeyManager::GetInstance()->IsTrg('R')) {
 		// 現在のシーンの再読み込み
@@ -168,6 +171,7 @@ void MainApp::RenderDebug_()
 
 	// 操作説明
 	const std::string ds[] = {
+		camera_.GetInfo(),
 		"R:シーンリセット",
 		"O:コンソールを開く",
 		"C:コンソールを閉じる",
