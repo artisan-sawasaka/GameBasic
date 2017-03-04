@@ -5,13 +5,15 @@
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
 static const float RotateBase = 6.28318530718f;
 
+// メッシュコンテナ
 struct CD3DXMeshContainer : public D3DXMESHCONTAINER {
 	DWORD maxFaceInfl;
 	DWORD numBoneCombinations;
-	ID3DXBuffer *boneCombinationTable;
+	ID3DXBuffer* boneCombinationTable;
 	CD3DXMeshContainer() : maxFaceInfl(1), numBoneCombinations(0), boneCombinationTable(0) {}
 };
 
+// フレーム
 struct CD3DXFrame : public D3DXFRAME {
 	DWORD id;
 	D3DXMATRIX offsetMatrix;
@@ -19,12 +21,16 @@ struct CD3DXFrame : public D3DXFRAME {
 		D3DXMatrixIdentity(&offsetMatrix);
 	}
 
+	// コンテナを取得
 	CD3DXMeshContainer* GetMeshContainer() {
 		return GetMeshContainer_(this);
 	}
 
+	// フレームIDを設定
 	void InitializeFrameId() {
-		ID3DXSkinInfo *info = GetMeshContainer()->pSkinInfo;
+		ID3DXSkinInfo* info = GetMeshContainer()->pSkinInfo;
+		if (info == nullptr) return ;
+
 		std::map<std::string, DWORD> nameToIdMap;
 		for (DWORD i = 0; i < info->GetNumBones(); ++i) {
 			nameToIdMap[info->GetBoneName(i)] = i;
@@ -36,14 +42,22 @@ struct CD3DXFrame : public D3DXFRAME {
 		UpdateCombMatrix(mat);
 	}
 
+	// マトリクスを更新
 	void UpdateCombMatrix(D3DXMATRIX& mat)	{
-		UpdateCombMatrix_(combMatrixMap_, mat, this);
+		UpdateCombMatrix_(mat, this);
 	}
 
-	D3DXMATRIX* GetMatrix(int id) {
-		return &combMatrixMap_[id];
+	// 指定されたIDのマトリクスを取得
+	const D3DXMATRIX* GetMatrix(int id) const {
+		auto it = combMatrixMap_.find(id);
+		if (it != combMatrixMap_.end()) {
+			return &it->second;
+		}
+		return nullptr;
 	}
+
 private :
+	// フレームの階層を辿ってコンテナを取得
 	CD3DXMeshContainer* GetMeshContainer_(D3DXFRAME* frame) {
 		if (frame->pMeshContainer != nullptr)
 			return static_cast<CD3DXMeshContainer*>(frame->pMeshContainer);
@@ -54,6 +68,7 @@ private :
 		return 0;
 	}
 
+	// 各フレームにIDを付与する
 	void SetFrameIdAndMatrix_(std::map<std::string, DWORD>& nameToIdMap, ID3DXSkinInfo* info, CD3DXFrame* frame) {
 		if (nameToIdMap.find(frame->Name) != nameToIdMap.end()) {
 			frame->id = nameToIdMap[frame->Name];
@@ -67,23 +82,24 @@ private :
 		}
 	}
 
-	void UpdateCombMatrix_(std::map<DWORD, D3DXMATRIX>& combMatrixMap, D3DXMATRIX& parentBoneMatrix, CD3DXFrame* frame) {
-		D3DXMATRIX &localBoneMatrix = frame->TransformationMatrix;
-		D3DXMATRIX boneMatrix = localBoneMatrix * parentBoneMatrix;
+	// マトリクスを更新する
+	void UpdateCombMatrix_(D3DXMATRIX& parentBoneMatrix, CD3DXFrame* frame) {
+		D3DXMATRIX boneMatrix = frame->TransformationMatrix * parentBoneMatrix;
 		if (frame->id != 0xffffffff) {
-			combMatrixMap[frame->id] = frame->offsetMatrix * boneMatrix;
+			combMatrixMap_[frame->id] = frame->offsetMatrix * boneMatrix;
 		}
 		if (frame->pFrameFirstChild) {
-			UpdateCombMatrix_(combMatrixMap, boneMatrix, static_cast<CD3DXFrame*>(frame->pFrameFirstChild));
+			UpdateCombMatrix_(boneMatrix, static_cast<CD3DXFrame*>(frame->pFrameFirstChild));
 		}
 		if (frame->pFrameSibling) {
-			UpdateCombMatrix_(combMatrixMap, parentBoneMatrix, static_cast<CD3DXFrame*>(frame->pFrameSibling));
+			UpdateCombMatrix_(parentBoneMatrix, static_cast<CD3DXFrame*>(frame->pFrameSibling));
 		}
 	}
 
 	std::map<DWORD, D3DXMATRIX> combMatrixMap_;
 };
 
+// 階層とメモリ管理
 class AllocateHierarchy : public ID3DXAllocateHierarchy {
 public:
 	AllocateHierarchy(
@@ -97,9 +113,10 @@ public:
 		, path_(path)
 	{}
 
+	// フレーム作成
 	STDMETHOD(CreateFrame)(THIS_ LPCSTR Name, LPD3DXFRAME* ppNewFrame) {
 		CD3DXFrame* frame = new CD3DXFrame();
-		frame->Name = copyName(Name);
+		frame->Name = CopyName(Name);
 		frame->pFrameFirstChild = nullptr;
 		frame->pFrameSibling = nullptr;
 		frame->pMeshContainer = nullptr;
@@ -109,6 +126,7 @@ public:
 		return D3D_OK;
 	}
 
+	// メッシュコンテナ作成
 	STDMETHOD(CreateMeshContainer)(THIS_
 		LPCSTR Name,
 		CONST D3DXMESHDATA* pMeshData,
@@ -120,9 +138,11 @@ public:
 		LPD3DXMESHCONTAINER* ppNewMeshContainer
 		)
 	{
+		// 新しいメッシュコンテナを作成
 		CD3DXMeshContainer *newCont = new CD3DXMeshContainer();
-		newCont->Name = copyName(Name);
+		newCont->Name = CopyName(Name);
 
+		// 各種必要な項目をコピー
 		newCont->pAdjacency = new DWORD[pMeshData->pMesh->GetNumFaces() * 3];
 		memset(newCont->pAdjacency, 0, pMeshData->pMesh->GetNumFaces() * 3 * sizeof(DWORD));
 		newCont->MeshData.Type = pMeshData->Type;
@@ -131,9 +151,7 @@ public:
 			&newCont->numBoneCombinations, &newCont->boneCombinationTable, &newCont->MeshData.pMesh
 		);
 
-		newCont->NumMaterials = NumMaterials;
-		newCont->pMaterials = new D3DXMATERIAL[NumMaterials];
-		memcpy(newCont->pMaterials, pMaterials, NumMaterials * sizeof(D3DXMATERIAL));
+		// マテリアルのコピーとテクスチャーのロード
 		materials_.resize(NumMaterials);
 		textures_.resize(NumMaterials);
 		for (DWORD i = 0; i < NumMaterials; ++i) {
@@ -148,8 +166,10 @@ public:
 
 			auto name = Utility::GetFileName(texture_path);
 			if (texture_func_) {
+				// 指定テクスチャーロード関数の呼び出し
 				textures_[i] = texture_func_(name.c_str());
 			} else {
+				// 指定がない場合は同一ディレクトリにテクスチャーがあると判断
 				auto dir = Utility::GetDirectoryName(path_.c_str());
 				auto tex_path = Utility::StringFormat("%s/%s", dir.c_str(), name.c_str());
 
@@ -158,31 +178,35 @@ public:
 			}
 		}
 
-		newCont->pEffects = 0;
+		// エフェクト作成
+		newCont->pEffects = nullptr;
 		if (pEffectInstances != nullptr) {
 			newCont->pEffects = new D3DXEFFECTINSTANCE();
-			newCont->pEffects->pEffectFilename = copyName(pEffectInstances->pEffectFilename);
+			newCont->pEffects->pEffectFilename = CopyName(pEffectInstances->pEffectFilename);
 			newCont->pEffects->NumDefaults = pEffectInstances->NumDefaults;
 			newCont->pEffects->pDefaults = new D3DXEFFECTDEFAULT[pEffectInstances->NumDefaults];
-			for (DWORD i = 0; i < pEffectInstances->NumDefaults; i++) {
+			for (DWORD i = 0; i < pEffectInstances->NumDefaults; ++i) {
 				D3DXEFFECTDEFAULT *src = pEffectInstances->pDefaults + i;
 				D3DXEFFECTDEFAULT *dest = newCont->pEffects->pDefaults + i;
-				dest->NumBytes = src->NumBytes;
 				dest->Type = src->Type;
-				dest->pParamName = copyName(src->pParamName);
+				dest->pParamName = CopyName(src->pParamName);
 				dest->pValue = new char[src->NumBytes];
+				dest->NumBytes = src->NumBytes;
 				memcpy(dest->pValue, src->pValue, src->NumBytes);
 			}
 		}
 
+		// スキン情報を保持
 		newCont->pSkinInfo = pSkinInfo;
 		pSkinInfo->AddRef();
 
+		// 作成したコンテナを渡す
 		*ppNewMeshContainer = newCont;
 
 		return D3D_OK;
 	}
 
+	// フレーム削除
 	STDMETHOD(DestroyFrame)(THIS_ LPD3DXFRAME pFrameToFree) {
 		if (pFrameToFree->pFrameFirstChild != nullptr) {
 			DestroyFrame(pFrameToFree->pFrameFirstChild);
@@ -192,10 +216,6 @@ public:
 			DestroyFrame(pFrameToFree->pFrameSibling);
 			pFrameToFree->pFrameSibling = nullptr;
 		}
-		if (pFrameToFree->pMeshContainer != nullptr) {
-			DestroyMeshContainer(pFrameToFree->pMeshContainer);
-			pFrameToFree->pMeshContainer = nullptr;
-		}
 
 		delete[] pFrameToFree->Name;
 		delete pFrameToFree;
@@ -203,21 +223,17 @@ public:
 		return D3D_OK;
 	}
 
+	// コンテナ削除
 	STDMETHOD(DestroyMeshContainer)(THIS_ LPD3DXMESHCONTAINER pMeshContainerToFree)
 	{
-		// 解放済みのアドレスが来ることがあるので既に解放したものを弾く
-		if (deletes_.find(pMeshContainerToFree) != deletes_.end()) {
-			return D3D_OK;
-		}
-		deletes_.insert(pMeshContainerToFree);
-
 		CD3DXMeshContainer *m = static_cast<CD3DXMeshContainer*>(pMeshContainerToFree);
 
 		SAFE_RELEASE(m->MeshData.pMesh);
 		delete[] m->Name;
 		delete[] m->pAdjacency;
-		if (m->pEffects) {
-			for (DWORD i = 0; i < m->pEffects->NumDefaults; i++) {
+
+		if (m->pEffects != nullptr) {
+			for (DWORD i = 0; i < m->pEffects->NumDefaults; ++i) {
 				D3DXEFFECTDEFAULT *d = m->pEffects->pDefaults + i;
 				delete[] d->pParamName;
 				delete[] d->pValue;
@@ -226,7 +242,6 @@ public:
 			delete[] m->pEffects->pEffectFilename;
 			delete m->pEffects;
 		}
-		delete[] m->pMaterials;
 
 		SAFE_RELEASE(m->pSkinInfo);
 		SAFE_RELEASE(m->boneCombinationTable);
@@ -235,24 +250,19 @@ public:
 
 		return D3D_OK;
 	}
-
-	void InitializeDelete() {
-		deletes_.clear();
-	}
 private :
-	char *copyName(const char* name) {
-		char *n = 0;
+	char* CopyName(const char* name) {
+		char* s;
 		if (name == nullptr) {
-			n = new char[1];
-			n[0] = '\0';
+			s = new char[1];
+			s[0] = '\0';
 		} else {
-			n = new char[strlen(name) + 1];
-			strcpy(n, name);
+			s = new char[strlen(name) + 1];
+			strcpy(s, name);
 		}
-		return n;
+		return s;
 	}
 
-	std::set<LPD3DXMESHCONTAINER> deletes_;
 	std::vector<D3DMATERIAL9>& materials_;
 	std::vector<std::shared_ptr<Texture>>& textures_;
 	std::function<std::shared_ptr<Texture>(const char* name)> texture_func_;
@@ -269,9 +279,9 @@ struct SkinData {
 
 	~SkinData() {
 		if (frame != nullptr) {
-			allocater->InitializeDelete();
 			D3DXFrameDestroy(frame, allocater.get());
 		}
+		allocater.reset();
 		SAFE_RELEASE(controller);
 	}
 };
@@ -322,6 +332,8 @@ void SkinModel::Release()
 
 void SkinModel::Update(float df)
 {
+	if (!data_) return ;
+
 	D3DXMATRIX mat;
 	CreateWorldMatrix_(mat);
 
@@ -332,7 +344,7 @@ void SkinModel::Update(float df)
 void SkinModel::Render()
 {
 	auto device = DeviceManager::GetInstance()->GetDevice();
-	if (device == nullptr) return ;
+	if (device == nullptr || !data_) return ;
 
 	// アルファブレンド
 	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
