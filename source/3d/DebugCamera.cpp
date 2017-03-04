@@ -21,9 +21,17 @@ void DebugCamera::Update(float df)
 		move_[1] = -ms->GetMoveY() / 10.0f;
 	}
 	if (ms->IsHwheelUp()) {
-		move_[2] = 2.0f;
+		if (ms->IsPress(MouseManager::RBUTTON)) {
+			move_[5] = 0.5f;
+		} else {
+			move_[2] = 2.0f;
+		}
 	} else if (ms->IsHwheelDown()) {
-		move_[2] = -2.0f;
+		if (ms->IsPress(MouseManager::RBUTTON)) {
+			move_[5] -= 0.5f;
+		} else {
+			move_[2] -= 2.0f;
+		}
 	}
 	position_ += D3DXVECTOR3(move_[0], move_[1], move_[2]);
 
@@ -33,6 +41,9 @@ void DebugCamera::Update(float df)
 		move_[4] = ms->GetMoveY() / 400.0f;
 	}
 	rotate_ += D3DXVECTOR3(move_[4], move_[3], 0.0f);
+
+	// Ž‹–ìŠp
+	fov_ += move_[5];
 
 	if (ms->IsPress(MouseManager::LBUTTON) && ms->IsPress(MouseManager::RBUTTON)) {
 		Initialize_();

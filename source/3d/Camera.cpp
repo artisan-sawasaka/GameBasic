@@ -24,7 +24,7 @@ void Camera::Apply()
 	} else {
 		D3DXMatrixLookAtLH(&view_, &position_, &lookat_, &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
 	}
-	D3DXMatrixPerspectiveFovLH(&projection_, fov_, aspect_, znear_, zfar_);
+	D3DXMatrixPerspectiveFovLH(&projection_, D3DXToRadian(fov_), aspect_, znear_, zfar_);
 }
 
 void Camera::Update(float df)
@@ -69,9 +69,10 @@ void Camera::SetDepth(float znear, float zfar)
 
 std::string Camera::GetInfo() const
 {
-	return Utility::StringFormat("px:%5.2f py:%5.2f pz:%5.2f lx:%5.2f ly:%5.2f lz:%5.2f",
+	return Utility::StringFormat("px:%5.2f py:%5.2f pz:%5.2f lx:%5.2f ly:%5.2f lz:%5.2f fov:%5.2f",
 		position_.x, position_.y, position_.z,
-		lookat_.x, lookat_.y, lookat_.z);
+		lookat_.x, lookat_.y, lookat_.z,
+		fov_);
 }
 
 void Camera::Initialize_()
@@ -79,7 +80,7 @@ void Camera::Initialize_()
 	SetPosition(0.0f, 5.0f, -14);
 	SetRotate(0.0f, 0.0f, 0.0f);
 	SetLookAt(0.0f, 5.0f, 0.0f);
-	SetFov(D3DXToRadian(45));
+	SetFov(45);
 	SetAspect(16.0f / 9.0f);
 	SetDepth(0.1f, 1000.0f);
 	Apply();

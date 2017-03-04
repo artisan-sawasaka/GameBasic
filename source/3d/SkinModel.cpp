@@ -332,8 +332,11 @@ void SkinModel::Render()
 	auto device = DeviceManager::GetInstance()->GetDevice();
 	if (device == nullptr) return ;
 
+	IDirect3DStateBlock9* block;
+	device->CreateStateBlock(D3DSBT_PIXELSTATE, &block);
 
 	// アルファブレンド
+	Renderer::GetInstance()->SetZEnable(true);
 	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);
 	float r = color_.GetR() / 255.0f;
 	float g = color_.GetG() / 255.0f;
@@ -409,4 +412,6 @@ void SkinModel::Render()
 			mesh->DrawSubset(i);
 		}
 	}
+	block->Apply();
+	SAFE_RELEASE(block);
 }

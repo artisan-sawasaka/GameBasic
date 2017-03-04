@@ -62,6 +62,9 @@ void SceneTitle::Update(float df)
 	// カーソル更新
 	UpdateCursor_();
 
+	// モデル更新
+	model_.Update(df);
+
 	if (KeyManager::GetInstance()->IsTrg('1')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
 	} else if (KeyManager::GetInstance()->IsTrg('2')) {
@@ -84,7 +87,6 @@ void SceneTitle::Update(float df)
  */
 void SceneTitle::Render3D()
 {
-	model_.Render();
 }
 
 /*!
@@ -93,7 +95,9 @@ void SceneTitle::Render3D()
 void SceneTitle::Render2D()
 {
 	// マスターデータに基づく描画処理
-//	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
+	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
+
+	model_.Render();
 }
 
 /*!
@@ -111,8 +115,7 @@ void SceneTitle::Reload_()
 	objects_ = Utility::CreateObjects<MasterData::TitleUIData>(ui_);
 
 	model_.LoadFile("data/model/ch00_stand00.x");
-	//model_.LoadFile("data/model/sample.x");
-	
+	model_.SetPotision(5.0f, 0, 0);
 }
 
 /*!
@@ -191,7 +194,6 @@ bool SceneTitle::ActionSelect_(float df)
 			model_.SetColor(color);
 		}
 	}
-	model_.Update(df);
 
 	return false;
 }

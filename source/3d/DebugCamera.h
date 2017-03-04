@@ -14,5 +14,5 @@ public :
 	virtual void Update(float df);
 
 private :
-	float move_[5];
+	float move_[6];
 };
