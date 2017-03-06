@@ -29,6 +29,12 @@
     <Filter Include="source\3d">
       <UniqueIdentifier>{2724e0b3-e7f3-4c56-bdf3-6f1e4bcbf2c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\shader">
+      <UniqueIdentifier>{097afec4-c908-4840-a463-fa2a44ed6e7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\render_utility">
+      <UniqueIdentifier>{a4315768-77d4-40e8-8f5f-f180b0d4e560}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main\main.cpp">
@@ -117,6 +123,15 @@
     </ClCompile>
     <ClCompile Include="source\3d\SkinModel.cpp">
       <Filter>source\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="source\shader\Shader.cpp">
+      <Filter>source\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="source\shader\BlurShader.cpp">
+      <Filter>source\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="source\shader\RasterScrollShader.cpp">
+      <Filter>source\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +251,15 @@
     </ClInclude>
     <ClInclude Include="source\3d\SkinModel.h">
       <Filter>source\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="source\shader\BlurShader.h">
+      <Filter>source\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="source\shader\Shader.h">
+      <Filter>source\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="source\shader\RasterScrollShader.h">
+      <Filter>source\shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

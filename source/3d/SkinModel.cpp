@@ -309,6 +309,7 @@ bool SkinModel::LoadFile(const char* path, std::function<std::shared_ptr<Texture
 	data_->allocater.reset(new AllocateHierarchy(materials_, textures_, texture_func, path));
 	auto ret = D3DXLoadMeshHierarchyFromXA(path, D3DXMESH_MANAGED, device, data_->allocater.get(), nullptr, (D3DXFRAME**)&data_->frame, &data_->controller);
 	if (ret != D3D_OK) {
+		Release();
 		return false;
 	}
 

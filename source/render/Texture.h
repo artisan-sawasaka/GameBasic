@@ -10,11 +10,12 @@
 #include <d3dx9.h>
 #include <cstdint>
 #include "TextureFormat.h"
+#include "main/DeviceLostListener.h"
 
 /*!
  * @brief テクスチャークラス
  */
-class Texture
+class Texture : public DeviceLostListener
 {
 public :
 	Texture();
@@ -30,11 +31,18 @@ public :
 	uint32_t GetWidth() const { return desc_.Width; }
 	uint32_t GetHeight() const { return desc_.Height; }
 	LPDIRECT3DTEXTURE9 GetTexture() const  { return texture_; }
+	void OnLostDevice();
+	void OnResetDevice();
 
 private :
 	Texture& operator=(const Texture&);
 	LPDIRECT3DTEXTURE9 texture_;
 	D3DSURFACE_DESC desc_;
 	D3DXIMAGE_INFO info_;
+	LPDIRECT3DSURFACE9 surface_;
 	bool is_render_target_;
+
+	TEXTURE_FORMAT render_target_format_;
+	uint32_t render_target_width_;
+	uint32_t render_target_height_;
 };

@@ -99,6 +99,9 @@
     <ClCompile Include="source\scene\SceneInitialize.cpp" />
     <ClCompile Include="source\scene\SceneOption.cpp" />
     <ClCompile Include="source\scene\SceneTitle.cpp" />
+    <ClCompile Include="source\shader\BlurShader.cpp" />
+    <ClCompile Include="source\shader\RasterScrollShader.cpp" />
+    <ClCompile Include="source\shader\Shader.cpp" />
     <ClCompile Include="source\sound\SoundManager.cpp" />
     <ClCompile Include="source\stream\BinaryReader.cpp" />
     <ClCompile Include="source\stream\FileStream.cpp" />
@@ -133,6 +136,9 @@
     <ClInclude Include="source\scene\SceneList.h" />
     <ClInclude Include="source\scene\SceneOption.h" />
     <ClInclude Include="source\scene\SceneTitle.h" />
+    <ClInclude Include="source\shader\BlurShader.h" />
+    <ClInclude Include="source\shader\RasterScrollShader.h" />
+    <ClInclude Include="source\shader\Shader.h" />
     <ClInclude Include="source\sound\Bgm.h" />
     <ClInclude Include="source\sound\Se.h" />
     <ClInclude Include="source\sound\SoundManager.h" />

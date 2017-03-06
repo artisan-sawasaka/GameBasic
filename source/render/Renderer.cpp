@@ -251,7 +251,10 @@ void Renderer::PushState()
 	if (device == nullptr) return ;
 
 	IDirect3DStateBlock9* block;
-	device->CreateStateBlock(D3DSBT_PIXELSTATE, &block);
+	HRESULT hr = device->CreateStateBlock(D3DSBT_PIXELSTATE, &block);
+	if (FAILED(hr)) {
+		return ;
+	}
 	state_block_.push(block);
 }
 

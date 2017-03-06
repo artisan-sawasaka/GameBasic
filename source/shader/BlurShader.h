@@ -4,7 +4,7 @@
 #include <string>
 
 /*!
- * @brief シェーダ
+ * @brief ブラーシェーダ
  */
 class BlurShader : public Shader
 {
@@ -19,7 +19,6 @@ public :
 	~BlurShader();
 
 	virtual bool LoadFile(const char* path) { return false; }
-	virtual void SetTexture(Texture* texture);
 	void SetDispersion(float dispersion);
 	float GetDispersion() const;
 
@@ -29,7 +28,6 @@ private :
 	void UpdateWeight_(float dispersion);
 
 	D3DXHANDLE weight_;
-	D3DXHANDLE src_map_;
 	float dispersion_;
 	float weight_table_[WEIGHT_MUN];
 };

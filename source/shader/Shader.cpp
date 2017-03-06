@@ -34,6 +34,7 @@ bool Shader::LoadFile(const char* path)
 	}
 	SAFE_RELEASE(message);
 	techniqe_ = effect_->GetTechniqueByName("TShader");
+	src_map_ = effect_->GetParameterByName(nullptr, "SrcMap");
 
 	return true;
 }
@@ -45,7 +46,9 @@ void Shader::Release()
 
 void Shader::SetTexture(Texture* texture)
 {
-	texture_ = texture;
+	if (effect_ == nullptr) return;
+
+	effect_->SetTexture(src_map_, texture->GetTexture());
 }
 
 void Shader::Begin(int index)

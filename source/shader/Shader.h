@@ -26,5 +26,6 @@ public :
 protected :
 	LPD3DXEFFECT effect_;
 	D3DXHANDLE techniqe_;
+	D3DXHANDLE src_map_;
 	Texture* texture_;
 };

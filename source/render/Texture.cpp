@@ -24,6 +24,7 @@ Texture::Texture()
 Texture::~Texture()
 {
 	Release();
+	DeviceManager::GetInstance()->GetDevice()->RemoveDeviceLostListener(this);
 }
 
 /*!
@@ -69,7 +70,10 @@ void Texture::ResetRenderTarget()
 	if (device == nullptr || render_stack.empty()) return;
 
 	LPDIRECT3DSURFACE9 surface = render_stack.top();
-	device->SetRenderTarget(0, surface);
+	HRESULT hr = device->SetRenderTarget(0, surface);
+	if (FAILED(hr)) {
+		return;
+	}
 	SAFE_RELEASE(surface);
 }
 
@@ -192,33 +196,7 @@ bool Texture::CreateRenderTarget(TEXTURE_FORMAT format, uint32_t width, uint32_t
 	HRESULT hr;
 
 	hr = device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, fmt, D3DPOOL_DEFAULT, &texture_, nullptr);
-	if (FAILED(hr)) return false;
-
-	// バックバッファのサーフェイス情報を取得
-	LPDIRECT3DSURFACE9 surface;
-	D3DSURFACE_DESC desc;
-	hr = device->GetDepthStencilSurface(&surface);
-	if (FAILED(hr)) return false;
-
-	hr = surface->GetDesc(&desc);
 	if (FAILED(hr)) {
-		SAFE_RELEASE(surface);
-		Release();
-		return false;
-	}
-	
-	hr = texture_->GetSurfaceLevel(0, &surface);
-	if (FAILED(hr)) {
-		SAFE_RELEASE(surface);
-		Release();
-		return false;
-	}
-
-	// レンダリングターゲットを生成
-	hr = device->CreateRenderTarget(width, height, fmt, desc.MultiSampleType, 0, FALSE, &surface, nullptr);
-	SAFE_RELEASE(surface);
-	if (FAILED(hr)) {
-		Release();
 		return false;
 	}
 
@@ -228,7 +206,26 @@ bool Texture::CreateRenderTarget(TEXTURE_FORMAT format, uint32_t width, uint32_t
 		Release();
 		return false;
 	}
+
+	DeviceManager::GetInstance()->GetDevice()->AddDeviceLostListener(this);
+	render_target_format_ = format;
+	render_target_width_ = width;
+	render_target_height_ = height;
 	is_render_target_ = true;
 
 	return true;
 }
+
+void Texture::OnLostDevice()
+{
+	if (!is_render_target_) return;
+	Release();
+	is_render_target_ = true;
+}
+
+void Texture::OnResetDevice()
+{
+	if (!is_render_target_) return;
+	CreateRenderTarget(render_target_format_, render_target_width_, render_target_height_);
+}
+
