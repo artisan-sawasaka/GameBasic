@@ -10,6 +10,8 @@
 #include "scene/SceneGame.h"
 #include <algorithm>
 
+static const float PI2 = 6.28318530718f;
+
 /*!
  * @brief 更新
  */
@@ -30,7 +32,7 @@ void SceneTitle::Update(float df)
 
 	// 初期化
 	if (state_ == ST_INIT) {
-		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
+		//SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
 		state_.Change(ST_LOADING, true);
 	}
 	if (state_ == ST_LOADING) {
@@ -79,7 +81,10 @@ void SceneTitle::Update(float df)
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 	} else if (KeyManager::GetInstance()->IsTrg('9')) {
 		SoundManager::GetInstance()->StopAll();
+		raster_scroll_.SetRate(2.0f, 1.0f, 0.05f);
+		raster_scroll_.Start(3.0f, 1.0f);
 	}
+	raster_scroll_.Update(df);
 }
 
 /*!
@@ -94,13 +99,11 @@ void SceneTitle::Render3D()
  */
 void SceneTitle::Render2D()
 {
-	// マスターデータに基づく描画処理
-	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
+	render_target_.ApplyRenderTarget();
+	Render2D_();
+	render_target_.ResetRenderTarget();
 
-	Renderer::GetInstance()->PushState();
-	Renderer::GetInstance()->SetZEnable(true);
-	model_.Render();
-	Renderer::GetInstance()->PopState();
+	raster_scroll_.Render(&render_target_);
 }
 
 /*!
@@ -121,6 +124,8 @@ void SceneTitle::Reload_()
 	
 	model_.SetPotision(6.0f, 0, 0);
 	model_.SetRotate(0, 0.075f, 0);
+
+	render_target_.CreateRenderTarget(TEXTURE_FORMAT_ARGB8888, DeviceManager::GetInstance()->GetWidth(), DeviceManager::GetInstance()->GetHeight());
 }
 
 /*!
@@ -229,4 +234,14 @@ bool SceneTitle::ActionOutAnimation_(float df)
 	}
 
 	return false;
+}
+
+void SceneTitle::Render2D_()
+{
+	// マスターデータに基づく描画処理
+	Utility::BasicRender(MasterData::TitleImageList, ui_, textures_);
+	Renderer::GetInstance()->PushState();
+	Renderer::GetInstance()->SetZEnable(true);
+	model_.Render();
+	Renderer::GetInstance()->PopState();
 }

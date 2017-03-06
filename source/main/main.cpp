@@ -108,12 +108,12 @@ void MainApp::Update(float df)
 		SceneManager::GetInstance()->Restart();
 	} else if (KeyManager::GetInstance()->IsTrg('O')) {
 		// デバッグ出力ウインドウを開く
-		ConsoleManager::GetInstance()->Open();
+		//ConsoleManager::GetInstance()->Open();
 	} else if (KeyManager::GetInstance()->IsTrg('C')) {
 		// デバッグ出力ウインドウを閉じる
-		ConsoleManager::GetInstance()->Close();
+		//ConsoleManager::GetInstance()->Close();
 	} else if (KeyManager::GetInstance()->IsTrg('Q')) {
-		is_debug_render_ = !is_debug_render_;
+		//is_debug_render_ = !is_debug_render_;
 	}
 
 	// 更新
@@ -138,8 +138,8 @@ void MainApp::Update_(float df)
 void MainApp::ClearScreen()
 {
 	// 画面クリア
-	Renderer::GetInstance()->ClearScreen(Color(255, 0, 255));
-	//Renderer::GetInstance()->ClearScreen(Color(0, 0, 0));
+	//Renderer::GetInstance()->ClearScreen(Color(255, 0, 255));
+	Renderer::GetInstance()->ClearScreen(Color(0, 0, 0));
 }
 
 /*!
@@ -163,10 +163,7 @@ void MainApp::Render2D()
 	FadeManager::GetInstance()->Render();
 
 	// デバッグ表示
-	RenderDebug_();
-
-	// FPS表示
-	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 12, Color::White, _T("FPS:%.1f"), GetAverageFPS());
+	//RenderDebug_();
 }
 
 void MainApp::RenderDebug_()
@@ -184,6 +181,9 @@ void MainApp::RenderDebug_()
 	for (int i = 0; i < sizeof(ds) / sizeof(*ds); ++i) {
 		Renderer::GetInstance()->DrawString(ds[i].c_str(), Renderer::LEFT_TOP, 0, i * 12, 12);
 	}
+
+	// FPS表示
+	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 12, Color::White, _T("FPS:%.1f"), GetAverageFPS());
 }
 
 void MainApp::ReloadMasterData_()

@@ -133,6 +133,9 @@
     <ClCompile Include="source\shader\RasterScrollShader.cpp">
       <Filter>source\shader</Filter>
     </ClCompile>
+    <ClCompile Include="source\render_utility\RasterScroll.cpp">
+      <Filter>source\render_utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main\main.h">
@@ -260,6 +263,9 @@
     </ClInclude>
     <ClInclude Include="source\shader\RasterScrollShader.h">
       <Filter>source\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render_utility\RasterScroll.h">
+      <Filter>source\render_utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

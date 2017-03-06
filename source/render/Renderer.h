@@ -208,7 +208,7 @@ public :
 	/*!
 	 * @brief ‰æ‘œ•`‰æ
 	 */
-	void DrawImage(Texture* texture, Anchor anchor, int x, int y);
+	void DrawImage(Texture* texture, Anchor anchor, int x, int y, const Color& color = Color::White, float rotate = 0.0f);
 
 	/*!
 	 * @brief ‰æ‘œ•`‰æ

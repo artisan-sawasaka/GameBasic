@@ -315,10 +315,10 @@ void Renderer::FillRect(int x, int y, int w, int h, const Color& color)
 /*!
  * @brief ‰æ‘œ•`‰æ
  */
-void Renderer::DrawImage(Texture* texture, Anchor anchor, int x, int y)
+void Renderer::DrawImage(Texture* texture, Anchor anchor, int x, int y, const Color& color, float rotate)
 {
 	if (texture == nullptr) return ;
-	DrawImage(texture, anchor, x, y, texture->GetWidth(), texture->GetHeight(), 0, 0, texture->GetWidth(), texture->GetHeight());
+	DrawImage(texture, anchor, x, y, texture->GetWidth(), texture->GetHeight(), 0, 0, texture->GetWidth(), texture->GetHeight(), color, rotate);
 }
 
 /*!

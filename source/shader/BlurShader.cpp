@@ -252,6 +252,7 @@ BlurShader::BlurShader()
 	SAFE_RELEASE(message);
 	techniqe_ = effect_->GetTechniqueByName("TShader");
 	weight_ = effect_->GetParameterByName(nullptr, "weight");
+	src_map_ = effect_->GetParameterByName(nullptr, "SrcMap");
 	effect_->SetFloat("MAP_WIDTH", static_cast<float>(DeviceManager::GetInstance()->GetWidth()));
 	effect_->SetFloat("MAP_HEIGHT", static_cast<float>(DeviceManager::GetInstance()->GetHeight()));
 	UpdateWeight_(dispersion_ * dispersion_);

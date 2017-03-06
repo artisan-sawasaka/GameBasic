@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shader.h"
+#include "render/Color.h"
 #include <string>
 
 /*!
@@ -26,6 +27,10 @@ public :
 	 * @brief 1カーブ辺りの大きさを設定
 	 */
 	void SetAmplitude(float value);
+	/*!
+	 * @brief カラーの設定
+	 */
+	void SetColor(const Color& color);
 
 	/*!
 	 * @brief 縦の移動値を取得
@@ -42,10 +47,11 @@ public :
 
 private :
 	D3DXHANDLE offset_handle_;
-	D3DXHANDLE amplitude_handle_;
 	D3DXHANDLE period_handle_;
+	D3DXHANDLE amplitude_handle_;
+	D3DXHANDLE diffuse_handle_;
 	
 	float offset_;
-	float amplitude_;
 	float period_;
+	float amplitude_;
 };

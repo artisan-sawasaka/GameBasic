@@ -6,6 +6,7 @@
 #include "utility/InOutAnimation.h"
 #include "master/MasterData.hpp"
 #include "3d/SkinModel.h"
+#include "render_utility/RasterScroll.h"
 #include <memory>
 #include <map>
 
@@ -75,6 +76,7 @@ private :
 	bool ActionSelect_(float df);			// 選択
 	bool ActionOutAnimation_(float df);		// アウトアニメーション
 
+	void Render2D_();
 
 	std::map<std::string, std::shared_ptr<Texture>> textures_;						// 画像データ
 	std::vector<MasterData::TitleUIData> ui_;										// UI
@@ -85,4 +87,8 @@ private :
 	//Model model_;
 	SkinModel model_;
 	Menu cursor_;	// カーソル
+
+	Texture render_target_;
+	RasterScroll raster_scroll_;
+
 };
