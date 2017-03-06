@@ -79,6 +79,9 @@ void MainApp::Initialize()
  */
 void MainApp::Finalize()
 {
+	// シーンの終了
+	SceneManager::GetInstance()->Finalize();
+
 	// レンダラーを終了化
 	Renderer::GetInstance()->Finalize();
 }
@@ -136,6 +139,7 @@ void MainApp::ClearScreen()
 {
 	// 画面クリア
 	Renderer::GetInstance()->ClearScreen(Color(255, 0, 255));
+	//Renderer::GetInstance()->ClearScreen(Color(0, 0, 0));
 }
 
 /*!

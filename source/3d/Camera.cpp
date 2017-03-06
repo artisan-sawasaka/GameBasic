@@ -29,7 +29,7 @@ void Camera::Apply()
 
 void Camera::Update(float df)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr) return ;
 
 	device->SetTransform(D3DTS_VIEW, &view_);

@@ -6,6 +6,15 @@
 #include "scene/SceneGame.h"
 
 /*!
+ * @brief I—¹
+ */
+void SceneManager::Finalize()
+{
+	Clear();
+	scene_.reset();
+}
+
+/*!
  * @brief ƒV[ƒ“Ø‚è‘Ö‚¦
  */
 void SceneManager::Change(SceneList::List scene, std::shared_ptr<SceneBaseParam> param)

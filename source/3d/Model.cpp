@@ -22,7 +22,7 @@ Model::~Model()
 
 bool Model::LoadFile(const char* path, std::function<std::shared_ptr<Texture>(const char* name)> texture_func)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr || path == nullptr) return false;
 
 	Release();
@@ -89,7 +89,7 @@ void Model::Update(float df)
 
 void Model::Render()
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr || mesh_ == nullptr) return ;
 
 	// ワードルマトリクス設定
@@ -149,7 +149,7 @@ void Model::Render()
 
 void Model::CreateWorldMatrix_(D3DXMATRIX& mat)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr) return ;
 
 	D3DXMATRIX matt;

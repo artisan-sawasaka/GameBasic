@@ -48,7 +48,7 @@ void DeviceManager::Exit()
 /*!
  * @brief デバイス取得
  */
-LPDIRECT3DDEVICE9 DeviceManager::GetDevice()
+Device* DeviceManager::GetDevice()
 {
-	return app_->GetDevice().GetDevice();
+	return &app_->GetDevice();
 }

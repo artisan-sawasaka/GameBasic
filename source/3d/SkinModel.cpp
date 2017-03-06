@@ -300,7 +300,7 @@ SkinModel::~SkinModel()
 
 bool SkinModel::LoadFile(const char* path, std::function<std::shared_ptr<Texture>(const char* name)> texture_func)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr || path == nullptr) return false;
 
 	Release();
@@ -343,7 +343,7 @@ void SkinModel::Update(float df)
 
 void SkinModel::Render()
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr || !data_) return ;
 
 	// アルファブレンド

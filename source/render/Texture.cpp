@@ -31,7 +31,7 @@ Texture::~Texture()
  */
 void Texture::Apply(int index)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr) return ;
 
 	device->SetTexture(index, texture_);
@@ -42,7 +42,7 @@ void Texture::Apply(int index)
  */
 void Texture::ApplyRenderTarget()
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr || texture_ == nullptr || !is_render_target_) return;
 
 	LPDIRECT3DSURFACE9 surface;
@@ -65,7 +65,7 @@ void Texture::ApplyRenderTarget()
  */
 void Texture::ResetRenderTarget()
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr || render_stack.empty()) return;
 
 	LPDIRECT3DSURFACE9 surface = render_stack.top();
@@ -89,7 +89,7 @@ void Texture::Release()
  */
 bool Texture::CreateFromFile(const char* path, MIPMAP mipmap)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr) return false;
 	if (path == nullptr) return false;
 
@@ -134,7 +134,7 @@ bool Texture::CreateFromFile(const char* path, MIPMAP mipmap)
  */
 bool Texture::CreateFromMemory(const char* buffer, uint32_t size, MIPMAP mipmap)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr) return false;
 	if (buffer == nullptr) return false;
 
@@ -177,7 +177,7 @@ bool Texture::CreateFromMemory(const char* buffer, uint32_t size, MIPMAP mipmap)
  */
 bool Texture::CreateRenderTarget(TEXTURE_FORMAT format, uint32_t width, uint32_t height)
 {
-	auto device = DeviceManager::GetInstance()->GetDevice();
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
 	if (device == nullptr) return false;
 
 	SAFE_RELEASE(texture_);

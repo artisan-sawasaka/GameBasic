@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include <d3dx9.h>
+#include "main/Device.h"
 
 class AppBase;
 
@@ -45,7 +45,7 @@ public :
 	/*!
 	 * @brief デバイス取得
 	 */
-	LPDIRECT3DDEVICE9 GetDevice();
+	Device* GetDevice();
 
 	static DeviceManager* GetInstance()	{
 		static DeviceManager v;

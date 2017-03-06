@@ -20,6 +20,11 @@ class SceneManager
 {
 public :
 	/*!
+	 * @brief 終了
+	 */
+	void Finalize();
+
+	/*!
 	 * @brief シーンを切り替える
 	 *
 	 * @param scene 切り替えるシーン
