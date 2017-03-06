@@ -1,16 +1,19 @@
 #include "Texture.h"
 #include "utility/DeviceManager.h"
 #include <memory>
+#include <stack>
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
+
+static std::stack<LPDIRECT3DSURFACE9> render_stack;
 
 /*!
  * @brief コンストラクタ
  */
 Texture::Texture()
 	: texture_(nullptr)
+	, is_render_target_(false)
 {
-	std::memset(&lock_rect_, 0, sizeof(lock_rect_));
 	std::memset(&desc_, 0, sizeof(desc_));
 	std::memset(&info_, 0, sizeof(info_));
 }
@@ -20,7 +23,7 @@ Texture::Texture()
  */
 Texture::~Texture()
 {
-	SAFE_RELEASE(texture_);
+	Release();
 }
 
 /*!
@@ -32,6 +35,53 @@ void Texture::Apply(int index)
 	if (device == nullptr) return ;
 
 	device->SetTexture(index, texture_);
+}
+
+/*!
+ * @brief テクスチャーをレンダリングターゲットに設定します。
+ */
+void Texture::ApplyRenderTarget()
+{
+	auto device = DeviceManager::GetInstance()->GetDevice();
+	if (device == nullptr || texture_ == nullptr || !is_render_target_) return;
+
+	LPDIRECT3DSURFACE9 surface;
+	HRESULT hr = device->GetRenderTarget(0, &surface);
+	if (FAILED(hr)) {
+		return;
+	}
+	render_stack.push(surface);
+
+	hr = texture_->GetSurfaceLevel(0, &surface);
+	if (FAILED(hr)) {
+		return;
+	}
+	device->SetRenderTarget(0, surface);
+	SAFE_RELEASE(surface);
+}
+
+/*!
+ * @brief テクスチャーをレンダリングターゲットから外します。
+ */
+void Texture::ResetRenderTarget()
+{
+	auto device = DeviceManager::GetInstance()->GetDevice();
+	if (device == nullptr || render_stack.empty()) return;
+
+	LPDIRECT3DSURFACE9 surface = render_stack.top();
+	device->SetRenderTarget(0, surface);
+	SAFE_RELEASE(surface);
+}
+
+/*!
+ * @brief 解放します。
+ */
+void Texture::Release()
+{
+	std::memset(&desc_, 0, sizeof(desc_));
+	std::memset(&info_, 0, sizeof(info_));
+	is_render_target_ = false;
+	SAFE_RELEASE(texture_);
 }
 
 /*!
@@ -153,24 +203,32 @@ bool Texture::CreateRenderTarget(TEXTURE_FORMAT format, uint32_t width, uint32_t
 	hr = surface->GetDesc(&desc);
 	if (FAILED(hr)) {
 		SAFE_RELEASE(surface);
+		Release();
 		return false;
 	}
-	SAFE_RELEASE(surface);
-
 	
 	hr = texture_->GetSurfaceLevel(0, &surface);
 	if (FAILED(hr)) {
+		SAFE_RELEASE(surface);
+		Release();
 		return false;
 	}
 
 	// レンダリングターゲットを生成
 	hr = device->CreateRenderTarget(width, height, fmt, desc.MultiSampleType, 0, FALSE, &surface, nullptr);
 	SAFE_RELEASE(surface);
-	if (FAILED(hr))	return false;
+	if (FAILED(hr)) {
+		Release();
+		return false;
+	}
 
 	// テクスチャー情報の取得
 	hr = texture_->GetLevelDesc(0, &desc_);
-	if (FAILED(hr)) return false;
+	if (FAILED(hr)) {
+		Release();
+		return false;
+	}
+	is_render_target_ = true;
 
 	return true;
 }

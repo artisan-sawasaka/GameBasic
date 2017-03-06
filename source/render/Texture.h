@@ -21,6 +21,9 @@ public :
 	~Texture();
 
 	void Apply(int index = 0);
+	void ApplyRenderTarget();
+	void ResetRenderTarget();
+	void Release();
 	bool CreateFromFile(const char* path, MIPMAP mipmap = MIPMAP_DEFAULT);
 	bool CreateFromMemory(const char* buffer, uint32_t size, MIPMAP mipmap = MIPMAP_DEFAULT);
 	bool CreateRenderTarget(TEXTURE_FORMAT format, uint32_t width, uint32_t height);
@@ -28,8 +31,9 @@ public :
 	uint32_t GetHeight() const  { return desc_.Height; }
 
 private :
+	Texture& operator=(const Texture&);
 	LPDIRECT3DTEXTURE9 texture_;
-	D3DLOCKED_RECT lock_rect_;
 	D3DSURFACE_DESC desc_;
 	D3DXIMAGE_INFO info_;
+	bool is_render_target_;
 };

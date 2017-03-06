@@ -496,11 +496,13 @@ void Renderer::CreateVertex2D_(Vertex2D* v, Texture* texture, Anchor anchor, int
 	if (texture == nullptr) return ;
 	if (color.GetA() == 0) return ;
 
-	dx -= (dw >> 1) * (anchor % 3);
-	dy -= (dh >> 1) * (anchor / 3);
+	int width =  (dw >> 1) * (anchor % 3);
+	int height = (dh >> 1) * (anchor / 3);
+	int x = dx - width;
+	int y = dy - height;
 
-	const float left = static_cast<float>(dx);
-	const float top = static_cast<float>(dy);
+	const float left = static_cast<float>(x);
+	const float top = static_cast<float>(y);
 	const float right = static_cast<float>(dw) + left;
 	const float bottom = static_cast<float>(dh) + top;
 	const float tl = static_cast<float>(sx + 0.5f) / texture->GetWidth();
@@ -521,10 +523,10 @@ void Renderer::CreateVertex2D_(Vertex2D* v, Texture* texture, Anchor anchor, int
 	// ‰ñ“]s—ñ‚ğ‘‚«‚Ş
 	if (rotate != 0) {
 		D3DXMATRIX mat, matt;
-		D3DXMatrixTranslation(&mat, -left, -top, 0);
+		D3DXMatrixTranslation(&mat, -static_cast<float>(dx), -static_cast<float>(dy), 0);
 		mat *= *D3DXMatrixRotationZ(&matt, rotate * RotateBase);
-		mat.m[3][0] += left;
-		mat.m[3][1] += top;
+		mat.m[3][0] += dx;
+		mat.m[3][1] += dy;
 
 		for (int i = 0; i < 4; ++i) {
 			D3DXVECTOR3 din, dout;
