@@ -18,7 +18,7 @@ public :
 	virtual bool LoadFile(const char* path);
 	virtual void Release();
 	virtual void SetTexture(Texture* texture);
-	virtual void SetColor(const Color& color);
+	virtual void SetColor(const Color& color, float rate = 1.0f);
 	const Color& GetColor() const { return color_; }
 	void Begin(int index = 0);
 	void End();

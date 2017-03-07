@@ -51,14 +51,14 @@ void Shader::SetTexture(Texture* texture)
 	effect_->SetTexture(src_map_, texture->GetTexture());
 }
 
-void Shader::SetColor(const Color& color)
+void Shader::SetColor(const Color& color, float rate)
 {
 	color_ = color;
 	const float col[4] = {
-		color.GetR() / 255.0f,
-		color.GetG() / 255.0f,
-		color.GetB() / 255.0f,
-		color.GetA() / 255.0f,
+		color.GetR() * rate / 255.0f,
+		color.GetG() * rate / 255.0f,
+		color.GetB() * rate / 255.0f,
+		color.GetA() * rate / 255.0f,
 	};
 	effect_->SetFloatArray(diffuse_handle_, col, 4);
 }
