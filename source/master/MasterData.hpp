@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "master/ConstRasterScroll.hpp"
 #include "master/Const.hpp"
+#include "master/ConstRasterScroll.hpp"
 #include "master/KeyRepeatBase.hpp"
 #include "master/OptionImageList.hpp"
 #include "master/OptionUI.hpp"
@@ -16,8 +16,8 @@
 
 namespace MasterData
 {
-    extern ConstRasterScrollData ConstRasterScroll;
     extern ConstData Const;
+    extern ConstRasterScrollData ConstRasterScroll;
     extern std::vector<KeyRepeatBaseData> KeyRepeatBase;
     extern std::map<std::string, OptionImageListData> OptionImageList;
     extern std::vector<OptionUIData> OptionUI;
