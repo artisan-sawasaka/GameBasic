@@ -14,9 +14,22 @@
  */
 class Color{
 public :
-	static Color Black;
 	static Color White;
+	static Color Silver;
+	static Color Gray;
+	static Color Black;
 	static Color Red;
+	static Color Maroon;
+	static Color Lime;
+	static Color Green;
+	static Color Blue;
+	static Color Navy;
+	static Color Yellow;
+	static Color Olive;
+	static Color Fuchsia;
+	static Color Purple;
+	static Color Aqua;
+	static Color Teal;
 
 public :
 	/*!
