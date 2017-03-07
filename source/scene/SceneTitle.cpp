@@ -39,25 +39,32 @@ void SceneTitle::Update(float df)
 		Reload_();
 		state_.Change(ST_IN_ANIMATION_INIT);
 	}
-
 	// インアニメーション
 	if (state_.IsRange(ST_IN_ANIMATION_INIT, ST_IN_ANIMATION)) {
 		if (ActionInAnimation_(df)) {
 			state_.Change(ST_SELECT_INIT);
 		}
 	}
-
 	// 選択
 	if (state_.IsRange(ST_SELECT_INIT, ST_SELECT)) {
 		if (ActionSelect_(df)) {
-			state_.Change(ST_OUT_ANIMATION_INIT);
+			if (cursor_ == Start) {
+				state_.Change(ST_START_GAME_ANIMATION_INIT);
+			} else {
+				state_.Change(ST_OUT_ANIMATION_INIT);
+			}
 		}
 	}
-
 	// アウトアニメーション
 	if (state_.IsRange(ST_OUT_ANIMATION_INIT, ST_OUT_ANIMATION)) {
 		if (ActionOutAnimation_(df)) {
-			state_.Change(ST_SELECT_INIT);
+			state_.Change(ST_EXIT);
+		}
+	}
+	// ゲーム選択時のアウトアニメーション
+	if (state_.IsRange(ST_START_GAME_ANIMATION_INIT, ST_START_GAME_ANIMATION)) {
+		if (ActionStartGameAnimation_(df)) {
+			state_.Change(ST_EXIT);
 		}
 	}
 
@@ -81,10 +88,7 @@ void SceneTitle::Update(float df)
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 	} else if (KeyManager::GetInstance()->IsTrg('9')) {
 		SoundManager::GetInstance()->StopAll();
-		raster_scroll_.SetRate(2.0f, 1.0f, 0.05f);
-		raster_scroll_.Start(3.0f, 1.0f);
 	}
-	raster_scroll_.Update(df);
 }
 
 /*!
@@ -194,11 +198,11 @@ bool SceneTitle::ActionSelect_(float df)
 			model_.SetRotate(rotate);
 		} else if (KeyManager::GetInstance()->IsPress('Z')) {
 			model_.SetRotate(0, 0, 0);
-		} else if (KeyManager::GetInstance()->IsPress('B')) {
+		} else if (KeyManager::GetInstance()->IsPress('A')) {
 			auto color = model_.GetColor();
 			color.SetA(128);
 			model_.SetColor(color);
-		} else if (KeyManager::GetInstance()->IsPress('V')) {
+		} else if (KeyManager::GetInstance()->IsPress('S')) {
 			auto color = model_.GetColor();
 			color.SetA(255);
 			model_.SetColor(color);
@@ -220,15 +224,33 @@ bool SceneTitle::ActionOutAnimation_(float df)
 	if (state_ == ST_OUT_ANIMATION) {
 		animtion_.Update(df);
 		if (animtion_.IsEnd()) {
-			if (cursor_ == Start) {
-				std::shared_ptr<SceneGameParam> param(new SceneGameParam());
-				param->str = "あいうえお";
-				SceneManager::GetInstance()->Change(SceneList::Game, param);
-			} else if (cursor_ == Option) {
+			if (cursor_ == Option) {
 				SceneManager::GetInstance()->Change(SceneList::Option, nullptr);
 			} else if (cursor_ == Exit) {
 				DeviceManager::GetInstance()->Exit();
 			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*!
+ * @brief アウトアニメーション
+ */
+bool SceneTitle::ActionStartGameAnimation_(float df)
+{
+	if (state_ == ST_START_GAME_ANIMATION_INIT) {
+		raster_scroll_.Start();
+		state_.Change(ST_START_GAME_ANIMATION, true);
+	}
+	if (state_ == ST_START_GAME_ANIMATION) {
+		raster_scroll_.Update(df);
+		if (raster_scroll_.IsEnd()) {
+			std::shared_ptr<SceneGameParam> param(new SceneGameParam());
+			param->str = "あいうえお";
+			SceneManager::GetInstance()->Change(SceneList::Game, param);
 			return true;
 		}
 	}

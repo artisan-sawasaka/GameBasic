@@ -57,6 +57,10 @@ private :
 		ST_OUT_ANIMATION_INIT,
 		ST_OUT_ANIMATION,
 
+		// ゲーム選択時のアウトアニメーション
+		ST_START_GAME_ANIMATION_INIT,
+		ST_START_GAME_ANIMATION,
+
 		ST_EXIT,
 	};
 	
@@ -68,13 +72,14 @@ private :
 		MenuMax,
 	};
 
-	void Reload_();							// データ再読み込み
-	void UpdateCursor_();					// カーソル更新
+	void Reload_();								// データ再読み込み
+	void UpdateCursor_();						// カーソル更新
 
 	// 処理
-	bool ActionInAnimation_(float df);		// インアニメーション
-	bool ActionSelect_(float df);			// 選択
-	bool ActionOutAnimation_(float df);		// アウトアニメーション
+	bool ActionInAnimation_(float df);			// インアニメーション
+	bool ActionSelect_(float df);				// 選択
+	bool ActionOutAnimation_(float df);			// アウトアニメーション
+	bool ActionStartGameAnimation_(float df);	// アウトアニメーション
 
 	void Render2D_();
 
