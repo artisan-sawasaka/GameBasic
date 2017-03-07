@@ -1,11 +1,12 @@
 #include "RasterScroll.h"
 #include "render/Renderer.h"
+#include "master/MasterData.hpp"
 
 RasterScroll::RasterScroll()
 	: end_(true)
 {
-	Set();
-	SetRate();
+	Set(MasterData::ConstRasterScroll.offset, MasterData::ConstRasterScroll.period, MasterData::ConstRasterScroll.amplitude);
+	SetRate(MasterData::ConstRasterScroll.offset_rate, MasterData::ConstRasterScroll.period_rate, MasterData::ConstRasterScroll.amplitude_rate);
 	color_ = Color::White;
 }
 
@@ -37,6 +38,13 @@ void RasterScroll::Start(float scroll_time, float fade_time)
 	end_ = false;
 }
 
+void RasterScroll::Start()
+{
+	Set(MasterData::ConstRasterScroll.offset, MasterData::ConstRasterScroll.period, MasterData::ConstRasterScroll.amplitude);
+	SetRate(MasterData::ConstRasterScroll.offset_rate, MasterData::ConstRasterScroll.period_rate, MasterData::ConstRasterScroll.amplitude_rate);
+	Start(MasterData::ConstRasterScroll.scroll_time, MasterData::ConstRasterScroll.fade_time);
+}
+
 void RasterScroll::Update(float df)
 {
 	if (end_) return ;
@@ -60,9 +68,13 @@ void RasterScroll::Update(float df)
 
 void RasterScroll::Render(Texture* texture)
 {
-	shader_.Begin();
-	shader_.SetTexture(texture);
-	shader_.SetColor(color_);
-	Renderer::GetInstance()->DrawImage(texture, Renderer::LEFT_TOP, 0, 0, color_);
-	shader_.End();
+	if (end_) {
+		Renderer::GetInstance()->DrawImage(texture, Renderer::LEFT_TOP, 0, 0, color_);
+	} else {
+		shader_.Begin();
+		shader_.SetTexture(texture);
+		shader_.SetColor(color_);
+		Renderer::GetInstance()->DrawImage(texture, Renderer::LEFT_TOP, 0, 0, color_);
+		shader_.End();
+	}
 }

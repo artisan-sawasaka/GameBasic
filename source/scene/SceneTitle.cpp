@@ -3,6 +3,7 @@
 #include "utility/Utility.hpp"
 #include "utility/FadeManager.h"
 #include "utility/KeyManager.h"
+#include "utility/KeyUtility.hpp"
 #include "utility/SceneManager.h"
 #include "sound/SoundManager.h"
 #include "sound/Bgm.h"
@@ -32,7 +33,7 @@ void SceneTitle::Update(float df)
 
 	// 初期化
 	if (state_ == ST_INIT) {
-		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
+		//SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
 		state_.Change(ST_LOADING, true);
 	}
 	if (state_ == ST_LOADING) {
@@ -74,21 +75,8 @@ void SceneTitle::Update(float df)
 	// モデル更新
 	model_.Update(df);
 
-	if (KeyManager::GetInstance()->IsTrg('1')) {
-		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
-	} else if (KeyManager::GetInstance()->IsTrg('2')) {
-		SoundManager::GetInstance()->PlayBgm(CRI_BGM_FIELD);
-	} else if (KeyManager::GetInstance()->IsTrg('3')) {
-		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
-	} else if (KeyManager::GetInstance()->IsTrg('4')) {
-		SoundManager::GetInstance()->PlaySe(CRI_SE_OK);
-	} else if (KeyManager::GetInstance()->IsTrg('5')) {
-		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
-	} else if (KeyManager::GetInstance()->IsTrg('6')) {
-		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
-	} else if (KeyManager::GetInstance()->IsTrg('9')) {
-		SoundManager::GetInstance()->StopAll();
-	}
+	// デバッグ用
+	Debug_();
 }
 
 /*!
@@ -184,28 +172,6 @@ bool SceneTitle::ActionSelect_(float df)
 			// 決定
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			return true;
-		} else if (KeyManager::GetInstance()->IsPress('Q')) {
-			auto rotate = model_.GetRotate();
-			rotate.x += 0.01f;
-			model_.SetRotate(rotate);
-		} else if (KeyManager::GetInstance()->IsPress('W')) {
-			auto rotate = model_.GetRotate();
-			rotate.y += 0.01f;
-			model_.SetRotate(rotate);
-		} else if (KeyManager::GetInstance()->IsPress('E')) {
-			auto rotate = model_.GetRotate();
-			rotate.z += 0.01f;
-			model_.SetRotate(rotate);
-		} else if (KeyManager::GetInstance()->IsPress('Z')) {
-			model_.SetRotate(0, 0, 0);
-		} else if (KeyManager::GetInstance()->IsPress('A')) {
-			auto color = model_.GetColor();
-			color.SetA(128);
-			model_.SetColor(color);
-		} else if (KeyManager::GetInstance()->IsPress('S')) {
-			auto color = model_.GetColor();
-			color.SetA(255);
-			model_.SetColor(color);
 		}
 	}
 
@@ -266,4 +232,47 @@ void SceneTitle::Render2D_()
 	Renderer::GetInstance()->SetZEnable(true);
 	model_.Render();
 	Renderer::GetInstance()->PopState();
+}
+
+
+void SceneTitle::Debug_()
+{
+	if (KeyManager::GetInstance()->IsTrg('1')) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
+	} else if (KeyManager::GetInstance()->IsTrg('2')) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_FIELD);
+	} else if (KeyManager::GetInstance()->IsTrg('3')) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
+	} else if (KeyManager::GetInstance()->IsTrg('4')) {
+		SoundManager::GetInstance()->PlaySe(CRI_SE_OK);
+	} else if (KeyManager::GetInstance()->IsTrg('5')) {
+		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
+	} else if (KeyManager::GetInstance()->IsTrg('6')) {
+		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
+	} else if (KeyManager::GetInstance()->IsTrg('9')) {
+		SoundManager::GetInstance()->StopAll();
+	}
+	if (KeyManager::GetInstance()->IsPress('Q')) {
+		auto rotate = model_.GetRotate();
+		rotate.x += 0.01f;
+		model_.SetRotate(rotate);
+	} else if (KeyManager::GetInstance()->IsPress('W')) {
+		auto rotate = model_.GetRotate();
+		rotate.y += 0.01f;
+		model_.SetRotate(rotate);
+	} else if (KeyManager::GetInstance()->IsPress('E')) {
+		auto rotate = model_.GetRotate();
+		rotate.z += 0.01f;
+		model_.SetRotate(rotate);
+	} else if (KeyManager::GetInstance()->IsPress('Z')) {
+		model_.SetRotate(0, 0, 0);
+	} else if (KeyManager::GetInstance()->IsPress('A')) {
+		auto color = model_.GetColor();
+		color.SetA(std::max(0, color.GetA() - 5));
+		model_.SetColor(color);
+	} else if (KeyManager::GetInstance()->IsPress('S')) {
+		auto color = model_.GetColor();
+		color.SetA(std::min(255, color.GetA() + 5));
+		model_.SetColor(color);
+	}
 }

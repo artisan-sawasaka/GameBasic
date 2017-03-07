@@ -83,6 +83,7 @@ private :
 	bool ActionStartGameAnimation_(float df);	// アウトアニメーション
 
 	void Render2D_();
+	void Debug_();
 
 	std::map<std::string, std::shared_ptr<Texture>> textures_;						// 画像データ
 	std::vector<MasterData::TitleUIData> ui_;										// UI

@@ -12,9 +12,10 @@ public :
 	RasterScroll();
 	virtual ~RasterScroll();
 
-	void Set(float offset = 0.0f, float period = 0.0f, float amplitude = 0.24f);
-	void SetRate(float offset = 1.0f, float period = 2.0f, float amplitude = 0.0f);
-	void Start(float scroll_time = 4.0f, float fade_time = 2.0f);
+	void Set(float offset, float period, float amplitude);
+	void SetRate(float offset, float period, float amplitude);
+	void Start(float scroll_time, float fade_time);
+	void Start();
 	bool IsEnd() const { return end_; }
 
 	void Update(float df);

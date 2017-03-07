@@ -8,9 +8,10 @@
 #include <Shlwapi.h>
 #include <memory>
 #include "master/MasterData.hpp"
-#include "Unpacker.hpp"
 #include "render/Renderer.h"
 #include "render/Texture.h"
+#include "Unpacker.hpp"
+#include "KeyManager.h"
 
 class Utility
 {
@@ -33,7 +34,7 @@ public:
 	}
 
 	/*!
-	* @brief マスターデータの再読み込み
+	* @brief 文字列フォーマット変換
 	*/
 	static std::string StringFormat(const char* s, ...)
 	{
@@ -70,7 +71,8 @@ public:
 	 * @return オブジェクトデータ
 	 */
 	template <class Data, class UI>
-	static std::map<std::string, Data*> CreateObjects(UI& ui) {
+	static std::map<std::string, Data*> CreateObjects(UI& ui)
+	{
 		std::map<std::string, Data*> ret;
 		for (auto it = ui.begin(); it != ui.end(); ++it) {
 			ret.insert(std::pair<std::string, Data*>(it->name, &(*it)));
@@ -102,7 +104,8 @@ public:
 	 * @return オブジェクトデータ
 	 */
 	template <class ImageList>
-	static std::map<std::string, std::shared_ptr<Texture>> CreateBitmaps(const ImageList& list) {
+	static std::map<std::string, std::shared_ptr<Texture>> CreateBitmaps(const ImageList& list)
+	{
 		std::map<std::string, std::shared_ptr<Texture>> textures;
 		std::set<std::string> images;
 		Unpacker unpacker;
@@ -117,7 +120,8 @@ public:
 			if (texture == nullptr) continue;
 			if (texture->CreateFromMemory(&v[0], v.size())) {
 				textures[*it].reset(texture);
-			} else {
+			}
+			else {
 				delete texture;
 			}
 		}
@@ -143,24 +147,29 @@ public:
 			if (info.type == 0) {
 				// 画像描画
 				auto it2 = list.find(info.str);
-				if (it2 == list.end()) continue ;
+				if (it2 == list.end()) continue;
 				const auto& info2 = it2->second;
 				auto it3 = textures.find(info2.path);
-				if (it3 == textures.end()) continue ;
+				if (it3 == textures.end()) continue;
 				render->DrawImage(it3->second.get(),
 					static_cast<Renderer::Anchor>(info.anchor),
-					info.x,  info.y,  info.w,  info.h,
+					info.x, info.y, info.w, info.h,
 					info2.x, info2.y, info2.w, info2.h,
 					Color(info.a, info.r, info.g, info.b),
 					info.rotate);
-			} else if (info.type == 1) {
+			}
+			else if (info.type == 1) {
 				// 文字列描画
 				render->DrawString(info.str.c_str(),
-					static_cast<Renderer::Anchor>(info.anchor), info.x, info.y, info.h, 
+					static_cast<Renderer::Anchor>(info.anchor), info.x, info.y, info.h,
 					Color(info.a, info.r, info.g, info.b));
 			}
 		}
 	}
+
+	/*!
+	 * @brief CRC32取得
+	 */
 	static uint32_t GetCrc32(const void* buf, uint32_t size, uint32_t crc32 = 0xffffffff)
 	{
 		static const uint32_t CRC32Table[] = {
@@ -180,7 +189,7 @@ public:
 			0xC7361B4C, 0xC3F706FB, 0xCEB42022, 0xCA753D95,
 			0xF23A8028, 0xF6FB9D9F, 0xFBB8BB46, 0xFF79A6F1,
 			0xE13EF6F4, 0xE5FFEB43, 0xE8BCCD9A, 0xEC7DD02D,
-    
+
 			0x34867077, 0x30476DC0, 0x3D044B19, 0x39C556AE,
 			0x278206AB, 0x23431B1C, 0x2E003DC5, 0x2AC12072,
 			0x128E9DCF, 0x164F8078, 0x1B0CA6A1, 0x1FCDBB16,
@@ -197,7 +206,7 @@ public:
 			0xF3B06B3B, 0xF771768C, 0xFA325055, 0xFEF34DE2,
 			0xC6BCF05F, 0xC27DEDE8, 0xCF3ECB31, 0xCBFFD686,
 			0xD5B88683, 0xD1799B34, 0xDC3ABDED, 0xD8FBA05A,
-    
+
 			0x690CE0EE, 0x6DCDFD59, 0x608EDB80, 0x644FC637,
 			0x7A089632, 0x7EC98B85, 0x738AAD5C, 0x774BB0EB,
 			0x4F040D56, 0x4BC510E1, 0x46863638, 0x42472B8F,
@@ -214,7 +223,7 @@ public:
 			0xAE3AFBA2, 0xAAFBE615, 0xA7B8C0CC, 0xA379DD7B,
 			0x9B3660C6, 0x9FF77D71, 0x92B45BA8, 0x9675461F,
 			0x8832161A, 0x8CF30BAD, 0x81B02D74, 0x857130C3,
-    
+
 			0x5D8A9099, 0x594B8D2E, 0x5408ABF7, 0x50C9B640,
 			0x4E8EE645, 0x4A4FFBF2, 0x470CDD2B, 0x43CDC09C,
 			0x7B827D21, 0x7F436096, 0x7200464F, 0x76C15BF8,
@@ -240,68 +249,5 @@ public:
 		}
 
 		return crc32;
-	}
-
-	/*!
-	 * @brief フルパスからファイル名なしのパスを取得します
-	 */
-	static std::string GetDirectoryName(const char* str)
-	{
-		const char* p = strrchr(str, '\\');
-		if (p == NULL) {
-			p = strrchr(str, '/');
-			if (p == NULL) {
-				return std::string(str);
-			}
-		}
-		return std::string(str, p - str);
-	}
-
-	/*!
-	 * @brief 指定したパス文字列のファイル名と拡張子を返します。
-	 */
-	static std::string GetFileName(const char* str)
-	{
-		const char* p = strrchr(str, '\\');
-		if (p == NULL) {
-			p = strrchr(str, '/');
-			if (p == NULL) {
-				return std::string(str);
-			}
-		}
-		return std::string(p + 1);
-	}
-
-	/*!
-	 * @brief 指定したパス文字列のファイル名を拡張子を付けずに返します。
-	 */
-	static std::string GetFileNameWithoutExtension(const char* str)
-	{
-		const char* p = strrchr(str, '\\');
-		if (p == NULL) {
-			p = strrchr(str, '/');
-		}
-		if (p == NULL){
-			p = str;
-		} else {
-			p++;
-		}
-		const char* pp = strrchr(p, '.');
-		if (pp == NULL) {
-			return std::string(p);
-		}
-		return std::string(p, pp - p);
-	}
-
-	/*!
-	 * @brief 指定したパス文字列の拡張子を返します。
-	 */
-	static std::string GetExtension(const char* str)
-	{
-		const char* pp = strrchr(str, '.');
-		if (pp == NULL) {
-			return std::string(str);
-		}
-		return std::string(pp + 1);
 	}
 };

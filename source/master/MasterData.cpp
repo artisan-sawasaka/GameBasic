@@ -4,6 +4,7 @@
 
 namespace MasterData
 {
+    ConstRasterScrollData ConstRasterScroll;
     ConstData Const;
     std::vector<KeyRepeatBaseData> KeyRepeatBase;
     std::map<std::string, OptionImageListData> OptionImageList;
@@ -20,6 +21,10 @@ namespace MasterData
         std::vector<char> buffer;
 	    StreamReader reader;
         int length;
+
+        buffer = File::ReadAllBytes(path + "/ConstRasterScroll.dat");
+        reader = StreamReader(buffer);
+        ConstRasterScroll.Load(reader);
 
         buffer = File::ReadAllBytes(path + "/Const.dat");
         reader = StreamReader(buffer);

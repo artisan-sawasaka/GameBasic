@@ -1,6 +1,8 @@
 #include "SkinModel.h"
+#include "render/Renderer.h"
 #include "utility/DeviceManager.h"
-#include "utility/Utility.hpp"
+#include "utility/PathUtility.hpp"
+#include <map>
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
 static const float RotateBase = 6.28318530718f;
@@ -164,14 +166,14 @@ public:
 			if (texture_path == nullptr)
 				continue;
 
-			auto name = Utility::GetFileName(texture_path);
+			auto name = PathUtility::GetFileName(texture_path);
 			if (texture_func_) {
 				// 指定テクスチャーロード関数の呼び出し
 				textures_[i] = texture_func_(name.c_str());
 			} else {
 				// 指定がない場合は同一ディレクトリにテクスチャーがあると判断
-				auto dir = Utility::GetDirectoryName(path_.c_str());
-				auto tex_path = Utility::StringFormat("%s/%s", dir.c_str(), name.c_str());
+				auto dir = PathUtility::GetDirectoryName(path_.c_str());
+				auto tex_path = PathUtility::Combine(dir, name);
 
 				textures_[i].reset(new Texture());
 				textures_[i]->CreateFromFile(tex_path.c_str());
@@ -345,7 +347,7 @@ void SkinModel::Update(float df)
 void SkinModel::Render()
 {
 	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
-	if (device == nullptr || !data_) return ;
+	if (device == nullptr || !data_ || color_.GetA() == 0) return ;
 
 	// アルファブレンド
 	Renderer::GetInstance()->SetBlend(Renderer::BLEND_ALPHA);

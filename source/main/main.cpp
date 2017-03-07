@@ -163,13 +163,14 @@ void MainApp::Render2D()
 	FadeManager::GetInstance()->Render();
 
 	// デバッグ表示
-	//RenderDebug_();
+	RenderDebug_();
 }
 
 void MainApp::RenderDebug_()
 {
 	if (!is_debug_render_) return;
 
+	/*
 	// 操作説明
 	const std::string ds[] = {
 		camera_.GetInfo(),
@@ -181,6 +182,7 @@ void MainApp::RenderDebug_()
 	for (int i = 0; i < sizeof(ds) / sizeof(*ds); ++i) {
 		Renderer::GetInstance()->DrawString(ds[i].c_str(), Renderer::LEFT_TOP, 0, i * 12, 12);
 	}
+	*/
 
 	// FPS表示
 	Renderer::GetInstance()->DrawStringFormat(Renderer::RIGHT_TOP, GetWidth(), 0, 12, Color::White, _T("FPS:%.1f"), GetAverageFPS());

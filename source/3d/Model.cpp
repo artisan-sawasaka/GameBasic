@@ -1,7 +1,7 @@
 #include "Model.h"
+#include "render/Renderer.h"
 #include "utility/DeviceManager.h"
-#include "utility/Utility.hpp"
-//#include "utility/KeyManager.h"
+#include "utility/PathUtility.hpp"
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
 static const float RotateBase = 6.28318530718f;
@@ -60,12 +60,12 @@ bool Model::LoadFile(const char* path, std::function<std::shared_ptr<Texture>(co
 		if (d3dxmatrs[i].pTextureFilename == nullptr)
 			continue;
 
-		auto name = Utility::GetFileName(d3dxmatrs[i].pTextureFilename);
+		auto name = PathUtility::GetFileName(d3dxmatrs[i].pTextureFilename);
 		if (texture_func) {
 			textures_[i] = texture_func(name.c_str());
 		} else {
-			auto dir = Utility::GetDirectoryName(path);
-			auto tex_path = Utility::StringFormat("%s/%s", dir.c_str(), name.c_str());
+			auto dir = PathUtility::GetDirectoryName(path);
+			auto tex_path = PathUtility::Combine(dir, name);
 
 			textures_[i].reset(new Texture());
 			textures_[i]->CreateFromFile(tex_path.c_str());
@@ -90,7 +90,7 @@ void Model::Update(float df)
 void Model::Render()
 {
 	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
-	if (device == nullptr || mesh_ == nullptr) return ;
+	if (device == nullptr || mesh_ == nullptr || color_.GetA() == 0) return ;
 
 	// ワードルマトリクス設定
 	D3DXMATRIX mat;
