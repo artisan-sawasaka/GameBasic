@@ -7,6 +7,7 @@
 #include "master/MasterData.hpp"
 #include "3d/SkinModel.h"
 #include "render_utility/RasterScroll.h"
+#include "shader/BlurShader.h"
 #include <memory>
 #include <map>
 
@@ -95,5 +96,5 @@ private :
 
 	Texture render_target_;
 	RasterScroll raster_scroll_;
-
+	BlurShader shader_;
 };

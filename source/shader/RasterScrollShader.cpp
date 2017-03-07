@@ -55,24 +55,13 @@ static const char* fx = {
 
 RasterScrollShader::RasterScrollShader()
 {
-	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
-	if (device == nullptr) return ;
-
-	//ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ
-	LPD3DXBUFFER message;
-	HRESULT hr = D3DXCreateEffect(device, fx, strlen(fx), nullptr, nullptr, 0, nullptr, &effect_, &message);
-	if (FAILED(hr)) {
-		std::string s = static_cast<const char*>(message->GetBufferPointer());
-		SAFE_RELEASE(message);
-		return;
+	if (!Create_(fx)) {
+		return ;
 	}
-	SAFE_RELEASE(message);
-	techniqe_ = effect_->GetTechniqueByName("TShader");
-	src_map_ = effect_->GetParameterByName(nullptr, "SrcMap");
+
 	offset_handle_ = effect_->GetParameterByName(nullptr, "Offset");
 	period_handle_ = effect_->GetParameterByName(nullptr, "Period");
 	amplitude_handle_ = effect_->GetParameterByName(nullptr, "Amplitude");
-	diffuse_handle_ = effect_->GetParameterByName(nullptr, "Diffuse");
 
 	effect_->GetFloat(offset_handle_, &offset_);
 	effect_->GetFloat(period_handle_, &period_);
@@ -100,15 +89,4 @@ void RasterScrollShader::SetAmplitude(float value)
 {
 	amplitude_ = value;
 	effect_->SetFloat(amplitude_handle_, value);
-}
-
-void RasterScrollShader::SetColor(const Color& color)
-{
-	const float col[4] = {
-		color.GetR() / 255.0f,
-		color.GetG() / 255.0f,
-		color.GetB() / 255.0f,
-		color.GetA() / 255.0f,
-	};
-	effect_->SetFloatArray(diffuse_handle_, col, 4);
 }

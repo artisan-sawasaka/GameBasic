@@ -6,7 +6,7 @@
 
 Shader::Shader()
 	: effect_(nullptr)
-	, texture_(nullptr)
+	, color_(Color::White)
 {
 	DeviceManager::GetInstance()->GetDevice()->AddDeviceLostListener(this);
 }
@@ -33,8 +33,8 @@ bool Shader::LoadFile(const char* path)
 		return false;
 	}
 	SAFE_RELEASE(message);
-	techniqe_ = effect_->GetTechniqueByName("TShader");
-	src_map_ = effect_->GetParameterByName(nullptr, "SrcMap");
+
+	InitializeHandle_();
 
 	return true;
 }
@@ -49,6 +49,18 @@ void Shader::SetTexture(Texture* texture)
 	if (effect_ == nullptr) return;
 
 	effect_->SetTexture(src_map_, texture->GetTexture());
+}
+
+void Shader::SetColor(const Color& color)
+{
+	color_ = color;
+	const float col[4] = {
+		color.GetR() / 255.0f,
+		color.GetG() / 255.0f,
+		color.GetB() / 255.0f,
+		color.GetA() / 255.0f,
+	};
+	effect_->SetFloatArray(diffuse_handle_, col, 4);
 }
 
 void Shader::Begin(int index)
@@ -79,3 +91,28 @@ void Shader::OnResetDevice()
 	effect_->OnResetDevice();
 }
 
+void Shader::InitializeHandle_()
+{
+	techniqe_ = effect_->GetTechniqueByName("TShader");
+	src_map_ = effect_->GetParameterByName(nullptr, "SrcMap");
+	diffuse_handle_ = effect_->GetParameterByName(nullptr, "Diffuse");
+}
+
+bool Shader::Create_(const char* src)
+{
+	auto device = DeviceManager::GetInstance()->GetDevice()->GetDevice();
+	if (device == nullptr) return false;
+
+	//ÉtÉ@ÉCÉãÇÃì«Ç›çûÇ›
+	LPD3DXBUFFER message;
+	HRESULT hr = D3DXCreateEffect(device, src, strlen(src), nullptr, nullptr, 0, nullptr, &effect_, &message);
+	if (FAILED(hr)) {
+		std::string s = static_cast<const char*>(message->GetBufferPointer());
+		SAFE_RELEASE(message);
+		return false;
+	}
+	SAFE_RELEASE(message);
+	InitializeHandle_();
+
+	return true;
+}
