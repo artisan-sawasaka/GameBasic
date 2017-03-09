@@ -88,6 +88,8 @@
     <ClCompile Include="source\3d\DebugCamera.cpp" />
     <ClCompile Include="source\3d\Model.cpp" />
     <ClCompile Include="source\3d\SkinModel.cpp" />
+    <ClCompile Include="source\input\Key.cpp" />
+    <ClCompile Include="source\input\Mouse.cpp" />
     <ClCompile Include="source\main\Device.cpp" />
     <ClCompile Include="source\main\main.cpp" />
     <ClCompile Include="source\main\WinMain.cpp" />
@@ -113,8 +115,6 @@
     <ClCompile Include="source\utility\DeviceManager.cpp" />
     <ClCompile Include="source\utility\FadeManager.cpp" />
     <ClCompile Include="source\utility\InOutAnimation.cpp" />
-    <ClCompile Include="source\utility\KeyManager.cpp" />
-    <ClCompile Include="source\utility\MouseManager.cpp" />
     <ClCompile Include="source\utility\SceneManager.cpp" />
     <ClCompile Include="source\utility\Unpacker.cpp" />
   </ItemGroup>
@@ -123,6 +123,8 @@
     <ClInclude Include="source\3d\DebugCamera.h" />
     <ClInclude Include="source\3d\Model.h" />
     <ClInclude Include="source\3d\SkinModel.h" />
+    <ClInclude Include="source\input\Key.h" />
+    <ClInclude Include="source\input\Mouse.h" />
     <ClInclude Include="source\main\Device.h" />
     <ClInclude Include="source\main\main.h" />
     <ClInclude Include="source\main\WinMain.h" />
@@ -155,8 +157,8 @@
     <ClInclude Include="source\utility\FadeManager.h" />
     <ClInclude Include="source\utility\FileUtility.hpp" />
     <ClInclude Include="source\utility\InOutAnimation.h" />
-    <ClInclude Include="source\utility\KeyManager.h" />
-    <ClInclude Include="source\utility\MouseManager.h" />
+    <ClInclude Include="source\utility\KeyUtility.hpp" />
+    <ClInclude Include="source\utility\PathUtility.hpp" />
     <ClInclude Include="source\utility\SceneManager.h" />
     <ClInclude Include="source\utility\StateManager.h" />
     <ClInclude Include="source\utility\StreamReader.hpp" />
