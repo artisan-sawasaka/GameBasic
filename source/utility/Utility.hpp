@@ -250,4 +250,20 @@ public:
 
 		return crc32;
 	}
+
+	/*!
+	 * @brief •âŠ®
+	 */
+	template <class T>
+	static T Lerp(T min, T max, float rate)
+	{
+		rate = std::max(std::min(rate, 1.0f), 0.0f);
+		if (min > max) {
+			T value = min - max;
+			return min - static_cast<T>(value * rate);
+		} else {
+			T value = max - min;
+			return min + static_cast<T>(value * rate);
+		} 
+	}
 };

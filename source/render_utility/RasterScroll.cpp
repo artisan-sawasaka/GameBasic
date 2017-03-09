@@ -1,6 +1,7 @@
 #include "RasterScroll.h"
 #include "render/Renderer.h"
 #include "master/MasterData.hpp"
+#include "utility/Utility.hpp"
 
 RasterScroll::RasterScroll()
 	: end_(true)
@@ -28,21 +29,22 @@ void RasterScroll::SetRate(float offset, float period, float amplitude)
 	amplitude_rate_ = amplitude;
 }
 
-void RasterScroll::Start(float scroll_time, float fade_time)
+void RasterScroll::Start(float scroll_time, float fade_time, const Color& start_color, const Color& end_color)
 {
 	scroll_time_ = scroll_time;
 	fade_time_ = fade_time;
 	time_ = 0;
-	color_ = Color::White;
+	start_color_ = start_color;
+	end_color_ = end_color;
 
 	end_ = false;
 }
 
-void RasterScroll::Start()
+void RasterScroll::Start(const Color& start_color, const Color& end_color)
 {
 	Set(MasterData::ConstRasterScroll.offset, MasterData::ConstRasterScroll.period, MasterData::ConstRasterScroll.amplitude);
 	SetRate(MasterData::ConstRasterScroll.offset_rate, MasterData::ConstRasterScroll.period_rate, MasterData::ConstRasterScroll.amplitude_rate);
-	Start(MasterData::ConstRasterScroll.scroll_time, MasterData::ConstRasterScroll.fade_time);
+	Start(MasterData::ConstRasterScroll.scroll_time, MasterData::ConstRasterScroll.fade_time, start_color, end_color);
 }
 
 void RasterScroll::Update(float df)
@@ -56,13 +58,13 @@ void RasterScroll::Update(float df)
 
 	if (time_ >= scroll_time_ + fade_time_) {
 		end_ = true;
-		color_ = Color::Black;
+		color_ = end_color_;
 	} else if (time_ >= scroll_time_) {
-		float time = time_ - scroll_time_;
-		uint8_t v = static_cast<uint8_t>((1.0f - time / fade_time_) * 255.0f);
-		color_.SetR(v);
-		color_.SetG(v);
-		color_.SetB(v);
+		float rate = (time_ - scroll_time_) / fade_time_;
+		color_.SetR(Utility::Lerp(start_color_.GetR(), end_color_.GetR(), rate));
+		color_.SetG(Utility::Lerp(start_color_.GetG(), end_color_.GetG(), rate));
+		color_.SetB(Utility::Lerp(start_color_.GetB(), end_color_.GetB(), rate));
+		color_.SetA(Utility::Lerp(start_color_.GetA(), end_color_.GetA(), rate));
 	}
 }
 
