@@ -17,7 +17,7 @@ void DebugCamera::Update(float df)
 
 	// À•W
 	if (ms->IsDrag(Mouse::LBUTTON)) {
-		move_[0] = ms->GetMoveX() / 10.0f;
+		move_[0] =  ms->GetMoveX() / 10.0f;
 		move_[1] = -ms->GetMoveY() / 10.0f;
 	}
 	if (ms->IsHwheelUp()) {

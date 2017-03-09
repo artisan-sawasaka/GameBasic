@@ -11,8 +11,6 @@
 #include "scene/SceneGame.h"
 #include <algorithm>
 
-static const float PI2 = 6.28318530718f;
-
 /*!
  * @brief 更新
  */
@@ -252,27 +250,24 @@ void SceneTitle::Debug_()
 	} else if (Key::GetInstance()->IsTrg('9')) {
 		SoundManager::GetInstance()->StopAll();
 	}
-	if (Key::GetInstance()->IsPress('Q')) {
-		auto rotate = model_.GetRotate();
-		rotate.x += 0.01f;
-		model_.SetRotate(rotate);
-	} else if (Key::GetInstance()->IsPress('W')) {
-		auto rotate = model_.GetRotate();
-		rotate.y += 0.01f;
-		model_.SetRotate(rotate);
-	} else if (Key::GetInstance()->IsPress('E')) {
-		auto rotate = model_.GetRotate();
-		rotate.z += 0.01f;
-		model_.SetRotate(rotate);
-	} else if (Key::GetInstance()->IsPress('Z')) {
+
+	// モデル操作
+	if (Key::GetInstance()->IsPress('Z')) {
+		// リセット
 		model_.SetRotate(0, 0, 0);
-	} else if (Key::GetInstance()->IsPress('A')) {
+		model_.SetColor(Color::White);
+	} else {
+		// 回転
+		auto rotate = model_.GetRotate();
+		rotate.x = KeyUtility::PressAddValue('Q', rotate.x, 0.01f, 1000.0f);
+		rotate.y = KeyUtility::PressAddValue('W', rotate.y, 0.01f, 1000.0f);
+		rotate.z = KeyUtility::PressAddValue('E', rotate.z, 0.01f, 1000.0f);
+		model_.SetRotate(rotate);
+
+		// カラー
 		auto color = model_.GetColor();
-		color.SetA(std::max(0, color.GetA() - 5));
-		model_.SetColor(color);
-	} else if (Key::GetInstance()->IsPress('S')) {
-		auto color = model_.GetColor();
-		color.SetA(std::min(255, color.GetA() + 5));
+		color.SetA(KeyUtility::PressAddValue('S', static_cast<int>(color.GetA()), 5, 255));
+		color.SetA(KeyUtility::PressSubValue('A', static_cast<int>(color.GetA()), 5, 0));
 		model_.SetColor(color);
 	}
 }

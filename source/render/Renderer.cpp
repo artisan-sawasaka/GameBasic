@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-static const float RotateBase = 6.28318530718f;
+static const float PI2 = 6.28318530718f;
 
 D3DCMPFUNC ChangeFunc(Renderer::FUNC func)
 {
@@ -527,7 +527,7 @@ void Renderer::CreateVertex2D_(Vertex2D* v, Texture* texture, Anchor anchor, int
 	if (rotate != 0) {
 		D3DXMATRIX mat, matt;
 		D3DXMatrixTranslation(&mat, -static_cast<float>(dx), -static_cast<float>(dy), 0);
-		mat *= *D3DXMatrixRotationZ(&matt, rotate * RotateBase);
+		mat *= *D3DXMatrixRotationZ(&matt, rotate * PI2);
 		mat.m[3][0] += dx;
 		mat.m[3][1] += dy;
 

@@ -4,7 +4,7 @@
 #include "utility/PathUtility.hpp"
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
-static const float RotateBase = 6.28318530718f;
+static const float PI2 = 6.28318530718f;
 
 Model::Model()
 	: mesh_(nullptr)
@@ -164,19 +164,19 @@ void Model::CreateWorldMatrix_(D3DXMATRIX& mat)
 	// Z‰ñ“]
 	if (rotate_.z != 0) {
 		D3DXQUATERNION tq = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(0, 0, 1), rotate_.z * RotateBase);
+		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(0, 0, 1), rotate_.z * PI2);
 		rotate = true;
 	}
 	// X‰ñ“]
 	if (rotate_.x != 0) {
 		D3DXQUATERNION tq = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(1, 0, 0), rotate_.x * RotateBase);
+		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(1, 0, 0), rotate_.x * PI2);
 		rotate = true;
 	}
 	// Y‰ñ“]
 	if (rotate_.y != 0) {
 		D3DXQUATERNION tq = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 1.0f);
-		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(0, 1, 0), rotate_.y * RotateBase);
+		q *= *D3DXQuaternionRotationAxis(&tq, &D3DXVECTOR3(0, 1, 0), rotate_.y * PI2);
 		rotate = true;
 	}
 	if (rotate) {

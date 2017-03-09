@@ -5,7 +5,7 @@
 #include <map>
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
-static const float RotateBase = 6.28318530718f;
+static const float PI2 = 6.28318530718f;
 
 // メッシュコンテナ
 struct CD3DXMeshContainer : public D3DXMESHCONTAINER {

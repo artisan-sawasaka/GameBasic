@@ -55,12 +55,12 @@ public:
 	static T TrgSubValue(char key, T value, T sub, T min)
 	{
 		if (!Key::GetInstance()->IsTrg(key)) return value;
-		return std::man(value - sub, min);
+		return std::max(value - sub, min);
 	}
 	template <class T>
 	static T PressSubValue(char key, T value, T sub, T min)
 	{
 		if (!Key::GetInstance()->IsPress(key)) return value;
-		return std::man(value - sub, min);
+		return std::max(value - sub, min);
 	}
 };
