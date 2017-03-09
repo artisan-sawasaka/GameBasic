@@ -118,7 +118,7 @@ void Model::Render()
 
 	/*
 	static bool hoge = false;
-	if (KeyManager::GetInstance()->IsTrg('L')) {
+	if (Key::GetInstance()->IsTrg('L')) {
 		hoge = !hoge;
 	}
 	*/

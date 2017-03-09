@@ -1,11 +1,11 @@
 #include "main.h"
 #include "render/Renderer.h"
+#include "input/Key.h"
+#include "input/Mouse.h"
 #include "utility/SceneManager.h"
 #include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
 #include "utility/ConsoleManager.h"
-#include "utility/KeyManager.h"
-#include "utility/MouseManager.h"
 #include "utility/Utility.hpp"
 #include "sound/SoundManager.h"
 #include <set>
@@ -40,17 +40,17 @@ MainApp::~MainApp()
 LRESULT MainApp::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 {
 	if (msg == WM_KEYDOWN) {
-		KeyManager::GetInstance()->Down(wParam);
+		Key::GetInstance()->Down(wParam);
 	} else if (msg == WM_KEYUP) {
-		KeyManager::GetInstance()->Up(wParam);
+		Key::GetInstance()->Up(wParam);
 	} else if (msg == WM_ACTIVATE && wParam == 0) {
-		KeyManager::GetInstance()->Clear();
-		MouseManager::GetInstance()->Clear();
+		Key::GetInstance()->Clear();
+		Mouse::GetInstance()->Clear();
 	} else if (msg == WM_SYSKEYDOWN) {
 		if (wParam == VK_RETURN) {
 		}
 	}
-	MouseManager::GetInstance()->WndProc(hWnd, msg, wParam, lParam);
+	Mouse::GetInstance()->WndProc(hWnd, msg, wParam, lParam);
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
@@ -92,27 +92,27 @@ void MainApp::Finalize()
 void MainApp::Update(float df)
 {
 	// キーの更新
-	KeyManager::GetInstance()->Update();
+	Key::GetInstance()->Update();
 
 	// マウス更新
-	MouseManager::GetInstance()->Update();
+	Mouse::GetInstance()->Update();
 
 	// カメラの更新
 	camera_.Update(df);
 
 	// デバッグ機能
-	if (KeyManager::GetInstance()->IsTrg('R')) {
+	if (Key::GetInstance()->IsTrg('R')) {
 		// 現在のシーンの再読み込み
 		SoundManager::GetInstance()->StopAll();
 		ReloadMasterData_();
 		SceneManager::GetInstance()->Restart();
-	} else if (KeyManager::GetInstance()->IsTrg('O')) {
+	} else if (Key::GetInstance()->IsTrg('O')) {
 		// デバッグ出力ウインドウを開く
 		//ConsoleManager::GetInstance()->Open();
-	} else if (KeyManager::GetInstance()->IsTrg('C')) {
+	} else if (Key::GetInstance()->IsTrg('C')) {
 		// デバッグ出力ウインドウを閉じる
 		//ConsoleManager::GetInstance()->Close();
-	} else if (KeyManager::GetInstance()->IsTrg('Q')) {
+	} else if (Key::GetInstance()->IsTrg('Q')) {
 		//is_debug_render_ = !is_debug_render_;
 	}
 

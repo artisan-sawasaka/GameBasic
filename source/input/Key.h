@@ -10,7 +10,7 @@
 /*!
  * @brief キー管理クラス
  */
-class KeyManager
+class Key
 {
 public :
 	/*!
@@ -53,13 +53,13 @@ public :
 	 */
 	bool IsRepeat(unsigned char key) const;
 
-	static KeyManager* GetInstance() {
-		static KeyManager v;
+	static Key* GetInstance() {
+		static Key v;
 		return &v;
 	}
 
 private :
-	KeyManager();
+	Key();
 
 	struct Info {
 		bool key;

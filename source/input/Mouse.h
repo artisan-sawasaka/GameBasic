@@ -12,7 +12,7 @@
 /*!
  * @brief マウス管理クラス
  */
-class MouseManager
+class Mouse
 {
 public :
 	enum Button {
@@ -88,13 +88,13 @@ public :
 	 */
 	int GetMoveY() const;
 
-	static MouseManager* GetInstance() {
-		static MouseManager v;
+	static Mouse* GetInstance() {
+		static Mouse v;
 		return &v;
 	}
 
 private :
-	MouseManager();
+	Mouse();
 
 	struct Info {
 		bool button;

@@ -1,8 +1,8 @@
 #include "SceneTitle.h"
 #include "render/Renderer.h"
+#include "input/Key.h"
 #include "utility/Utility.hpp"
 #include "utility/FadeManager.h"
-#include "utility/KeyManager.h"
 #include "utility/KeyUtility.hpp"
 #include "utility/SceneManager.h"
 #include "sound/SoundManager.h"
@@ -160,15 +160,15 @@ bool SceneTitle::ActionSelect_(float df)
 		state_.Change(ST_SELECT, true);
 	}
 	if (state_ == ST_SELECT) {
-		if (KeyManager::GetInstance()->IsTrg(VK_UP)) {
+		if (Key::GetInstance()->IsTrg(VK_UP)) {
 			// è„
 			cursor_ = static_cast<Menu>((cursor_ + (MenuMax - 1)) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
-		} else if (KeyManager::GetInstance()->IsTrg(VK_DOWN)) {
+		} else if (Key::GetInstance()->IsTrg(VK_DOWN)) {
 			// â∫
 			cursor_ = static_cast<Menu>((cursor_ + 1) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
-		} else if (KeyManager::GetInstance()->IsTrg(VK_RETURN)) {
+		} else if (Key::GetInstance()->IsTrg(VK_RETURN)) {
 			// åàíË
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			return true;
@@ -237,40 +237,40 @@ void SceneTitle::Render2D_()
 
 void SceneTitle::Debug_()
 {
-	if (KeyManager::GetInstance()->IsTrg('1')) {
+	if (Key::GetInstance()->IsTrg('1')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
-	} else if (KeyManager::GetInstance()->IsTrg('2')) {
+	} else if (Key::GetInstance()->IsTrg('2')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_FIELD);
-	} else if (KeyManager::GetInstance()->IsTrg('3')) {
+	} else if (Key::GetInstance()->IsTrg('3')) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
-	} else if (KeyManager::GetInstance()->IsTrg('4')) {
+	} else if (Key::GetInstance()->IsTrg('4')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_OK);
-	} else if (KeyManager::GetInstance()->IsTrg('5')) {
+	} else if (Key::GetInstance()->IsTrg('5')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
-	} else if (KeyManager::GetInstance()->IsTrg('6')) {
+	} else if (Key::GetInstance()->IsTrg('6')) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
-	} else if (KeyManager::GetInstance()->IsTrg('9')) {
+	} else if (Key::GetInstance()->IsTrg('9')) {
 		SoundManager::GetInstance()->StopAll();
 	}
-	if (KeyManager::GetInstance()->IsPress('Q')) {
+	if (Key::GetInstance()->IsPress('Q')) {
 		auto rotate = model_.GetRotate();
 		rotate.x += 0.01f;
 		model_.SetRotate(rotate);
-	} else if (KeyManager::GetInstance()->IsPress('W')) {
+	} else if (Key::GetInstance()->IsPress('W')) {
 		auto rotate = model_.GetRotate();
 		rotate.y += 0.01f;
 		model_.SetRotate(rotate);
-	} else if (KeyManager::GetInstance()->IsPress('E')) {
+	} else if (Key::GetInstance()->IsPress('E')) {
 		auto rotate = model_.GetRotate();
 		rotate.z += 0.01f;
 		model_.SetRotate(rotate);
-	} else if (KeyManager::GetInstance()->IsPress('Z')) {
+	} else if (Key::GetInstance()->IsPress('Z')) {
 		model_.SetRotate(0, 0, 0);
-	} else if (KeyManager::GetInstance()->IsPress('A')) {
+	} else if (Key::GetInstance()->IsPress('A')) {
 		auto color = model_.GetColor();
 		color.SetA(std::max(0, color.GetA() - 5));
 		model_.SetColor(color);
-	} else if (KeyManager::GetInstance()->IsPress('S')) {
+	} else if (Key::GetInstance()->IsPress('S')) {
 		auto color = model_.GetColor();
 		color.SetA(std::min(255, color.GetA() + 5));
 		model_.SetColor(color);

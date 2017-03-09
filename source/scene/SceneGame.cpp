@@ -1,7 +1,7 @@
 #include "SceneGame.h"
 #include "render/Renderer.h"
+#include "input/Key.h"
 #include "utility/SceneManager.h"
-#include "utility/KeyManager.h"
 #include "utility/ConsoleManager.h"
 
 /*!
@@ -26,7 +26,7 @@ void SceneGame::Finalize()
  */
 void SceneGame::Update(float df)
 {
-	if (KeyManager::GetInstance()->IsTrg('A')) {
+	if (Key::GetInstance()->IsTrg('A')) {
 		SceneManager::GetInstance()->Back();
 	}
 }

@@ -1,6 +1,6 @@
 #include "DebugCamera.h"
-#include "utility/KeyManager.h"
-#include "utility/MouseManager.h"
+#include "input/Key.h"
+#include "input/Mouse.h"
 
 DebugCamera::DebugCamera()
 {
@@ -13,21 +13,21 @@ DebugCamera::~DebugCamera()
 
 void DebugCamera::Update(float df)
 {
-	auto* ms = MouseManager::GetInstance();
+	auto* ms = Mouse::GetInstance();
 
 	// À•W
-	if (ms->IsDrag(MouseManager::LBUTTON)) {
+	if (ms->IsDrag(Mouse::LBUTTON)) {
 		move_[0] = ms->GetMoveX() / 10.0f;
 		move_[1] = -ms->GetMoveY() / 10.0f;
 	}
 	if (ms->IsHwheelUp()) {
-		if (ms->IsPress(MouseManager::RBUTTON)) {
+		if (ms->IsPress(Mouse::RBUTTON)) {
 			move_[5] = 0.5f;
 		} else {
 			move_[2] = 2.0f;
 		}
 	} else if (ms->IsHwheelDown()) {
-		if (ms->IsPress(MouseManager::RBUTTON)) {
+		if (ms->IsPress(Mouse::RBUTTON)) {
 			move_[5] -= 0.5f;
 		} else {
 			move_[2] -= 2.0f;
@@ -36,7 +36,7 @@ void DebugCamera::Update(float df)
 	position_ += D3DXVECTOR3(move_[0], move_[1], move_[2]);
 
 	// Œü‚«
-	if (ms->IsDrag(MouseManager::RBUTTON)) {
+	if (ms->IsDrag(Mouse::RBUTTON)) {
 		move_[3] = ms->GetMoveX() / 400.0f;
 		move_[4] = ms->GetMoveY() / 400.0f;
 	}
@@ -45,7 +45,7 @@ void DebugCamera::Update(float df)
 	// Ž‹–ìŠp
 	fov_ += move_[5];
 
-	if (ms->IsPress(MouseManager::LBUTTON) && ms->IsPress(MouseManager::RBUTTON)) {
+	if (ms->IsPress(Mouse::LBUTTON) && ms->IsPress(Mouse::RBUTTON)) {
 		Initialize_();
 	}
 

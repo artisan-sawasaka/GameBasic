@@ -1,8 +1,8 @@
 #include "SceneOption.h"
 #include "render/Renderer.h"
+#include "input/Key.h"
 #include "utility/Utility.hpp"
 #include "utility/FadeManager.h"
-#include "utility/KeyManager.h"
 #include "utility/SceneManager.h"
 #include "sound/SoundManager.h"
 #include "sound/Se.h"
@@ -201,31 +201,31 @@ bool SceneOption::ActionSelect_(float df)
 		state_.Change(ST_SELECT, true);
 	}
 	if (state_ == ST_SELECT) {
-		if (KeyManager::GetInstance()->IsTrg(VK_UP)) {
+		if (Key::GetInstance()->IsTrg(VK_UP)) {
 			// è„
 			cursor_ = static_cast<Menu>((cursor_ + (MenuMax - 1)) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 			SetCursor_();
-		} else if (KeyManager::GetInstance()->IsTrg(VK_DOWN)) {
+		} else if (Key::GetInstance()->IsTrg(VK_DOWN)) {
 			// â∫
 			cursor_ = static_cast<Menu>((cursor_ + 1) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 			SetCursor_();
-		} else if (KeyManager::GetInstance()->IsRepeat(VK_LEFT) && cursor_ != Exit) {
+		} else if (Key::GetInstance()->IsRepeat(VK_LEFT) && cursor_ != Exit) {
 			// ç∂
 			if (volume_[cursor_] > 0) {
 				SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 				volume_[cursor_]--;
 				UpdateSound_();
 			}
-		} else if (KeyManager::GetInstance()->IsRepeat(VK_RIGHT) && cursor_ != Exit) {
+		} else if (Key::GetInstance()->IsRepeat(VK_RIGHT) && cursor_ != Exit) {
 			// âE
 			if (volume_[cursor_] < MaxVolume) {
 				SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
 				volume_[cursor_]++;
 				UpdateSound_();
 			}
-		} else if (KeyManager::GetInstance()->IsTrg(VK_RETURN) && cursor_ == Exit) {
+		} else if (Key::GetInstance()->IsTrg(VK_RETURN) && cursor_ == Exit) {
 			// èIóπ
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			return true;

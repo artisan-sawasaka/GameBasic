@@ -7,11 +7,11 @@
 #include <cstdint>
 #include <Shlwapi.h>
 #include <memory>
+#include <algorithm>
 #include "master/MasterData.hpp"
 #include "render/Renderer.h"
 #include "render/Texture.h"
 #include "Unpacker.hpp"
-#include "KeyManager.h"
 
 class Utility
 {

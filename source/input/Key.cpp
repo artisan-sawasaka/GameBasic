@@ -1,9 +1,9 @@
-#include "KeyManager.h"
+#include "Key.h"
 #include <string.h>
 #include <algorithm>
 #include "master/MasterData.hpp"
 
-KeyManager::KeyManager()
+Key::Key()
 {
 	Clear();
 }
@@ -11,7 +11,7 @@ KeyManager::KeyManager()
 /*!
  * @brief クリア
  */
-void KeyManager::Clear()
+void Key::Clear()
 {
 	memset(infos_, false , sizeof(infos_));
 }
@@ -19,7 +19,7 @@ void KeyManager::Clear()
 /*!
  * @brief 押した時
  */
-void KeyManager::Down(unsigned char key)
+void Key::Down(unsigned char key)
 {
 	infos_[key].key_temp = true;
 }
@@ -27,7 +27,7 @@ void KeyManager::Down(unsigned char key)
 /*!
  * @brief 離した時
  */
-void KeyManager::Up(unsigned char key)
+void Key::Up(unsigned char key)
 {
 	infos_[key].key_temp = false;
 }
@@ -35,7 +35,7 @@ void KeyManager::Up(unsigned char key)
 /*!
  * @brief キーの更新
  */
-void KeyManager::Update()
+void Key::Update()
 {
 	for (int i = 0; i < sizeof(infos_) / sizeof(*infos_); ++i) {
 		auto& info = infos_[i];
@@ -48,7 +48,7 @@ void KeyManager::Update()
 /*!
  * @brief キーの押されっぱなしを取得
  */
-bool KeyManager::IsPress(unsigned char key) const
+bool Key::IsPress(unsigned char key) const
 {
 	return infos_[key].key;
 }
@@ -56,7 +56,7 @@ bool KeyManager::IsPress(unsigned char key) const
 /*!
  * @brief キーの押した時を取得
  */
-bool KeyManager::IsTrg(unsigned char key) const
+bool Key::IsTrg(unsigned char key) const
 {
 	return infos_[key].key && !infos_[key].key_back;
 }
@@ -64,7 +64,7 @@ bool KeyManager::IsTrg(unsigned char key) const
 /*!
  * @brief キーの離した時を取得
  */
-bool KeyManager::IsRelease(unsigned char key) const
+bool Key::IsRelease(unsigned char key) const
 {
 	return !infos_[key].key && infos_[key].key_back;
 }
@@ -72,7 +72,7 @@ bool KeyManager::IsRelease(unsigned char key) const
 /*!
  * @brief キーリピート
  */
-bool KeyManager::IsRepeat(unsigned char key) const
+bool Key::IsRepeat(unsigned char key) const
 {
 	auto& info = infos_[key];
 	if (info.key_count == 0) return false;

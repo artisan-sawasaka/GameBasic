@@ -1,9 +1,9 @@
-#include "MouseManager.h"
+#include "Mouse.h"
 #include <string.h>
 #include <algorithm>
 #include "master/MasterData.hpp"
 
-MouseManager::MouseManager()
+Mouse::Mouse()
 	: hwnd_(NULL)
 {
 	Clear();
@@ -12,7 +12,7 @@ MouseManager::MouseManager()
 /*!
  * @brief クリア
  */
-void MouseManager::Clear()
+void Mouse::Clear()
 {
 	memset(infos_, false , sizeof(infos_));
 	pos_x_ = 0;
@@ -27,7 +27,7 @@ void MouseManager::Clear()
 /*!
  * @brief イベント
  */
-void MouseManager::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
+void Mouse::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 {
 	hwnd_ = hWnd;
 	if (msg == WM_LBUTTONDOWN) {
@@ -51,7 +51,7 @@ void MouseManager::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 /*!
  * @brief ボタンの更新
  */
-void MouseManager::Update()
+void Mouse::Update()
 {
 	for (int i = 0; i < sizeof(infos_) / sizeof(*infos_); ++i) {
 		auto& info = infos_[i];
@@ -75,7 +75,7 @@ void MouseManager::Update()
 /*!
  * @brief ボタンの押されっぱなしを取得
  */
-bool MouseManager::IsPress(Button button) const
+bool Mouse::IsPress(Button button) const
 {
 	return infos_[button].button;
 }
@@ -83,7 +83,7 @@ bool MouseManager::IsPress(Button button) const
 /*!
  * @brief ボタンのドラッグを取得
  */
-bool MouseManager::IsDrag(Button button) const
+bool Mouse::IsDrag(Button button) const
 {
 	return IsPress(button) && !IsTrg(button);
 }
@@ -91,7 +91,7 @@ bool MouseManager::IsDrag(Button button) const
 /*!
  * @brief ボタンの押した時を取得
  */
-bool MouseManager::IsTrg(Button button) const
+bool Mouse::IsTrg(Button button) const
 {
 	return infos_[button].button && !infos_[button].button_back;
 }
@@ -99,7 +99,7 @@ bool MouseManager::IsTrg(Button button) const
 /*!
  * @brief ボタンの離した時を取得
  */
-bool MouseManager::IsRelease(Button button) const
+bool Mouse::IsRelease(Button button) const
 {
 	return !infos_[button].button && infos_[button].button_back;
 }
@@ -107,7 +107,7 @@ bool MouseManager::IsRelease(Button button) const
 /*!
  * @brief ホイールが上に回されたときを取得
  */
-bool MouseManager::IsHwheelUp() const
+bool Mouse::IsHwheelUp() const
 {
 	return notch_ > 0;
 }
@@ -115,7 +115,7 @@ bool MouseManager::IsHwheelUp() const
 /*!
  * @brief ホイールが下に回されたときを取得
  */
-bool MouseManager::IsHwheelDown() const
+bool Mouse::IsHwheelDown() const
 {
 	return notch_ < 0;
 }
@@ -123,7 +123,7 @@ bool MouseManager::IsHwheelDown() const
 /*!
  * @brief マウスのX座標を取得
  */
-int MouseManager::GetX() const
+int Mouse::GetX() const
 {
 	return pos_x_;
 }
@@ -131,7 +131,7 @@ int MouseManager::GetX() const
 /*!
  * @brief マウスのY座標を取得
  */
-int MouseManager::GetY() const
+int Mouse::GetY() const
 {
 	return pos_y_;
 }
@@ -139,7 +139,7 @@ int MouseManager::GetY() const
 /*!
  * @brief マウスのXの移動量を取得
  */
-int MouseManager::GetMoveX() const
+int Mouse::GetMoveX() const
 {
 	return pos_x_ - pos_x_back_;
 }
@@ -147,7 +147,7 @@ int MouseManager::GetMoveX() const
 /*!
  * @brief マウスのYの移動量を取得
  */
-int MouseManager::GetMoveY() const
+int Mouse::GetMoveY() const
 {
 	return pos_y_ - pos_y_back_;
 }
