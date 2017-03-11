@@ -32,16 +32,22 @@ void Mouse::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 	hwnd_ = hWnd;
 	if (msg == WM_LBUTTONDOWN) {
 		infos_[LBUTTON].button_temp = true;
+		SetCapture(hWnd);
 	} else if (msg == WM_LBUTTONUP) {
 		infos_[LBUTTON].button_temp = false;
+		ReleaseCapture();
 	} else if (msg == WM_MBUTTONDOWN) {
 		infos_[MBUTTON].button_temp = true;
+		SetCapture(hWnd);
 	} else if (msg == WM_MBUTTONUP) {
 		infos_[MBUTTON].button_temp = false;
+		ReleaseCapture();
 	} else if (msg == WM_RBUTTONDOWN) {
 		infos_[RBUTTON].button_temp = true;
+		SetCapture(hWnd);
 	} else if (msg == WM_RBUTTONUP) {
 		infos_[RBUTTON].button_temp = false;
+		ReleaseCapture();
 	} else if (msg == WM_MOUSEWHEEL) {
 		z_delta_ = GET_WHEEL_DELTA_WPARAM(wParam) + wheel_fraction_;
 		wheel_fraction_ = z_delta_ % WHEEL_DELTA;
