@@ -22,6 +22,7 @@ void Mouse::Clear()
 	z_delta_ = 0;
 	wheel_fraction_ = 0;
 	notch_ = 0;
+	ReleaseCapture();
 }
 
 /*!

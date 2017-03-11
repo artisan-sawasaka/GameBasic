@@ -9,42 +9,42 @@ public:
 	/*
 	 * @brief インクリメントループ
 	 */
-	static int TrgIncrement(char key, int value, int max)
+	static int TrgIncrement(KeyCode::Code code, int value, int max)
 	{
-		if (!Key::GetInstance()->IsTrg(key)) return value;
+		if (!Key::GetInstance()->IsTrg(code)) return value;
 		return ++value % max;
 	}
 
 	/*
 	 * @brief デクリメントループ
 	 */
-	static int TrgDecrement(char key, int value, int max)
+	static int TrgDecrement(KeyCode::Code code, int value, int max)
 	{
-		if (!Key::GetInstance()->IsTrg(key)) return value;
+		if (!Key::GetInstance()->IsTrg(code)) return value;
 		return (value + (max - 1)) % max;
 	}
 
 	/*
 	 * @brief 真偽の切り替え
 	 */
-	static bool TrgBoolean(char key, bool value)
+	static bool TrgBoolean(KeyCode::Code code, bool value)
 	{
-		return Key::GetInstance()->IsTrg(key) ? !value : value;
+		return Key::GetInstance()->IsTrg(code) ? !value : value;
 	}
 
 	/*
 	 * @brief 数値加算
 	 */
 	template <class T>
-	static T TrgAddValue(char key, T value, T add, T max)
+	static T TrgAddValue(KeyCode::Code code, T value, T add, T max)
 	{
-		if (!Key::GetInstance()->IsTrg(key)) return value;
+		if (!Key::GetInstance()->IsTrg(code)) return value;
 		return std::min(value + add, max);
 	}
 	template <class T>
-	static T PressAddValue(char key, T value, T add, T max)
+	static T PressAddValue(KeyCode::Code code, T value, T add, T max)
 	{
-		if (!Key::GetInstance()->IsPress(key)) return value;
+		if (!Key::GetInstance()->IsPress(code)) return value;
 		return std::min(value + add, max);
 	}
 
@@ -52,15 +52,15 @@ public:
 	* @brief 数値減算
 	*/
 	template <class T>
-	static T TrgSubValue(char key, T value, T sub, T min)
+	static T TrgSubValue(KeyCode::Code code, T value, T sub, T min)
 	{
-		if (!Key::GetInstance()->IsTrg(key)) return value;
+		if (!Key::GetInstance()->IsTrg(code)) return value;
 		return std::max(value - sub, min);
 	}
 	template <class T>
-	static T PressSubValue(char key, T value, T sub, T min)
+	static T PressSubValue(KeyCode::Code code, T value, T sub, T min)
 	{
-		if (!Key::GetInstance()->IsPress(key)) return value;
+		if (!Key::GetInstance()->IsPress(code)) return value;
 		return std::max(value - sub, min);
 	}
 };

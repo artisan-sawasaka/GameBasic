@@ -31,7 +31,7 @@ void SceneTitle::Update(float df)
 
 	// 初期化
 	if (state_ == ST_INIT) {
-		//SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
 		state_.Change(ST_LOADING, true);
 	}
 	if (state_ == ST_LOADING) {
@@ -158,15 +158,15 @@ bool SceneTitle::ActionSelect_(float df)
 		state_.Change(ST_SELECT, true);
 	}
 	if (state_ == ST_SELECT) {
-		if (Key::GetInstance()->IsTrg(VK_UP)) {
+		if (Key::GetInstance()->IsTrg(KeyCode::UP)) {
 			// 上
 			cursor_ = static_cast<Menu>((cursor_ + (MenuMax - 1)) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
-		} else if (Key::GetInstance()->IsTrg(VK_DOWN)) {
+		} else if (Key::GetInstance()->IsTrg(KeyCode::DOWN)) {
 			// 下
 			cursor_ = static_cast<Menu>((cursor_ + 1) % MenuMax);
 			SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
-		} else if (Key::GetInstance()->IsTrg(VK_RETURN)) {
+		} else if (Key::GetInstance()->IsTrg(KeyCode::ENTER)) {
 			// 決定
 			SoundManager::GetInstance()->PlaySe(CRI_SE_OK, 0);
 			return true;
@@ -206,6 +206,7 @@ bool SceneTitle::ActionOutAnimation_(float df)
 bool SceneTitle::ActionStartGameAnimation_(float df)
 {
 	if (state_ == ST_START_GAME_ANIMATION_INIT) {
+		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
 		raster_scroll_.Start();
 		state_.Change(ST_START_GAME_ANIMATION, true);
 	}
@@ -235,39 +236,39 @@ void SceneTitle::Render2D_()
 
 void SceneTitle::Debug_()
 {
-	if (Key::GetInstance()->IsTrg('1')) {
+	if (Key::GetInstance()->IsTrg(KeyCode::N1)) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_VILLAGE);
-	} else if (Key::GetInstance()->IsTrg('2')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::N2)) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_FIELD);
-	} else if (Key::GetInstance()->IsTrg('3')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::N3)) {
 		SoundManager::GetInstance()->PlayBgm(CRI_BGM_BATTLE);
-	} else if (Key::GetInstance()->IsTrg('4')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::N4)) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_OK);
-	} else if (Key::GetInstance()->IsTrg('5')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::N5)) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CANCEL, 0);
-	} else if (Key::GetInstance()->IsTrg('6')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::N6)) {
 		SoundManager::GetInstance()->PlaySe(CRI_SE_CURSOR, 0);
-	} else if (Key::GetInstance()->IsTrg('9')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::N9)) {
 		SoundManager::GetInstance()->StopAll();
 	}
 
 	// モデル操作
-	if (Key::GetInstance()->IsPress('Z')) {
+	if (Key::GetInstance()->IsPress(KeyCode::Z)) {
 		// リセット
 		model_.SetRotate(0, 0, 0);
 		model_.SetColor(Color::White);
 	} else {
 		// 回転
 		auto rotate = model_.GetRotate();
-		rotate.x = KeyUtility::PressAddValue('Q', rotate.x, 0.01f, 1000.0f);
-		rotate.y = KeyUtility::PressAddValue('W', rotate.y, 0.01f, 1000.0f);
-		rotate.z = KeyUtility::PressAddValue('E', rotate.z, 0.01f, 1000.0f);
+		rotate.x = KeyUtility::PressAddValue(KeyCode::Q, rotate.x, 0.01f, 1000.0f);
+		rotate.y = KeyUtility::PressAddValue(KeyCode::W, rotate.y, 0.01f, 1000.0f);
+		rotate.z = KeyUtility::PressAddValue(KeyCode::E, rotate.z, 0.01f, 1000.0f);
 		model_.SetRotate(rotate);
 
 		// カラー
 		auto color = model_.GetColor();
-		color.SetA(KeyUtility::PressAddValue('S', static_cast<int>(color.GetA()), 5, 255));
-		color.SetA(KeyUtility::PressSubValue('A', static_cast<int>(color.GetA()), 5, 0));
+		color.SetA(KeyUtility::PressAddValue(KeyCode::S, static_cast<int>(color.GetA()), 5, 255));
+		color.SetA(KeyUtility::PressSubValue(KeyCode::A, static_cast<int>(color.GetA()), 5, 0));
 		model_.SetColor(color);
 	}
 }

@@ -101,18 +101,18 @@ void MainApp::Update(float df)
 	camera_.Update(df);
 
 	// デバッグ機能
-	if (Key::GetInstance()->IsTrg('R')) {
+	if (Key::GetInstance()->IsTrg(KeyCode::R)) {
 		// 現在のシーンの再読み込み
 		SoundManager::GetInstance()->StopAll();
 		ReloadMasterData_();
 		SceneManager::GetInstance()->Restart();
-	} else if (Key::GetInstance()->IsTrg('O')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::O)) {
 		// デバッグ出力ウインドウを開く
 		//ConsoleManager::GetInstance()->Open();
-	} else if (Key::GetInstance()->IsTrg('C')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::C)) {
 		// デバッグ出力ウインドウを閉じる
 		//ConsoleManager::GetInstance()->Close();
-	} else if (Key::GetInstance()->IsTrg('Q')) {
+	} else if (Key::GetInstance()->IsTrg(KeyCode::Q)) {
 		//is_debug_render_ = !is_debug_render_;
 	}
 
