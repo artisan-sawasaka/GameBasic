@@ -59,6 +59,8 @@ public :
 		F10,
 		F11,
 		F12,
+		BACK,
+		TAB,
 		CLEAR,
 		ENTER,
 		SHIFT,

@@ -54,6 +54,8 @@ static unsigned char changeTable[256] =
 	VK_F10,
 	VK_F11,
 	VK_F12,
+	VK_BACK,
+	VK_TAB,
 	VK_CLEAR,
 	VK_RETURN,
 	VK_SHIFT,

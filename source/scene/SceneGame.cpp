@@ -26,7 +26,7 @@ void SceneGame::Finalize()
  */
 void SceneGame::Update(float df)
 {
-	if (Key::GetInstance()->IsTrg(KeyCode::A)) {
+	if (Key::GetInstance()->IsTrg(KeyCode::BACK)) {
 		SceneManager::GetInstance()->Back();
 	}
 }
