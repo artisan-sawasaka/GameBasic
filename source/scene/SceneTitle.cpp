@@ -4,7 +4,7 @@
 #include "utility/Utility.hpp"
 #include "utility/FadeManager.h"
 #include "utility/KeyUtility.hpp"
-#include "utility/SceneManager.h"
+#include "scene/SceneManager.h"
 #include "sound/SoundManager.h"
 #include "sound/Bgm.h"
 #include "sound/Se.h"

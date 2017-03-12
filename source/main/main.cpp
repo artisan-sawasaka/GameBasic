@@ -2,7 +2,7 @@
 #include "render/Renderer.h"
 #include "input/Key.h"
 #include "input/Mouse.h"
-#include "utility/SceneManager.h"
+#include "scene/SceneManager.h"
 #include "utility/DeviceManager.h"
 #include "utility/FadeManager.h"
 #include "utility/ConsoleManager.h"

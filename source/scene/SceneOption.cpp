@@ -3,7 +3,7 @@
 #include "input/Key.h"
 #include "utility/Utility.hpp"
 #include "utility/FadeManager.h"
-#include "utility/SceneManager.h"
+#include "scene/SceneManager.h"
 #include "sound/SoundManager.h"
 #include "sound/Se.h"
 

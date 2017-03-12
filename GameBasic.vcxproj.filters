@@ -127,9 +127,6 @@
     <ClCompile Include="source\utility\InOutAnimation.cpp">
       <Filter>source\utility</Filter>
     </ClCompile>
-    <ClCompile Include="source\utility\SceneManager.cpp">
-      <Filter>source\utility</Filter>
-    </ClCompile>
     <ClCompile Include="source\utility\Unpacker.cpp">
       <Filter>source\utility</Filter>
     </ClCompile>
@@ -138,6 +135,9 @@
     </ClCompile>
     <ClCompile Include="source\input\Mouse.cpp">
       <Filter>source\input</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\SceneManager.cpp">
+      <Filter>source\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -255,9 +255,6 @@
     <ClInclude Include="source\utility\PathUtility.hpp">
       <Filter>source\utility</Filter>
     </ClInclude>
-    <ClInclude Include="source\utility\SceneManager.h">
-      <Filter>source\utility</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\StateManager.h">
       <Filter>source\utility</Filter>
     </ClInclude>
@@ -275,6 +272,9 @@
     </ClInclude>
     <ClInclude Include="source\input\Mouse.h">
       <Filter>source\input</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\SceneManager.h">
+      <Filter>source\scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

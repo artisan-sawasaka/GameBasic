@@ -103,6 +103,7 @@
     <ClCompile Include="source\render_utility\RasterScroll.cpp" />
     <ClCompile Include="source\scene\SceneGame.cpp" />
     <ClCompile Include="source\scene\SceneInitialize.cpp" />
+    <ClCompile Include="source\scene\SceneManager.cpp" />
     <ClCompile Include="source\scene\SceneOption.cpp" />
     <ClCompile Include="source\scene\SceneTitle.cpp" />
     <ClCompile Include="source\shader\BlurShader.cpp" />
@@ -118,7 +119,6 @@
     <ClCompile Include="source\utility\DeviceManager.cpp" />
     <ClCompile Include="source\utility\FadeManager.cpp" />
     <ClCompile Include="source\utility\InOutAnimation.cpp" />
-    <ClCompile Include="source\utility\SceneManager.cpp" />
     <ClCompile Include="source\utility\Unpacker.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +141,7 @@
     <ClInclude Include="source\scene\SceneGame.h" />
     <ClInclude Include="source\scene\SceneInitialize.h" />
     <ClInclude Include="source\scene\SceneList.h" />
+    <ClInclude Include="source\scene\SceneManager.h" />
     <ClInclude Include="source\scene\SceneOption.h" />
     <ClInclude Include="source\scene\SceneTitle.h" />
     <ClInclude Include="source\shader\BlurShader.h" />
@@ -162,7 +163,6 @@
     <ClInclude Include="source\utility\InOutAnimation.h" />
     <ClInclude Include="source\utility\KeyUtility.hpp" />
     <ClInclude Include="source\utility\PathUtility.hpp" />
-    <ClInclude Include="source\utility\SceneManager.h" />
     <ClInclude Include="source\utility\StateManager.h" />
     <ClInclude Include="source\utility\StreamReader.hpp" />
     <ClInclude Include="source\utility\Unpacker.hpp" />

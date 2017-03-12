@@ -6,93 +6,56 @@ namespace MasterData
 {
     ConstData Const;
     ConstRasterScrollData ConstRasterScroll;
-    std::vector<KeyRepeatBaseData> KeyRepeatBase;
-    std::map<std::string, OptionImageListData> OptionImageList;
-    std::vector<OptionUIData> OptionUI;
-    std::map<std::string, OptionInOutData> OptionInOut;
     OptionConstData OptionConst;
+    std::map<std::string, OptionImageListData> OptionImageList;
+    std::map<std::string, OptionInOutData> OptionInOut;
     std::map<std::string, TitleImageListData> TitleImageList;
-    std::vector<TitleUIData> TitleUI;
     std::map<std::string, TitleInOutData> TitleInOut;
+    std::vector<KeyRepeatBaseData> KeyRepeatBase;
+    std::vector<OptionUIData> OptionUI;
+    std::vector<TitleUIData> TitleUI;
 
 
-    void Reload(const std::string& path)
-    {
-        std::vector<char> buffer;
-	    StreamReader reader;
-        int length;
+    template <class T>
+    void LoadConst(const std::string& path, T& value) {
+        auto buffer = File::ReadAllBytes(path);
+        auto reader = StreamReader(buffer);
+        value.Load(reader);
+    }
 
-        buffer = File::ReadAllBytes(path + "/Const.dat");
-        reader = StreamReader(buffer);
-        Const.Load(reader);
-
-        buffer = File::ReadAllBytes(path + "/ConstRasterScroll.dat");
-        reader = StreamReader(buffer);
-        ConstRasterScroll.Load(reader);
-
-        buffer = File::ReadAllBytes(path + "/KeyRepeatBase.dat");
-        reader = StreamReader(buffer);
-        std::vector<KeyRepeatBaseData>().swap(KeyRepeatBase);
-        KeyRepeatBase.resize(reader.ReadInt());
-        for (size_t i = 0; i < KeyRepeatBase.size(); ++i) {
-            KeyRepeatBase[i].Load(reader);
+    template <class T>
+    void LoadArray(const std::string& path, T& value) {
+        auto buffer = File::ReadAllBytes(path);
+        auto reader = StreamReader(buffer);
+        T().swap(value);
+        value.resize(reader.ReadInt());
+        for (size_t i = 0; i < value.size(); ++i) {
+            value[i].Load(reader);
         }
+    }
 
-        buffer = File::ReadAllBytes(path + "/OptionImageList.dat");
-        reader = StreamReader(buffer);
-        length = reader.ReadInt();
-        OptionImageList.clear();
+    template <class T>
+    void LoadMap(const std::string& path, T& value) {
+        auto buffer = File::ReadAllBytes(path);
+        auto reader = StreamReader(buffer);
+        auto length = reader.ReadInt();
+        value.clear();
         for (int i = 0; i < length; ++i) {
             auto key = reader.ReadStringNoSeek();
-            OptionImageList[key].Load(reader);
+            value[key].Load(reader);
         }
+    }
 
-        buffer = File::ReadAllBytes(path + "/OptionUI.dat");
-        reader = StreamReader(buffer);
-        std::vector<OptionUIData>().swap(OptionUI);
-        OptionUI.resize(reader.ReadInt());
-        for (size_t i = 0; i < OptionUI.size(); ++i) {
-            OptionUI[i].Load(reader);
-        }
-
-        buffer = File::ReadAllBytes(path + "/OptionInOut.dat");
-        reader = StreamReader(buffer);
-        length = reader.ReadInt();
-        OptionInOut.clear();
-        for (int i = 0; i < length; ++i) {
-            auto key = reader.ReadStringNoSeek();
-            OptionInOut[key].Load(reader);
-        }
-
-        buffer = File::ReadAllBytes(path + "/OptionConst.dat");
-        reader = StreamReader(buffer);
-        OptionConst.Load(reader);
-
-        buffer = File::ReadAllBytes(path + "/TitleImageList.dat");
-        reader = StreamReader(buffer);
-        length = reader.ReadInt();
-        TitleImageList.clear();
-        for (int i = 0; i < length; ++i) {
-            auto key = reader.ReadStringNoSeek();
-            TitleImageList[key].Load(reader);
-        }
-
-        buffer = File::ReadAllBytes(path + "/TitleUI.dat");
-        reader = StreamReader(buffer);
-        std::vector<TitleUIData>().swap(TitleUI);
-        TitleUI.resize(reader.ReadInt());
-        for (size_t i = 0; i < TitleUI.size(); ++i) {
-            TitleUI[i].Load(reader);
-        }
-
-        buffer = File::ReadAllBytes(path + "/TitleInOut.dat");
-        reader = StreamReader(buffer);
-        length = reader.ReadInt();
-        TitleInOut.clear();
-        for (int i = 0; i < length; ++i) {
-            auto key = reader.ReadStringNoSeek();
-            TitleInOut[key].Load(reader);
-        }
-
+    void Reload(const std::string& path) {
+        LoadArray(path + "/KeyRepeatBase.dat", KeyRepeatBase);
+        LoadArray(path + "/OptionUI.dat", OptionUI);
+        LoadArray(path + "/TitleUI.dat", TitleUI);
+        LoadConst(path + "/Const.dat", Const);
+        LoadConst(path + "/ConstRasterScroll.dat", ConstRasterScroll);
+        LoadConst(path + "/OptionConst.dat", OptionConst);
+        LoadMap(path + "/OptionImageList.dat", OptionImageList);
+        LoadMap(path + "/OptionInOut.dat", OptionInOut);
+        LoadMap(path + "/TitleImageList.dat", TitleImageList);
+        LoadMap(path + "/TitleInOut.dat", TitleInOut);
     }
 }

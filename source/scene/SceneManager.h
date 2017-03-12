@@ -7,9 +7,9 @@
  */
 #pragma once
 
-#include "StateManager.h"
 #include "scene/SceneBase.h"
 #include "scene/SceneList.h"
+#include "utility/StateManager.h"
 #include <memory>
 #include <stack>
 
