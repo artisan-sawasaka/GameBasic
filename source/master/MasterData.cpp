@@ -1,6 +1,7 @@
 #include "MasterData.hpp"
 #include "utility/FileUtility.hpp"
 #include "utility/StreamReader.hpp"
+#include <functional>
 
 namespace MasterData
 {
@@ -15,12 +16,10 @@ namespace MasterData
     std::vector<OptionUIData> OptionUI;
     std::vector<TitleUIData> TitleUI;
 
-
-    template <class T>
-    void LoadConst(const std::string& path, T& value) {
+    void LoadConst(const std::string& path, std::function<void(StreamReader&)> func) {
         auto buffer = File::ReadAllBytes(path);
         auto reader = StreamReader(buffer);
-        value.Load(reader);
+        func(reader);
     }
 
     template <class T>
@@ -50,9 +49,9 @@ namespace MasterData
         LoadArray(path + "/KeyRepeatBase.dat", KeyRepeatBase);
         LoadArray(path + "/OptionUI.dat", OptionUI);
         LoadArray(path + "/TitleUI.dat", TitleUI);
-        LoadConst(path + "/Const.dat", Const);
-        LoadConst(path + "/ConstRasterScroll.dat", ConstRasterScroll);
-        LoadConst(path + "/OptionConst.dat", OptionConst);
+        LoadConst(path + "/Const.dat", std::bind(&ConstData::Load, &Const, std::placeholders::_1));
+        LoadConst(path + "/ConstRasterScroll.dat", std::bind(&ConstRasterScrollData::Load, &ConstRasterScroll, std::placeholders::_1));
+        LoadConst(path + "/OptionConst.dat", std::bind(&OptionConstData::Load, &OptionConst, std::placeholders::_1));
         LoadMap(path + "/OptionImageList.dat", OptionImageList);
         LoadMap(path + "/OptionInOut.dat", OptionInOut);
         LoadMap(path + "/TitleImageList.dat", TitleImageList);
