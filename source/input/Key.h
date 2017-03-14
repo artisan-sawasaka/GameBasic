@@ -106,19 +106,14 @@ class Key
 {
 public :
 	/*!
-	* @brief キーのクリア
-	*/
+	 * @brief キーのクリア
+	 */
 	void Clear();
 
 	/*!
-	* @brief 押した時
-	*/
-	void Down(unsigned char key);
-
-	/*!
-	* @brief 離した時
-	*/
-	void Up(unsigned char key);
+	 * @brief キーのイベント
+	 */
+	void WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam);
 
 	/*!
 	* @brief キーの更新
@@ -141,8 +136,8 @@ public :
 	bool IsRelease(KeyCode::Code code) const;
 
 	/*!
-	* @brief キーリピート
-	*/
+	 * @brief キーリピート
+	 */
 	bool IsRepeat(KeyCode::Code code) const;
 
 	static Key* GetInstance() {

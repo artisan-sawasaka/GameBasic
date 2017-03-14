@@ -107,19 +107,15 @@ void Key::Clear()
 }
 
 /*!
- * @brief 押した時
+ * @brief イベント
  */
-void Key::Down(unsigned char key)
+void Key::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 {
-	infos_[key].key_temp = true;
-}
-
-/*!
- * @brief 離した時
- */
-void Key::Up(unsigned char key)
-{
-	infos_[key].key_temp = false;
+	if (msg == WM_KEYDOWN) {
+		infos_[wParam].key_temp = true;
+	} else if (msg == WM_KEYUP) {
+		infos_[wParam].key_temp = false;
+	}
 }
 
 /*!
@@ -158,6 +154,7 @@ bool Key::IsRelease(KeyCode::Code code) const
 {
 	return !infos_[changeTable[code]].key && infos_[changeTable[code]].key_back;
 }
+
 
 /*!
  * @brief キーリピート

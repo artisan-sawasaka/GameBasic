@@ -15,7 +15,7 @@ public:
 		if (p == nullptr) {
 			p = strrchr(str, '/');
 			if (p == nullptr) {
-				return std::string(str);
+				return std::string("./");
 			}
 		}
 		return std::string(str, p - str);

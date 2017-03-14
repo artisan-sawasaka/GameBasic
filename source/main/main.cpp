@@ -39,17 +39,11 @@ MainApp::~MainApp()
  */
 LRESULT MainApp::WndProc(HWND hWnd, UINT msg, UINT wParam, LONG lParam)
 {
-	if (msg == WM_KEYDOWN) {
-		Key::GetInstance()->Down(wParam);
-	} else if (msg == WM_KEYUP) {
-		Key::GetInstance()->Up(wParam);
-	} else if (msg == WM_ACTIVATE && wParam == 0) {
+	if (msg == WM_ACTIVATE && wParam == 0) {
 		Key::GetInstance()->Clear();
 		Mouse::GetInstance()->Clear();
-	} else if (msg == WM_SYSKEYDOWN) {
-		if (wParam == VK_RETURN) {
-		}
 	}
+	Key::GetInstance()->WndProc(hWnd, msg, wParam, lParam);
 	Mouse::GetInstance()->WndProc(hWnd, msg, wParam, lParam);
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
