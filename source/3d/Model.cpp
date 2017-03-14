@@ -13,6 +13,7 @@ Model::Model()
 	, position_(0.0f, 0.0f, 0.0f)
 	, rotate_(0.0f, 0.0f, 0.0f)
 	, scale_(1.0f, 1.0f, 1.0f)
+	, zalpha_enable_(true)
 {
 }
 
@@ -117,13 +118,8 @@ void Model::Render()
 		dst_diff.a = src_diff.a * a;
 	}
 
-	static bool check = false;
-#ifdef _DEBUG
-	check = KeyUtility::TrgBoolean(KeyCode::SPACE, check);
-#endif
-
 	// •`‰æ
-	if (a < 1.0f && !check) {
+	if (a < 1.0f && zalpha_enable_) {
 		// ”¼“§–¾‚ ‚è
 		Renderer::GetInstance()->SetBlend(Renderer::BLEND_DEST);
 		device->SetTexture(0, nullptr);

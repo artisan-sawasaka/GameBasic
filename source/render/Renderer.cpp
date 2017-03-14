@@ -242,6 +242,14 @@ void Renderer::SetZWriteEnable(bool enable)
 	device->SetRenderState(D3DRS_ZWRITEENABLE, enable ? TRUE : FALSE);
 }
 
+void Renderer::SetCulling(bool enable)
+{
+	auto device = GetDevice_();
+	if (device == nullptr) return ;
+
+	device->SetRenderState(D3DRS_CULLMODE, enable ? D3DCULL_CCW : D3DCULL_NONE);
+}
+
 /*!
  * @brief 現在の状態をプッシュします。
  */

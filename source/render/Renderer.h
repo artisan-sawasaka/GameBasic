@@ -181,6 +181,15 @@ public :
 	void SetZWriteEnable(bool enable);
 
 	/*!
+	 * @brief カリングモードを変更します。
+	 *
+	 * @param enable カリングの有無を指定します。
+	 *
+	 * @return なし
+	 */
+	void SetCulling(bool enable);
+
+	/*!
 	 * @brief 現在の状態をプッシュします。
 	 *
 	 * @return なし

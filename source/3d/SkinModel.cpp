@@ -373,13 +373,8 @@ void SkinModel::Render()
 	device->SetVertexShader(nullptr);
 	device->SetFVF(mesh->GetFVF());
 
-	static bool check = false;
-#ifdef _DEBUG
-	check = KeyUtility::TrgBoolean(KeyCode::SPACE, check);
-#endif
-
 	// •`‰æ
-	if (a < 1.0f && !check) {
+	if (a < 1.0f && zalpha_enable_) {
 		// ”¼“§–¾‚ ‚è
 		Renderer::GetInstance()->SetBlend(Renderer::BLEND_DEST);
 		device->SetTexture(0, nullptr);

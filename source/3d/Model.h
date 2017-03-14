@@ -29,6 +29,7 @@ public :
 	void SetScale(const D3DXVECTOR3& scale) { scale_ = scale; }
 	void SetScale(float x, float y, float z) { scale_ = D3DXVECTOR3(x, y, z); }
 	void SetColor(const Color& color) { color_ = color; }
+	void SetZAlphaEnable(bool enable) { zalpha_enable_ = enable; }
 
 	const D3DXVECTOR3& GetPotision() const { return position_; }
 	const D3DXVECTOR3& GetRotate() const { return rotate_; }
@@ -46,4 +47,5 @@ protected :
 	D3DXVECTOR3 rotate_;
 	D3DXVECTOR3 scale_;
 	Color color_;
+	bool zalpha_enable_;
 };
