@@ -7,11 +7,10 @@
  */
 #pragma once
 
-#include <Windows.h>
-#include <memory>
 #include <d3d9.h>
 #include <stack>
-#include "master/MasterData.hpp"
+#include <map>
+#include <vector>
 #include "main/DeviceLostListener.h"
 #include "Texture.h"
 #include "Color.h"

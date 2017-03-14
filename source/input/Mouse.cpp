@@ -1,7 +1,6 @@
 #include "Mouse.h"
 #include <string.h>
 #include <algorithm>
-#include "master/MasterData.hpp"
 
 Mouse::Mouse()
 	: hwnd_(NULL)

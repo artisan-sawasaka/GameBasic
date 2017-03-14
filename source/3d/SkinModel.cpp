@@ -2,6 +2,7 @@
 #include "render/Renderer.h"
 #include "utility/DeviceManager.h"
 #include "utility/PathUtility.hpp"
+#include "utility/KeyUtility.hpp"
 #include <map>
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
@@ -372,8 +373,13 @@ void SkinModel::Render()
 	device->SetVertexShader(nullptr);
 	device->SetFVF(mesh->GetFVF());
 
+	static bool check = false;
+#ifdef _DEBUG
+	check = KeyUtility::TrgBoolean(KeyCode::SPACE, check);
+#endif
+
 	// •`‰æ
-	if (a < 1.0f) {
+	if (a < 1.0f && !check) {
 		// ”¼“§–¾‚ ‚è
 		Renderer::GetInstance()->SetBlend(Renderer::BLEND_DEST);
 		device->SetTexture(0, nullptr);

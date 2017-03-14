@@ -2,6 +2,7 @@
 #include "render/Renderer.h"
 #include "utility/DeviceManager.h"
 #include "utility/PathUtility.hpp"
+#include "utility/KeyUtility.hpp"
 
 #define SAFE_RELEASE(a) if (a != nullptr) { a->Release(); a = nullptr; }
 static const float PI2 = 6.28318530718f;
@@ -116,15 +117,13 @@ void Model::Render()
 		dst_diff.a = src_diff.a * a;
 	}
 
-	/*
-	static bool hoge = false;
-	if (Key::GetInstance()->IsTrg('L')) {
-		hoge = !hoge;
-	}
-	*/
+	static bool check = false;
+#ifdef _DEBUG
+	check = KeyUtility::TrgBoolean(KeyCode::SPACE, check);
+#endif
 
 	// •`‰æ
-	if (a < 1.0f) {
+	if (a < 1.0f && !check) {
 		// ”¼“§–¾‚ ‚è
 		Renderer::GetInstance()->SetBlend(Renderer::BLEND_DEST);
 		device->SetTexture(0, nullptr);
